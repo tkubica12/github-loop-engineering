@@ -1,0 +1,19 @@
+{
+  "scenarioRevision": "agentic-loop-v1",
+  "changeId": "demo-change-42",
+  "id": "pr-42",
+  "type": "pull-request",
+  "title": "Add deterministic substitute suggestion",
+  "state": "reviewed",
+  "base": "main",
+  "head": "agent/substitute-suggestion",
+  "filesChanged": 2,
+  "additions": 31,
+  "deletions": 2,
+  "acceptanceMapping": {
+    "zeroStockSuggestion": "test/inventory.test.mjs: suggests one available item from the same category",
+    "unknownSku": "test/inventory.test.mjs: does not suggest for an unknown SKU",
+    "existingSuccess": "test/inventory.test.mjs: preserves successful reservation behavior"
+  },
+  "proposal": "Initial response used suggestion: { ...alternative }, which was challenged during review."
+}

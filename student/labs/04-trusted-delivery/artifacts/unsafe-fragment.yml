@@ -1,0 +1,9 @@
+# Unsafe example: untrusted pull request title is inserted into a generated shell script.
+- name: Check title
+  run: echo "${{ github.event.pull_request.title }}"
+
+# Safer pattern: pass untrusted text as data through an environment variable.
+- name: Check title
+  env:
+    PR_TITLE: ${{ github.event.pull_request.title }}
+  run: printf '%s\n' "$PR_TITLE"

@@ -1,0 +1,108 @@
+name: CodeQL
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  analyze:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          queries: security-extended
+      - uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938
+        with:
+          category: javascript-security
+
+  evidence:
+    name: Record main-branch security evidence
+    needs: analyze
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      security-events: read
+      issues: write
+    steps:
+      - name: Link the real CodeQL result to a bounded remediation issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const metadata = (await github.rest.repos.get({owner, repo})).data;
+            if (metadata.private || !metadata.topics.includes("workshop-synthetic-pharmacy")) {
+              throw new Error("Not the approved public synthetic demonstration.");
+            }
+            const main = (await github.rest.repos.getCommit({owner, repo, ref: "main"})).data;
+            if (main.sha !== context.sha) throw new Error("Refusing evidence from a stale main revision.");
+            const analyses = await github.paginate("GET /repos/{owner}/{repo}/code-scanning/analyses", {
+              owner, repo, ref: "refs/heads/main", per_page: 100
+            });
+            const analysis = analyses.find(a => a.commit_sha === context.sha && a.tool?.name === "CodeQL" && !a.error);
+            if (!analysis) throw new Error("No successful CodeQL analysis for this exact commit.");
+            const alerts = await github.paginate("GET /repos/{owner}/{repo}/code-scanning/alerts", {
+              owner, repo, ref: "refs/heads/main", state: "open", per_page: 100
+            });
+            const marker = "<!-- synthetic-pharmacy-codeql-evidence -->";
+            const clean = value => String(value ?? "").replaceAll("`", "'").replaceAll("@", "&#64;").replaceAll("\n", " ");
+            const rows = alerts.map(a => `- [CodeQL alert #${a.number}](${a.html_url}): \`${clean(a.rule.id)}\` at \`${clean(a.most_recent_instance?.location?.path)}\`.`);
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const body = [
+              "## Outcome",
+              "Restrict the synthetic stock export to the approved `stock.json` snapshot. Keep the existing reservation API unchanged.",
+              "",
+              "## Native security evidence",
+              `CodeQL analysis **${analysis.id}** at commit \`${context.sha}\`: **${alerts.length} open alert(s)**.`,
+              `[Inspect the completed scan](${runUrl}).`,
+              ...rows,
+              "A zero count is a scanner observation, not proof of application safety. Tests and human review remain required.",
+              "",
+              "## Acceptance",
+              "- Permit `/exports/stock.json` and return the same synthetic snapshot.",
+              "- Reject every other export name, including encoded traversal, before filesystem access.",
+              "- Add an HTTP regression test using only the application's own harmless `package.json`; never probe real secrets or system files.",
+              "- Preserve health, stock, reservation behavior, and all existing tests.",
+              "- Use built-in Node.js only. Update the README to describe the fixed contract.",
+              "",
+              "## Scope and authority",
+              "Change only `src/server.mjs`, `test/server.test.mjs`, and the README. Do not change workflows, credentials, ownership, or deployment controls.",
+              "Open one pull request with evidence. Do not approve, merge, or deploy. The unsafe starter is local-only.",
+              "",
+              marker
+            ].join("\n");
+            const issues = await github.paginate(github.rest.issues.listForRepo, {owner, repo, state: "all", per_page: 100});
+            const existing = issues.find(i => !i.pull_request && i.user?.login === "github-actions[bot]" && i.body?.includes(marker));
+            if (existing) {
+              await github.rest.issues.update({
+                owner, repo, issue_number: existing.number, body,
+                state: alerts.length ? "open" : "closed",
+                ...(alerts.length ? {} : {state_reason: "completed"})
+              });
+              core.notice(`Recorded actual CodeQL evidence in issue #${existing.number}.`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner, repo, title: "Restrict the synthetic stock export to its approved snapshot", body
+              });
+              if (!alerts.length) await github.rest.issues.update({
+                owner, repo, issue_number: created.data.number, state: "closed", state_reason: "completed"
+              });
+              core.notice(`Recorded actual CodeQL evidence in issue #${created.data.number}.`);
+            }

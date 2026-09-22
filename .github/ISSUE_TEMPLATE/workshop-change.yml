@@ -1,0 +1,38 @@
+name: Workshop change
+description: Define a testable workshop or platform improvement.
+title: "[Workshop] "
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Learner or operator outcome
+      description: State the observable result.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Include content, automation, and validation expectations.
+    validations:
+      required: true
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Platform profile
+      options:
+        - Both sandbox and enterprise
+        - Sandbox only
+        - Enterprise only
+    validations:
+      required: true
+  - type: dropdown
+    id: experience
+    attributes:
+      label: Experience
+      options:
+        - Full-day workshop
+        - One-hour showcase
+        - Shared platform
+    validations:
+      required: true

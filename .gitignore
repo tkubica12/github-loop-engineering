@@ -1,0 +1,6 @@
+.workshop/
+platform/profiles/enterprise.json
+node_modules/
+test-results/
+playwright-report/
+*.log

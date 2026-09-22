@@ -1,0 +1,270 @@
+name: Governed synthetic test release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: Exact merged remediation commit to package
+        required: true
+        type: string
+      pr_number:
+        description: Pull request that produced the remediation commit
+        required: true
+        type: number
+      run_id:
+        description: Workshop run identifier from the repository ownership topic
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-remediation-test
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: Verify merged, reviewed, tested remediation
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+      security-events: read
+    outputs:
+      release_sha: ${{ steps.gate.outputs.release_sha }}
+      pr_head: ${{ steps.gate.outputs.pr_head }}
+      workflow_sha: ${{ steps.gate.outputs.workflow_sha }}
+    steps:
+      - name: Check out trusted workflow revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify GitHub-native release evidence
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ inputs.release_sha }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          WORKFLOW_SHA: ${{ github.sha }}
+          WORKSHOP_RUN_ID: ${{ inputs.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == "refs/heads/main" ]] || {
+            echo "::error::Dispatch the trusted workflow from main."
+            exit 1
+          }
+          [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "::error::release_sha must be a full lowercase commit SHA."
+            exit 1
+          }
+          [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]] || {
+            echo "::error::pr_number must be a positive integer."
+            exit 1
+          }
+          git merge-base --is-ancestor "$RELEASE_SHA" "$WORKFLOW_SHA" || {
+            echo "::error::The release commit is not an ancestor of this trusted workflow revision."
+            exit 1
+          }
+          node --input-type=module <<'NODE'
+          const {appendFileSync} = await import("node:fs");
+          const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+          const release = process.env.RELEASE_SHA;
+          const prNumber = Number(process.env.PR_NUMBER);
+          const headers = {
+            accept: "application/vnd.github+json",
+            authorization: `Bearer ${process.env.GH_TOKEN}`,
+            "x-github-api-version": "2022-11-28"
+          };
+          async function request(path) {
+            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}${path}`, {headers});
+            if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
+            return response.json();
+          }
+          async function pages(path) {
+            const items = [];
+            for (let page = 1; ; page += 1) {
+              const values = await request(`${path}${path.includes("?") ? "&" : "?"}per_page=100&page=${page}`);
+              const pageItems = Array.isArray(values) ? values : values.workflow_runs;
+              if (!Array.isArray(pageItems)) throw new Error(`${path} did not return a pageable collection.`);
+              items.push(...pageItems);
+              if (pageItems.length < 100) return items;
+            }
+          }
+          function latestStates(reviews, mergedAt) {
+            if (reviews.some(r => r.state === "DISMISSED")) {
+              throw new Error("Dismissed review history cannot establish the pre-merge approval state.");
+            }
+            const states = new Map();
+            for (const review of reviews
+              .filter(r => r.user?.type === "User" && Date.parse(r.submitted_at) <= mergedAt)
+              .sort((a, b) => Date.parse(a.submitted_at) - Date.parse(b.submitted_at))) {
+              if (["APPROVED", "CHANGES_REQUESTED", "DISMISSED"].includes(review.state)) {
+                states.set(review.user.login.toLowerCase(), review);
+              }
+            }
+            return [...states.values()];
+          }
+          function latestPreMergeRun(runs, branch, mergedAt) {
+            const run = runs.filter(r =>
+              r.head_branch === branch && Date.parse(r.created_at) <= mergedAt)
+              .sort((a, b) => b.id - a.id)[0];
+            if (!run || run.status !== "completed" || run.conclusion !== "success" ||
+                !(Date.parse(run.updated_at) <= mergedAt)) {
+              throw new Error("Latest workflow execution did not complete successfully before merge.");
+            }
+            return run;
+          }
+          function acceptableCommit(commit, base, head) {
+            return commit.sha === head ||
+              (commit.parents?.length === 2 &&
+               commit.parents[0].sha === base && commit.parents[1].sha === head);
+          }
+          const metadata = await request("");
+          const workshopRun = process.env.WORKSHOP_RUN_ID;
+          if (metadata.private || metadata.default_branch !== "main" ||
+              !metadata.topics.includes("workshop-synthetic-pharmacy") ||
+              !/^[a-z0-9][a-z0-9-]{2,38}$/.test(workshopRun ?? "") ||
+              !metadata.topics.includes(`run-${workshopRun}`)) {
+            throw new Error("Repository is not the approved public synthetic pharmacy demonstration.");
+          }
+          const pull = await request(`/pulls/${prNumber}`);
+          if (!pull.merged || pull.merge_commit_sha !== release || pull.base.ref !== "main") {
+            throw new Error("The pull request is not merged to main as the exact release commit.");
+          }
+          const mergedAt = Date.parse(pull.merged_at);
+          const reviews = await pages(`/pulls/${prNumber}/reviews`);
+          const states = latestStates(reviews, mergedAt);
+          const blockers = states.filter(r => ["CHANGES_REQUESTED", "DISMISSED"].includes(r.state));
+          const approvals = states.filter(r =>
+            r.state === "APPROVED" && r.commit_id === pull.head.sha &&
+            Date.parse(r.submitted_at) <= mergedAt);
+          if (!approvals.length || blockers.length) {
+            throw new Error("A current human approval of the exact PR head is required with no outstanding review blocker.");
+          }
+          const commits = await pages(`/pulls/${prNumber}/commits`);
+          const base = commits[0]?.parents?.[0]?.sha;
+          if (!base) throw new Error("Cannot establish the pull request base commit.");
+          for (const workflow of ["quality.yml", "codeql.yml"]) {
+            const runs = await pages(`/actions/workflows/${workflow}/runs?event=pull_request`);
+            const run = latestPreMergeRun(runs, pull.head.ref, mergedAt);
+            const commit = await request(`/commits/${run.head_sha}`);
+            if (!acceptableCommit(commit, base, pull.head.sha)) {
+              throw new Error(`${workflow} did not test the PR head or its exact base+head test merge.`);
+            }
+            const jobs = (await request(`/actions/runs/${run.id}/jobs?per_page=100`)).jobs;
+            const requiredName = workflow === "quality.yml" ? "test" : "CodeQL";
+            if (!jobs.some(job => job.name === requiredName && job.conclusion === "success")) {
+              throw new Error(`${workflow} is missing its successful ${requiredName} job.`);
+            }
+          }
+          const analyses = await pages("/code-scanning/analyses?ref=refs%2Fheads%2Fmain");
+          const analysis = analyses.find(a =>
+            a.commit_sha === release && a.tool?.name === "CodeQL" &&
+            !a.error && a.results_count === 0);
+          if (!analysis) throw new Error("The exact merged commit lacks a completed zero-result native CodeQL analysis.");
+          const alert = await request("/code-scanning/alerts/1");
+          if (alert.state !== "fixed" || !alert.fixed_at) {
+            throw new Error("CodeQL alert #1 is not fixed.");
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT,
+            `release_sha=${release}\npr_head=${pull.head.sha}\nworkflow_sha=${process.env.WORKFLOW_SHA}\n`);
+          console.log(`Release gate passed for PR #${prNumber}, ${release}.`);
+          NODE
+
+  package:
+    name: Test and package exact merged commit
+    needs: gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    outputs:
+      sha256: ${{ steps.package.outputs.sha256 }}
+    steps:
+      - name: Check out trusted workflow revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Use Node.js 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: Extract, test, and package only the approved source
+        id: package
+        env:
+          RELEASE_SHA: ${{ needs.gate.outputs.release_sha }}
+          PR_HEAD: ${{ needs.gate.outputs.pr_head }}
+          WORKFLOW_SHA: ${{ needs.gate.outputs.workflow_sha }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$RELEASE_SHA" "$WORKFLOW_SHA"
+          mkdir package
+          git archive "$RELEASE_SHA" package.json package-lock.json src data test | tar -x -C package
+          cd package
+          npm ci --ignore-scripts
+          test -n "$(find test -name '*.test.mjs' -print -quit)"
+          npm test
+          node --input-type=commonjs -e 'const fs=require("fs"); fs.writeFileSync("release-manifest.json", JSON.stringify({
+            commit:process.env.RELEASE_SHA, runId:process.env.GITHUB_RUN_ID,
+            sourceRepo:process.env.GITHUB_REPOSITORY, prNumber:Number(process.env.PR_NUMBER),
+            prHead:process.env.PR_HEAD, workflowSha:process.env.WORKFLOW_SHA
+          })+"\n")'
+          zip -qr ../release.zip package.json package-lock.json src data release-manifest.json
+          cd ..
+          sha256sum release.zip > release.zip.sha256
+          echo "sha256=$(cut -d ' ' -f 1 release.zip.sha256)" >> "$GITHUB_OUTPUT"
+      - name: Upload run-unique immutable package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: release-${{ github.run_id }}
+          path: |
+            release.zip
+            release.zip.sha256
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy-test:
+    name: Deploy approved package to test
+    needs: [gate, package]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: test
+      url: https://${{ vars.AZURE_WEBAPP_NAME }}.azurewebsites.net/health
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Download this run's package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: release-${{ github.run_id }}
+      - name: Verify package SHA-256
+        env:
+          EXPECTED_SHA256: ${{ needs.package.outputs.sha256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$(sha256sum release.zip | cut -d ' ' -f 1)" == "$EXPECTED_SHA256" ]]
+          sha256sum --check release.zip.sha256
+      - name: Sign in to Azure with OIDC
+        uses: Azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy the verified ZIP
+        uses: Azure/webapps-deploy@5cfb776471c748b351e1ebf5770e208a54ace016
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          package: release.zip

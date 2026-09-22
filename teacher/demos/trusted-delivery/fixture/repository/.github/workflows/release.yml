@@ -1,0 +1,103 @@
+name: Manual test release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: Full reviewed commit SHA currently at main
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trusted-delivery-test
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      release_sha: ${{ steps.validate.outputs.release_sha }}
+    steps:
+      - name: Validate the operator-reviewed main SHA
+        id: validate
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == "refs/heads/main" ]] || {
+            echo "::error::Dispatch this workflow from main."
+            exit 1
+          }
+          [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "::error::release_sha must be a full lowercase commit SHA."
+            exit 1
+          }
+          [[ "$RELEASE_SHA" == "$GITHUB_SHA" ]] || {
+            echo "::error::release_sha is not the current main commit."
+            exit 1
+          }
+          echo "release_sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
+
+  package:
+    needs: gate
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out the exact release
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ needs.gate.outputs.release_sha }}
+          persist-credentials: false
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Create release manifest and package
+        env:
+          RELEASE_SHA: ${{ needs.gate.outputs.release_sha }}
+        run: |
+          mkdir -p evidence
+          printf '{"schema":"trusted-delivery-release/v1","commit":"%s","runId":"%s"}\n' \
+            "$RELEASE_SHA" "$GITHUB_RUN_ID" > evidence/release-manifest.json
+          zip -r release.zip package.json package-lock.json src evidence/release-manifest.json
+      - name: Upload immutable release package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-${{ needs.gate.outputs.release_sha }}
+          path: release.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy-test:
+    needs: [gate, package]
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download the exact release package
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: release-${{ needs.gate.outputs.release_sha }}
+      - name: Sign in to Azure with GitHub OIDC
+        uses: Azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3.0.2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Deploy only to the isolated test app
+        uses: Azure/webapps-deploy@5cfb776471c748b351e1ebf5770e208a54ace016 # v2.2.19
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          package: release.zip

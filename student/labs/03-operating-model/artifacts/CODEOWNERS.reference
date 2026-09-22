@@ -1,0 +1,11 @@
+# Workshop governance boundaries
+
+# Replace these examples with the actual GitHub user or team names assigned to your station.
+# The last matching CODEOWNERS pattern wins, so keep the workflow-specific rule
+# after the broader .github rule.
+
+/.github/ @station-maintainers
+/.github/workflows/ @workflow-contract-reviewers
+/src/ @station-maintainers
+/AGENTS.md @station-maintainers
+/CLAUDE.md @station-maintainers

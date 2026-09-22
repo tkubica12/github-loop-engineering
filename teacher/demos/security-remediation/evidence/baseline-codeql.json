@@ -1,0 +1,26 @@
+{
+  "kind": "workflow-published-codeql-observation",
+  "repository": "tkubica12/pharmacy-agentic-loop-demo",
+  "commit": "8128c76707a3aa91cf4880ca0f72daf337e2d7ea",
+  "analysisId": 1729751492,
+  "workflowRun": {
+    "id": 33979615194,
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979615194"
+  },
+  "origin": {
+    "kind": "authenticated-codeql-workflow-report",
+    "issue": 1,
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/issues/1",
+    "createdAt": "2026-09-05T17:01:43Z"
+  },
+  "openAlerts": [
+    {
+      "number": 1,
+      "rule": "js/path-injection",
+      "path": "src/server.mjs",
+      "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/security/code-scanning/1"
+    }
+  ],
+  "applicationDeployed": false,
+  "independentHumanApproval": false
+}

@@ -1,0 +1,27 @@
+{
+  "id": "enterprise",
+  "label": "Dedicated workshop organization",
+  "githubHost": "github.com",
+  "owner": "REPLACE_WITH_STUDENT_ORGANIZATION",
+  "authoringRepository": "github-loop-engineering",
+  "repositoryPrefix": "workshop-station",
+  "visibility": "internal",
+  "stationMode": "per-team",
+  "allowRemoteProvision": false,
+  "allowRemoteDelete": false,
+  "teams": {
+    "platform": "workshop-platform",
+    "security": "workshop-security",
+    "instructors": "workshop-instructors"
+  },
+  "capabilities": {
+    "agenticWorkflows": "preview-check",
+    "copilotCloudAgent": "policy-check",
+    "thirdPartyCodingAgents": "policy-check",
+    "organizationRulesets": "required",
+    "enterprisePolicies": "required",
+    "codeSecurity": "required",
+    "secretProtection": "required",
+    "environments": "required"
+  }
+}

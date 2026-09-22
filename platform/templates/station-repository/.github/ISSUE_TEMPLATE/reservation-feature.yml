@@ -1,0 +1,48 @@
+name: Reservation capability
+description: Propose a testable change to the synthetic pharmacy reservation service.
+title: "[Reservation] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the business outcome. Do not include real patient, medicine, or pharmacy data.
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What should become possible?
+      placeholder: A pharmacist can...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable, testable behavior.
+      placeholder: |
+        - Given...
+        - When...
+        - Then...
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      value: |
+        - Keep the service dependency-free.
+        - Use synthetic data only.
+        - Preserve existing API behavior.
+        - Add deterministic tests.
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Change risk
+      options:
+        - Low - isolated behavior
+        - Medium - API or workflow behavior
+        - High - identity, security, deployment, or data boundary
+    validations:
+      required: true

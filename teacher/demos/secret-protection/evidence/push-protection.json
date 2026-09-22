@@ -1,0 +1,55 @@
+{
+  "kind": "recorded-native-push-protection",
+  "timestamp": "2026-09-06T07:16:04.644Z",
+  "result": "PASS",
+  "liveClaimAllowed": false,
+  "source": {
+    "owner": "skills",
+    "repository": "introduction-to-secret-scanning",
+    "commit": "77045e069f9deda2beba27990d65899c4ee4b221",
+    "path": ".github/steps/3-enable-push-protection.md",
+    "blobSha": "e769b8ab0e3b6fb0fb33c342ac163f40690eb818",
+    "url": "https://github.com/skills/introduction-to-secret-scanning/blob/77045e069f9deda2beba27990d65899c4ee4b221/.github/steps/3-enable-push-protection.md"
+  },
+  "repository": {
+    "fullName": "tkubica12/pharmacy-agentic-loop-demo",
+    "id": 1358354046,
+    "visibility": "public"
+  },
+  "branch": {
+    "name": "main",
+    "before": "1ea98c29d0cfcd0032a04a3a3aa40442b3267678",
+    "after": "1ea98c29d0cfcd0032a04a3a3aa40442b3267678",
+    "unchanged": true
+  },
+  "capabilities": {
+    "secretScanning": "enabled",
+    "pushProtection": "enabled",
+    "validityChecks": "disabled"
+  },
+  "scope": {
+    "inactiveSampleRequestCreatedBlob": false,
+    "safeRequestCreatedUnreferencedBlobOnly": true,
+    "commitCreated": false,
+    "refChanged": false,
+    "pipelineTriggered": false,
+    "bypassAttempted": false
+  },
+  "controls": {
+    "actualCredentialUsed": false,
+    "sampleUsedForAuthentication": false,
+    "aiDecisionUsed": false,
+    "policiesChanged": false
+  },
+  "blockedAttempt": {
+    "httpStatus": 422,
+    "nativeType": "secret-scanning-push-protection",
+    "message": "Repository rule violations found\n\nSecret detected in content",
+    "tokenTypes": [
+      "GITHUB_TOKEN_V2"
+    ],
+    "requestId": "D959:A1770:12C0673:123499C:6A9D1337"
+  },
+  "safeBlobSha": "d6e30341cf5ff38584b22897e45ce3eba431bb6c",
+  "verifiedRemoteBytes": true
+}

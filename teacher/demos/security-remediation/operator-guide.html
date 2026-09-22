@@ -1,0 +1,311 @@
+<!doctype html>
+<!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Repeatable operator path for the native CodeQL pharmacy remediation demonstration.">
+  <title>Operator guide | Native security remediation</title>
+  <meta name="doc-id" content="teacher-security-remediation-operator">
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/article.css">
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/slides.css">
+  <script src="../../../docs/assets/html-docs/article.js" defer></script>
+  <script src="../../../docs/assets/html-docs/slides.js" defer></script>
+  <script src="../../../docs/assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening"><div class="slide-content slide-content--title"><p class="slide-eyebrow">Native security remediation</p><h2 class="slide-title">Show the finding.<br><em>Trace the fixed result.</em></h2><p class="slide-lead">Prepared native records preserve timing and the actual human decision.</p></div><p class="eyebrow">Presenter / 15-minute prepared scene</p>
+      <h1>Show the finding, the decision and the fixed result.</h1>
+      <p class="subtitle">Use the completed native CodeQL records for timing. Rehearse asynchronous scans and agent work before the session, not in front of the audience.</p>
+    </header>
+    <nav class="doc-nav" aria-label="Related material"><a href="../../../docs/index.html">Security remediation</a><a href="../../../docs/guides/security-remediation.html">Audience guide</a><a href="#main">Skip to the runbook</a></nav>
+    <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol><li><a href="#ch-recorded">Prepared evidence</a></li><li><a href="#ch-rehearsal">Fresh rehearsal</a></li><li><a href="#ch-release">Release authority</a></li><li><a href="#ch-recovery">Recovery</a></li></ol></nav>
+    <main>
+      <section class="chapter" id="ch-recorded"><h2 class="chapter-label">Prepared evidence</h2>
+        <article class="card card--lead" id="card-local-path" data-open>
+          <div class="slide-content"><h2 class="slide-title">Prove the local path.<br><em>Then open the records.</em></h2><p class="slide-lead">A snapshot is not live; a CodeQL job is not human approval.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Prove the local path before opening the tabs</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="main"></span><span id="prepare"></span>
+          <p>Run commands from the workshop repository root. Require Node.js 22+, Git, authenticated GitHub CLI with access to the synthetic public repository, and enabled Actions/CodeQL for live preparation. No Azure or inference key is needed to inspect the captured result.</p>
+          <div class="code"><pre><code>node teacher/demos/security-remediation/scripts/rehearse.mjs
+gh auth status</code></pre></div>
+          <p>Prepare tabs for <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/issues/1">issue #1</a>, <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/security/code-scanning/1">alert #1</a>, <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/pull/2/files">PR #2 diff</a>, its Conversation and Checks tabs, and the <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33983231482">main-branch scan</a>.</p>
+          <p><strong>Go:</strong> the local contrast passes and every named record is accessible. <strong>Stop:</strong> do not call a snapshot live, a CodeQL job a human approval, or the intentionally vulnerable starter deployable.</p>
+          </div></article>
+        <article class="card" id="card-fifteen-minute-flow">
+          <div class="slide-content"><h2 class="slide-title">Fifteen minutes.<br><em>One decision sequence.</em></h2><ul class="slide-points"><li class="frag">Find the boundary.</li><li class="frag">Inspect the narrow fix.</li><li class="frag">Trace human review to the clean scan.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Fifteen minutes follow one decision sequence</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="show"></span>
+          <ol class="steps">
+            <li><h4>0-3 · Normal export and passing starter tests</h4><p><strong>Say or ask:</strong> “The business needs one stock snapshot. Do these tests prove no other file can be read?”</p></li>
+            <li><h4>3-6 · Native CodeQL path from request to file access</h4><p><strong>Say or ask:</strong> Identify the trust boundary. Keep any local proof confined to the app's harmless manifest.</p></li>
+            <li><h4>6-10 · Copilot's three-file PR</h4><p><strong>Say or ask:</strong> Compare a literal allowlist with attempted string sanitization. Inspect positive and negative tests.</p></li>
+            <li><h4>10-13 · Actual run authorization, review and merge</h4><p><strong>Say or ask:</strong> Separate permission to execute, evidence, and human acceptance. Do not impersonate the reviewer.</p></li>
+            <li><h4>13-15 · Fixed alert and clean scan on main</h4><p><strong>Say or ask:</strong> “Now the observed weakness is removed. Which separate release gate still remains?”</p></li>
+          </ol>
+          <p>Transition to the release scene using this approved application revision. Do not substitute the unrelated earlier private-repository deployment and imply it contains this fix.</p>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">Copyable on-stage commands for minutes 0-3</button><div class="reveal-body">
+            <p>In PowerShell, from the workshop root, run the starter's existing tests and then start its loopback-only service in a second terminal. Confirm port 3001 is free first.</p>
+            <div class="code"><pre><code>node --test teacher/demos/security-remediation/fixture/repository/test/server.test.mjs
+$env:HOST = "127.0.0.1"
+$env:PORT = "3001"
+node teacher/demos/security-remediation/fixture/repository/src/server.mjs</code></pre></div>
+            <p>Open             <code>http://127.0.0.1:3001/<wbr>exports/<wbr>stock.json</code> to show the approved snapshot. The bounded <code>rehearse.mjs</code> command proves the harmless negative case. Stop the service with Ctrl+C before leaving this scene.</p>
+            <p>On macOS/Linux use:</p>
+            <div class="code"><pre><code>node --test teacher/demos/security-remediation/fixture/repository/test/server.test.mjs
+HOST=127.0.0.1 PORT=3001 node teacher/demos/security-remediation/fixture/repository/src/server.mjs</code></pre></div>
+          </div></div>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-rehearsal"><h2 class="chapter-label">Fresh rehearsal</h2>
+        <article class="card" id="card-public-fixture">
+          <div class="slide-content"><h2 class="slide-title">Create only<br><em>the approved fixture.</em></h2><p class="slide-lead">New public publication needs consent, an empty repository and a new run identifier.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Create only the approved public fixture</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="new-run"></span>
+          <p>Use a new run identifier and a new empty repository for a fresh end-to-end rehearsal. Public publication requires explicit consent; never change an existing private workshop repository's visibility.</p>
+          <div class="code"><pre><code>$repo = "YOUR-OWNER/YOUR-SYNTHETIC-REPOSITORY"
+$run = "YOUR-UNIQUE-RUN-ID"
+node teacher/demos/security-remediation/scripts/security.mjs plan --repo $repo --run-id $run
+node teacher/demos/security-remediation/scripts/security.mjs setup --repo $repo --run-id $run --apply --allow-public
+node teacher/demos/security-remediation/scripts/security.mjs inspect --repo $repo --run-id $run --expect finding</code></pre></div>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">macOS/Linux setup commands</button><div class="reveal-body">
+            <div class="code"><pre><code>repo="YOUR-OWNER/YOUR-SYNTHETIC-REPOSITORY"
+run="YOUR-UNIQUE-RUN-ID"
+node teacher/demos/security-remediation/scripts/security.mjs plan --repo "$repo" --run-id "$run"
+node teacher/demos/security-remediation/scripts/security.mjs setup --repo "$repo" --run-id "$run" --apply --allow-public
+node teacher/demos/security-remediation/scripts/security.mjs inspect --repo "$repo" --run-id "$run" --expect finding</code></pre></div>
+          </div></div>
+          <p>Replace the three uppercase values before execution. The plan lists the exact allowlisted files. Setup creates only a labelled public source repository and refuses unrelated existing repositories. It includes no deployment workflow. Expect one native <code>js/path-injection</code> finding and a bounded workflow-generated remediation issue.</p>
+          <p>Assign that issue to Copilot in GitHub. Keep the scope to server, tests and README. The human steps below are mandatory; after merge run <code>inspect --expect clean</code> with the same repository and run ID.</p>
+          </div></article>
+        <article class="card" id="card-human-review">
+          <div class="slide-content"><h2 class="slide-title">Keep the person<br><em>in the recorded loop.</em></h2><ul class="slide-points"><li class="frag">Authorize execution after inspecting the diff.</li><li class="frag">Review the exact final head.</li><li class="frag">Map that head to the merge commit.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Keep the person in the recorded loop</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="human"></span>
+          <ol class="steps">
+            <li><h4>Inspect before authorizing</h4><p>Inspect the proposed diff before authorizing pending Actions runs.</p></li>
+            <li><h4>Authorize the exact revision</h4><p>Use GitHub's <strong>Approve and run workflows</strong> control. Wait for Quality and CodeQL on that exact PR revision.</p></li>
+            <li><h4>Record the human review</h4><p>Have a person submit an <strong>Approve</strong> review on the final head. Re-review if the head changes.</p></li>
+            <li><h4>Preserve the merge mapping</h4><p>Merge only the reviewed head. Capture its mapping to the final merge commit, then observe the clean main analysis and fixed alert.</p></li>
+          </ol>
+          <div class="code"><pre><code>node teacher/demos/security-remediation/scripts/capture.mjs --repo $repo --pr YOUR-PR-NUMBER --baseline "teacher/demos/security-remediation/.state/$run-baseline.json" --output ".workshop/$run-remediation.json"</code></pre></div>
+          <p>The recorded example is <a href="evidence/remediation.json">remediation.json</a>. The <code>inspect --expect finding</code> step preserves each new run's baseline. Use a new output filename for its captured fix; the command refuses to overwrite an explicit output path.</p>
+          </div></article>
+        <article class="card" id="card-maintenance">
+          <div class="slide-content"><h2 class="slide-title">Persist one bounded<br><em>maintenance recommendation.</em></h2><p class="slide-lead">Source-based advice is not approval or proof of a later continuation.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Persist one bounded maintenance recommendation</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>Capture the approved remediation first. Then publish the current Copilot maintenance workflow; it adds workflow definitions to main, not application changes. Dispatch it with the exact merged application SHA and PR number, not an implicit “latest” revision. Fresh preparation does not require OpenCode credentials.</p>
+          <div class="code"><pre><code>$pr = 2
+$mergeSha = gh pr view $pr --repo $repo --json mergeCommit --jq .mergeCommit.oid
+node teacher/demos/security-remediation/scripts/security.mjs publish-maintenance --repo $repo --run-id $run --apply
+gh workflow list --repo $repo
+gh workflow run maintenance.lock.yml --repo $repo --ref main -f "reviewed_sha=$mergeSha" -f "pull_request_number=$pr"</code></pre></div>
+          <p>Replace the PR number for a new rehearsal. Wait until <code>gh workflow list</code> shows the new workflow before dispatch. Inspect the safe output: a created or updated owned issue must link that full SHA and PR and contain a specific next action. Identical, already-addressed or waiting-human recommendations require a no-op instead; missing, truncated or ambiguous evidence is BLOCKED. The workflow instructions reconcile owned issues, but do not guarantee skipping inference on duplicates or automatically start another worker.</p>
+          <p>The <a href="evidence/maintenance.json">recorded OpenCode result</a> is historical. It asks for <code>GET /exports/%</code> to return exact HTTP 400 with <code>{"error":"invalid export name"}</code>. It is source-based advice captured before the recorded deployment, not another approval or proof of a later agent continuation. That historical execution used the experimental OpenCode sample, which did not support an MCP-tool allowlist; do not transfer its runtime properties to the current Copilot path.</p>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">macOS/Linux maintenance commands</button><div class="reveal-body">
+            <div class="code"><pre><code>pr=2
+mergeSha=$(gh pr view "$pr" --repo "$repo" --json mergeCommit --jq .mergeCommit.oid)
+node teacher/demos/security-remediation/scripts/security.mjs publish-maintenance --repo "$repo" --run-id "$run" --apply
+gh workflow list --repo "$repo"
+gh workflow run maintenance.lock.yml --repo "$repo" --ref main -f "reviewed_sha=$mergeSha" -f "pull_request_number=$pr"</code></pre></div>
+          </div></div>
+          <p>The current <a href="workflows/maintenance.md">maintenance workflow source</a> selects <code>engine: copilot</code> and explicit GitHub toolsets <code>repos</code>, <code>issues</code> and <code>pull_requests</code>. Repository content, issue and pull-request permissions are read-only; <code>copilot-requests: write</code> permits inference with the per-run GitHub token when Copilot access is available. The firewall allows the declared defaults and <code>release-assets.githubusercontent.com</code>. Do not run application code, read secrets or settings, edit code, approve, merge or deploy.</p>
+          <p>Prepare the workflow before the session. Its main inference cap is 40 AIC, with an eight-minute timeout and ten-turn limit; the separate Copilot threat detector has a 20 AIC cap and fails closed. Native concurrency serializes domain reconciliation without cancelling an active run. Safe outputs separately cap issue creation and issue updates at one each per run; instructions restrict updates to one unambiguously owned issue. These caps are not a combined one-output transaction or a cross-run deduplication guarantee. Output remains source-based advice, not test execution, human approval or production monitoring.</p>
+          </div></article>
+        <article class="card" id="card-live-continuation">
+          <div class="slide-content"><p class="slide-eyebrow">Live local continuation</p><h2 class="slide-title">Run the verifier.<br><em>Read your own result.</em></h2><ul class="slide-points"><li class="frag">Trusted suite and mutation checks run locally.</li><li class="frag">No retained receipt is shipped.</li><li class="frag">This does not upgrade the historical GitHub chain.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The separate local verifier proves the prepared continuation</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <aside class="callout callout--source"><p class="callout-label">Source</p><p><strong>Live local continuation:</strong> issue #3 remains the historical OpenCode-produced recommendation. Run <code>node teacher\demos\security-remediation\scripts\verify-continuation.mjs</code> and read the printed result. The verifier uses disposable source copies, adds the prepared regression, and requires the full suite plus wrong-status and wrong-body mutation probes to pass. This local run is not GitHub Actions, a new pull request, review, merge, deployment, or an upgrade of the historical chain.</p></aside>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-release"><h2 class="chapter-label">Release authority</h2>
+        <article class="card" id="card-reviewed-release">
+          <div class="slide-content"><h2 class="slide-title">Release the reviewed source.<br><em>Not the latest checkout.</em></h2><ul class="slide-points"><li class="frag">Record application and workflow identities separately.</li><li class="frag">Wait at the real test environment.</li><li class="frag">Human approval precedes the Azure token.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Release the reviewed application, not the latest checkout</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="release"></span>
+          <p>Use the reviewed merged SHA from the preceding steps. The release workflow can be newer than that application commit: it extracts and tests the selected source, writes both identities into the package manifest, and waits at the real <code>test</code> environment before requesting an Azure token.</p>
+          <p>The <a href="evidence/release.json">recorded release</a> and <a href="evidence/release-artifact.zip">actual retained artifact</a> preserve the successful 6 September rehearsal. Its Azure group has been removed. Use these as historical evidence, or prepare a new target and personally approve a new release before a live session.</p>
+          <p>Before setup, select the approved Azure subscription and a globally unique test app name. Setup is F1-only and refuses unrelated resource groups. Require a named GitHub reviewer who has access to the public synthetic repository.</p>
+          <div class="code"><pre><code>$env:AZURE_SUBSCRIPTION_ID = az account show --query id -o tsv
+$env:AZURE_WEBAPP_NAME = "YOUR-UNIQUE-SYNTHETIC-APP"
+$release = "teacher/demos/security-remediation/scripts/azure.mjs"
+$parameters = @("--repo", $repo, "--run-id", $run, "--reviewer", "YOUR-GITHUB-LOGIN")
+node $release plan @parameters
+node $release preflight @parameters
+node $release setup @parameters --apply
+node $release publish @parameters --apply
+gh workflow list --repo $repo
+node $release release @parameters --apply --release-sha $mergeSha --pr-number $pr</code></pre></div>
+          <p>Read the plan before the <code>--apply</code> steps. Wait until the workflow list shows <strong>Governed synthetic test release</strong> before dispatching. Setup preserves compatible environment protections and refuses custom OIDC settings rather than replacing them. Azure setup requires resource creation and scoped role-assignment rights; never widen the identity beyond the single app or replace OIDC with a long-lived secret.</p>
+          <aside class="callout callout--warning"><p class="callout-label">Warning</p><p><strong>Human gate:</strong> open the printed release run, inspect its gate and package jobs, then have the configured person approve the waiting <code>test</code> environment in GitHub. No script approves or bypasses that step. The one-person sandbox permits the initiator to review; it does not claim separation of duties.</p></aside>
+          <div class="code"><pre><code>node $release verify @parameters
+node $release cleanup @parameters
+node $release cleanup @parameters --apply --confirm $run</code></pre></div>
+          <p>Before cleanup, run the <a href="../agentic-engineering-loop/operator-guide.html#preflight">live-chain collector</a> with the new run, artifact and endpoint configured. Retain its JSON and downloaded archive. Cleanup removes only the matching Azure group and retains GitHub records. Plan for cloud setup and F1 cold starts before the event; use completed evidence on stage.</p>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">macOS/Linux release commands</button><div class="reveal-body">
+            <div class="code"><pre><code>export AZURE_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+export AZURE_WEBAPP_NAME="YOUR-UNIQUE-SYNTHETIC-APP"
+reviewer="YOUR-GITHUB-LOGIN"
+release="teacher/demos/security-remediation/scripts/azure.mjs"
+node "$release" plan --repo "$repo" --run-id "$run" --reviewer "$reviewer"
+node "$release" preflight --repo "$repo" --run-id "$run" --reviewer "$reviewer"
+node "$release" setup --repo "$repo" --run-id "$run" --reviewer "$reviewer" --apply
+node "$release" publish --repo "$repo" --run-id "$run" --reviewer "$reviewer" --apply
+gh workflow list --repo "$repo"
+node "$release" release --repo "$repo" --run-id "$run" --reviewer "$reviewer" --apply --release-sha "$mergeSha" --pr-number "$pr"
+# Complete the real environment approval in GitHub; wait for the run to finish.
+node "$release" verify --repo "$repo" --run-id "$run" --reviewer "$reviewer"
+node "$release" cleanup --repo "$repo" --run-id "$run" --reviewer "$reviewer" --apply --confirm "$run"</code></pre></div>
+          </div></div>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-recovery"><h2 class="chapter-label">Recovery</h2>
+        <article class="card" id="card-recovery">
+          <div class="slide-content"><h2 class="slide-title">Resume without<br><em>weakening controls.</em></h2><p class="slide-lead">Retain the public evidence; never reset reviewed main to the vulnerable starter.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Resume without weakening the controls</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="recovery"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Queued work</span><p><strong>Symptom:</strong> Scan or agent is queued. <strong>Move:</strong> Show the completed recorded run. Resume from the current PR, not a fresh untracked change.</p></div>
+            <div class="summary-item"><span class="summary-label">Action required</span><p><strong>Symptom:</strong> Check says action required. <strong>Move:</strong> Wait for the person to authorize it. Do not switch triggers to bypass the gate.</p></div>
+            <div class="summary-item"><span class="summary-label">Missing alert</span><p><strong>Symptom:</strong> Native alert is missing. <strong>Move:</strong> Inspect the query/version and exact analysis revision. A local flaw demonstration is not a native alert.</p></div>
+            <div class="summary-item"><span class="summary-label">Local cleanup</span><p><strong>Symptom:</strong> Local cleanup is needed. <strong>Move:</strong> The local rehearsal removes its own temporary copies. Run it again for a clean reset.</p></div>
+          </div>
+          <div class="code"><pre><code>node teacher/demos/security-remediation/scripts/security.mjs cleanup --repo $repo --run-id $run</code></pre></div>
+          <p>This is a plan only. Retain the public repository for evidence. Deleting an explicitly disposable run additionally requires <code>--apply --delete-repository --confirm RUN-ID</code>; exact ownership topics are checked. Never reset a reviewed main branch back to the vulnerable starter to save setup time.</p>
+          <p><a href="evidence/baseline-codeql.json">Recorded baseline</a> and <a href="evidence/remediation.json">recorded fix</a> remain the offline fallback. This scene proves one finding was remediated, not exhaustive application security.</p>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>A fixed finding needs exact-revision evidence; a release still needs its own human gate.</p><div class="slide-content slide-content--end"><h2 class="slide-title">A fix is evidence.<br><em>Not release authority.</em></h2></div></section>
+    <footer class="doc-footer"><span>Synthetic public source / Genuine CodeQL and human-review records</span></footer>
+  </div>
+</body>
+</html>

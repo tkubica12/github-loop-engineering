@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Synthetic pharmacy reservation service for the GitHub engineering workshop.">
+  <title>Pharmacy reservation desk</title>
+  <link rel="stylesheet" href="app.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to reservation</a>
+  <header><strong>Pharmacy / Reservation desk</strong><button type="button" id="theme" hidden>Theme</button></header>
+  <main id="main">
+    <p class="eyebrow">A real API. Entirely synthetic data.</p>
+    <h1>Keep the decision with the person.</h1>
+    <p class="lead">Request an item. Inspect the response. An alternative is a suggestion, never an automatic reservation.</p>
+    <noscript><p class="notice">Enable JavaScript to use the desk, or call GET /stock and POST /reservations directly.</p></noscript>
+    <div class="columns">
+      <section class="panel" aria-labelledby="request-title">
+        <h2 id="request-title">Request a reservation</h2>
+        <form id="reservation">
+          <label for="sku">Synthetic item</label>
+          <select id="sku" name="sku">
+            <option value="MED-003">MED-003 / Synthetic Inhaler</option>
+            <option value="MED-004">MED-004 / Synthetic Alternative Inhaler</option>
+            <option value="MED-001">MED-001 / Synthetic Analgesic</option>
+            <option value="MED-002">MED-002 / Synthetic Antibiotic</option>
+          </select>
+          <label for="quantity">Quantity (1-5)</label>
+          <input id="quantity" name="quantity" type="number" min="1" max="5" value="1" required>
+          <button class="primary" id="submit" type="submit" disabled>Request reservation</button>
+        </form>
+        <section id="result" aria-live="polite" aria-atomic="true">
+          <h3>Waiting for your request</h3>
+          <p>Start with MED-003. There is no stock available for that item.</p>
+        </section>
+      </section>
+      <section class="panel" aria-labelledby="stock-title">
+        <h2 id="stock-title">Current stock</h2>
+        <p id="stock-status" role="status">Stock requires JavaScript; call GET /stock for raw data.</p>
+        <table>
+          <thead><tr><th>Item</th><th>Available</th></tr></thead>
+          <tbody id="stock"></tbody>
+        </table>
+        <p class="muted">Stock changes only after HTTP 201. HTTP 409 leaves both the requested item and any suggested item unchanged.</p>
+        <details><summary>API response</summary><pre id="response">No request sent.</pre></details>
+      </section>
+    </div>
+    <p class="notice">Engineering exercise only. Category matching does not establish clinical equivalence. Do not use this service for care or real stock.</p>
+  </main>
+  <footer>Local workshop service / in-memory stock / restart the process to reset stock</footer>
+</body>
+</html>

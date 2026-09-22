@@ -1,0 +1,91 @@
+{
+  "kind": "recorded-governed-release",
+  "capturedAt": "2026-09-06T06:02:19.958Z",
+  "repository": "tkubica12/pharmacy-agentic-loop-demo",
+  "liveClaimAllowed": false,
+  "freshCollectionResultAtCapture": "COMPLETE",
+  "pullRequest": {
+    "number": 2,
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/pull/2",
+    "head": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+    "merge": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+    "approvalReviewId": 5122408217
+  },
+  "workflow": {
+    "id": 33986708338,
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33986708338",
+    "sourceCommit": "1ea98c29d0cfcd0032a04a3a3aa40442b3267678",
+    "event": "workflow_dispatch",
+    "conclusion": "success",
+    "completedAt": "2026-09-06T05:54:06Z"
+  },
+  "artifact": {
+    "id": 9975374372,
+    "name": "release-33986708338",
+    "file": "release-artifact.zip",
+    "bytes": 3392,
+    "sha256": "9b5eb024b1ca8c8bc2d583c09b683870041265b9125f71228a15b185aad4374a",
+    "packageSha256": "9ad898728fc23963cfc39921444e6fe2633567f73bd270b51ace21f5f1051e3f",
+    "githubExpiresAt": "2026-09-12T19:18:37Z",
+    "sourceBlobsMatchedReviewedCommit": true,
+    "checksumIsCryptographicAttestation": false
+  },
+  "manifest": {
+    "commit": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+    "runId": "33986708338",
+    "sourceRepo": "tkubica12/pharmacy-agentic-loop-demo",
+    "prNumber": 2,
+    "prHead": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+    "workflowSha": "1ea98c29d0cfcd0032a04a3a3aa40442b3267678"
+  },
+  "sourceBlobs": [
+    { "path": "package.json", "sha": "ed4ff860e1d8ae32ca69c0a20d11e8d46d31a1ff" },
+    { "path": "package-lock.json", "sha": "8b8edda689bf08825d167baef65ff45698751bf9" },
+    { "path": "src/server.mjs", "sha": "84bcb86583a907e593a3b9c01c37695c98b243bb" },
+    { "path": "src/inventory.mjs", "sha": "eb8a3070665aebc7c8475e3f776abe8ca83812e4" },
+    { "path": "data/stock.json", "sha": "386e79d15449d4bc6531398a5fd8f950667e9caa" }
+  ],
+  "environment": {
+    "name": "test",
+    "id": 21318496540,
+    "requiredReviewer": "tkubica12",
+    "approval": "approved",
+    "approvedBy": "tkubica12",
+    "approvalApiUrl": "https://api.github.com/repos/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33986708338/approvals",
+    "canAdminsBypass": false,
+    "preventSelfReview": false,
+    "deploymentBranch": { "name": "main", "type": "branch" },
+    "independentSeparationOfDutiesClaimed": false,
+    "branchProtectionReviewEnforced": false
+  },
+  "runtime": {
+    "url": "https://pharmacy-reviewed-20260905-tk12.azurewebsites.net/health",
+    "httpStatus": 200,
+    "body": {
+      "service": "synthetic-pharmacy",
+      "status": "ok",
+      "commit": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+      "runId": "33986708338"
+    }
+  },
+  "maintenance": {
+    "issue": 3,
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/issues/3",
+    "reviewedCommit": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+    "modelOutputIsApproval": false
+  },
+  "cleanup": {
+    "verifiedOn": "2026-09-06",
+    "resourceGroup": "rg-security-pharmacy-loop-20260905",
+    "ownershipTag": "WorkshopRunId=pharmacy-loop-20260905",
+    "azureGroupAbsent": true,
+    "githubRecordsRetained": true,
+    "retainedArtifactAvailableOffline": true
+  },
+  "limits": [
+    "This is recorded evidence, not a fresh live check or a signed attestation.",
+    "GitHub artifact retention and Azure resource lifetime are independent.",
+    "Re-provision and approve a new release before a future live demonstration.",
+    "The synthetic in-memory service is not production-ready."
+  ]
+}

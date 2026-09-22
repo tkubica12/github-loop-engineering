@@ -1,0 +1,5 @@
+.github/workflows/*.lock.yml linguist-generated=true text eol=lf
+platform/templates/station-repository/.github/workflows/*.lock.yml linguist-generated=true text eol=lf
+teacher/demos/security-remediation/workflows/*.lock.yml linguist-generated=true text eol=lf
+
+.github/workflows/*.lock.yml linguist-generated=true

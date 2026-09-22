@@ -1,0 +1,5 @@
+# Workshop governance boundaries
+/.github/ {{CODEOWNER}}
+/src/ {{CODEOWNER}}
+/AGENTS.md {{CODEOWNER}}
+/CLAUDE.md {{CODEOWNER}}

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compact Loop Engineering reference for contracts, context, state, evidence, bounded decisions, and pilot selection.">
+  <title>Loop Engineering | GitHub workshop</title>
+  <meta name="doc-id" content="workshop-loop-engineering">
+  <!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+  -->
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../assets/html-docs/article.css">
+  <link rel="stylesheet" href="../assets/html-docs/slides.css">
+  <script src="../assets/html-docs/article.js" defer></script>
+  <script src="../assets/html-docs/slides.js" defer></script>
+  <script src="../assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening">
+      <div class="slide-content slide-content--title"><p class="slide-eyebrow">Loop Engineering</p><h2 class="slide-title">Make recurrence<br><em>inspectable and stoppable.</em></h2><p class="slide-lead">External evidence and persisted state determine whether work continues.</p></div>
+      <p class="eyebrow">Compact reference</p>
+      <h1>Make every recurrence inspectable and stoppable</h1>
+      <p class="subtitle">Define eligible work, bound the worker, verify the outcome outside the worker, persist what happened, and assign the next decision.</p>
+      <p>Local teaching adapter · Agentic Workflows availability varies</p>
+    </header>
+
+    <nav class="doc-nav" aria-label="Workshop navigation"><a href="../index.html">Loop Engineering with GitHub</a><a href="#main">Skip to content</a><a href="full-day.html">Full-day guide</a><a href="agentic-engineering-loop.html">One-hour guide</a></nav>
+    <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol><li><a href="#ch-lifecycle">Lifecycle and evidence</a></li><li><a href="#ch-contract">Layers and contract</a></li><li><a href="#ch-decisions">Decisions and pilot selection</a></li><li><a href="#ch-operation">Operation and authority</a></li></ol></nav>
+    <main id="main">
+      <section class="chapter" id="ch-lifecycle"><h2 class="chapter-label">Lifecycle and evidence</h2>
+        <article class="card card--lead" id="card-checked-state" data-open>
+          <div class="slide-content"><h2 class="slide-title">Return to checked state.<br><em>Not a blank prompt.</em></h2><ul class="slide-points"><li class="frag">Scheduling creates intake, not continuity.</li><li class="frag">External verification produces evidence.</li><li class="frag">Read prior state before authorizing another action.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The loop returns to checked state, not a blank prompt</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="lifecycle"></span>
+          <figure class="figure">
+            <svg viewBox="0 0 960 350" width="100%" role="img" aria-labelledby="reference-loop-title reference-loop-desc">
+              <title id="reference-loop-title">Loop Engineering lifecycle</title>
+              <desc id="reference-loop-desc">Intake, Delegate, Act, Verify, Persist, and Decide form a closed loop. The return edge reads prior state before retry, wait, escalation, no-op, or verified exit.</desc>
+              <defs><marker id="reference-loop-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--accent)"/></marker></defs>
+              <g fill="var(--surface)" stroke="var(--border-strong)" stroke-width="2"><rect x="30" y="25" width="260" height="100" rx="10"/><rect x="350" y="25" width="260" height="100" rx="10"/><rect x="670" y="25" width="260" height="100" rx="10"/><rect x="670" y="215" width="260" height="100" rx="10"/><rect x="350" y="215" width="260" height="100" rx="10"/><rect x="30" y="215" width="260" height="100" rx="10"/></g>
+              <g fill="none" stroke="var(--accent)" stroke-width="3" marker-end="url(#reference-loop-arrow)"><path d="M290 75H338"/><path d="M610 75H658"/><path d="M800 125V203"/><path d="M670 265H622"/><path d="M350 265H302"/><path d="M160 215V137"/></g>
+              <g fill="var(--text)" font-family="var(--font-sans)" font-size="25" text-anchor="middle"><text x="160" y="65">Intake</text><text x="480" y="65">Delegate</text><text x="800" y="65">Act</text><text x="800" y="255">Verify</text><text x="480" y="255">Persist</text><text x="160" y="255">Decide</text></g>
+              <g fill="var(--text-muted)" font-family="var(--font-sans)" font-size="18" text-anchor="middle"><text x="160" y="100">Eligible signal and identity</text><text x="480" y="100">Worker, context, scope</text><text x="800" y="100">Reviewable proposal</text><text x="800" y="290">External evidence</text><text x="480" y="290">State and receipt</text><text x="160" y="290">Next owned path</text><text x="460" y="175">Read prior state before another action</text></g>
+            </svg>
+            <figcaption>Decide returns to Intake. Reads prior state before retry, wait, escalation, no-op, or verified exit.</figcaption>
+          </figure>
+          <p>The decision can authorize one evidence-informed retry, wait for or escalate to an owner, record a justified no-op, report a result, or exit verified. Scheduling only creates intake. A later run becomes continuous when it reads prior state and changes its decision accordingly.</p>
+          <aside class="callout callout--rule"><p class="callout-label">Rule</p><p><strong>Inner change story:</strong> Intent, Propose, Prove, Approve, Release, and Improve still explain one governed software change. Release remains separately authorized; not every maintenance loop releases software.</p></aside>
+          </div></article>
+        <article class="card" id="card-evidence-verdicts">
+          <div class="slide-content"><h2 class="slide-title">A verdict limits the claim.</h2><ul class="slide-points"><li class="frag">Historical GitHub lineage remains historical.</li><li class="frag">Local continuation proves only its stated scope.</li><li class="frag">Controller fixtures do not prove agent execution.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">A verdict limits what you may claim</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="claims"></span>
+          <h4>Verdict, evidence meaning, and permitted claim</h4>
+          <dl>
+            <dt><code>VERIFIED_LOCAL</code></dt><dd><p><strong>Evidence meaning:</strong> A coordinator-observed local agent invocation is bound to trusted external verification.</p><p><strong>Permitted claim:</strong> Local agent continuation for that new collection only; not GitHub execution, approval, merge, deployment, or signed provider telemetry.</p></dd>
+            <dt><code>CONTROLLER_PROOF_ONLY</code></dt><dd><p><strong>Evidence meaning:</strong> A deterministic fixture exercised controller transitions without an agent.</p><p><strong>Permitted claim:</strong> Controller behavior only.</p></dd>
+            <dt><code>BLOCKED</code></dt><dd><p><strong>Evidence meaning:</strong> Required source, scope, identity, chronology, or verification evidence is absent or invalid.</p><p><strong>Permitted claim:</strong> No completed continuation.</p></dd>
+            <dt><code>NOT_EXECUTED</code></dt><dd><p><strong>Evidence meaning:</strong> No continuation report was supplied.</p><p><strong>Permitted claim:</strong> No continuation claim.</p></dd>
+          </dl>
+          <h4>Evidence class, recorded facts, and boundary</h4>
+          <dl>
+            <dt>Historical GitHub lineage</dt><dd><p><strong>What it records here:</strong> Issue, reviewed change, checks, approval, release, and retained maintenance recommendation.</p><p><strong>Boundary:</strong> Recorded platform history; it is not upgraded by later local work.</p></dd>
+            <dt>Local Copilot continuation</dt><dd><p><strong>What it records here:</strong> A 15 September 2026 task consumed retained state, proposed one test, passed trusted checks, and replayed to no-op.</p><p><strong>Boundary:</strong> Coordinator-attested local execution; no remote write or live collector claim.</p></dd>
+            <dt>Simulation</dt><dd><p><strong>What it records here:</strong> Capstone fixtures exercise report, retry, wait, block, escalate, and no-op decisions.</p><p><strong>Boundary:</strong> Deterministic teaching evidence; no model or learner pull-request evidence.</p></dd>
+          </dl>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-contract"><h2 class="chapter-label">Layers and contract</h2>
+        <article class="card" id="card-four-layers">
+          <div class="slide-content"><h2 class="slide-title">A prompt cannot enforce a loop.</h2><ul class="slide-points"><li class="frag">Context provides facts, not a ledger.</li><li class="frag">Harness permissions constrain execution.</li><li class="frag">Loop policy controls recurrence.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Prompt, context, harness, and loop solve different problems</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="layers"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Prompt</span><h4>Prompt instructs one action</h4><p>It states the immediate objective and requested output. It does not provide durable state or enforce policy.</p></div>
+            <div class="summary-item"><span class="summary-label">Context</span><h4>Context supplies relevant facts</h4><p>Issues, code, architecture decisions and repository conventions guide the work. <code>AGENTS.md</code> is durable convention, not a run ledger.</p></div>
+            <div class="summary-item"><span class="summary-label">Harness</span><h4>Harness executes within a boundary</h4><p>GitHub Copilot is the primary worker. Each optional harness retains its own tools, permissions, credentials, network and isolation properties.</p></div>
+            <div class="summary-item"><span class="summary-label">Loop policy</span><h4>Loop policy controls recurrence</h4><p>The contract, controller, verifier, persistence adapter and human owners determine whether work continues or stops.</p></div>
+          </div>
+          <p>A worktree isolates edits from another checkout. It is not an operating-system security sandbox. A per-run output cap limits one operation; stable identity and reconciliation prevent duplicate work across runs.</p>
+          </div></article>
+        <article class="card" id="card-four-records">
+          <div class="slide-content"><h2 class="slide-title">Keep four records separate.</h2><ul class="slide-points"><li class="frag">Contract defines authority; context informs an attempt.</li><li class="frag">State survives the next process.</li><li class="frag">Evidence binds checks to the revision.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Contract, context, state, and evidence remain separate</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="artifacts"></span>
+          <table>
+            <thead><tr><th>Record</th><th>What it answers</th><th>Workshop example</th></tr></thead>
+            <tbody>
+              <tr><td>Loop contract</td><td>What may happen, who owns it, how it is checked, and when it stops?</td><td><code>templates/loop-contract.json</code></td></tr>
+              <tr><td>Working context</td><td>Which exact source, issue, constraints and prior feedback inform this attempt?</td><td>Issue, application revision, repository instructions</td></tr>
+              <tr><td>Run state</td><td>What work identity, attempt count, status, deadline and next action survive a fresh process?</td><td>Owned station-local JSON or a marked GitHub issue/comment</td></tr>
+              <tr><td>Evidence receipt</td><td>Which trusted command checked which revision, with what result and scope?</td><td>Exact command, exit status, revision and scope result</td></tr>
+            </tbody>
+          </table>
+          <aside class="callout callout--warning"><p class="callout-label">Warning</p><p><strong>No-op requires evidence.</strong> Inaccessible, stale, malformed or wrong-identity evidence is blocked or unknown. It is never healthy and never a no-op.</p></aside>
+          </div></article>
+        <article class="card" id="card-compact-contract">
+          <div class="slide-content"><h2 class="slide-title">A contract exposes the control system.</h2><ul class="slide-points"><li class="frag">Name identity, scope, owner, and verifier.</li><li class="frag">Persist finite limits across attempts.</li><li class="frag">Parsing policy does not grant or enforce every permission.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">A compact contract exposes the control system</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="contract"></span>
+          <ol>
+            <li>Name a stable loop and work identity: profile, station, repository, objective and contract version.</li>
+            <li>Declare the exact eligible trigger and intake. Separate task identity from changing observations.</li>
+            <li>Limit reads, writes and actions. Forbid approval, merge, deployment, policy changes, credentials and trusted-verifier edits.</li>
+            <li>Name the worker, deterministic verifier, product owner and release owner.</li>
+            <li>Define durable state, update rules, retention and interrupted-publication reconciliation.</li>
+            <li>Set explicit component limits. This teaching controller allows two agent attempts total: the initial attempt and one repair authorized by specific verifier evidence.</li>
+            <li>Define success, report, no-op, waiting-human, blocked, escalated and stopped outcomes.</li>
+          </ol>
+          <p>The schema validates structure. Tools, tokens, validators, state transitions and human controls enforce behavior. General controller and lab callers may supply explicit <code>input.limits</code> with <code>maxAttempts</code> and <code>deadlineHours</code>; otherwise they default to two attempts and 24 hours. Live continuation is demonstrated by running the security-remediation verifier and reading its result, not by replaying a stored receipt. Legacy version-one records without policy fields retain their original fixed 2/24 interpretation and digest. The rest of the compact contract—scope, roles, timeouts and permissions—is descriptive or enforced separately by adapters, platform controls and people; parsing it does not grant or automatically enforce those fields. Worker time, detector time, inference credits and presenter wait cutoff remain separate limits.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-decisions"><h2 class="chapter-label">Decisions and pilot selection</h2>
+        <article class="card" id="card-owned-decisions">
+          <div class="slide-content"><h2 class="slide-title">Every next decision needs evidence and ownership.</h2><ul class="slide-points"><li class="frag">Specific trusted failure can authorize one repair.</li><li class="frag">Wait, no-op, block, and escalation start no worker.</li><li class="frag">Verified work still needs separate human authority.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The next decision carries evidence and ownership</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="decisions"></span>
+          <table>
+            <thead><tr><th>Observed state</th><th>Decision</th><th>Worker starts?</th></tr></thead>
+            <tbody>
+              <tr><td>New eligible intake with valid identity and evidence</td><td>Reserve an attempt, then delegate</td><td>Yes; the returned <code>dispatch</code> value is <code>true</code></td></tr>
+              <tr><td>Specific trusted task failure; one attempt remains</td><td>Persist <code>retry</code> with the exact failed-check receipt</td><td>No during verification; only a following eligible intake reserves attempt two</td></tr>
+              <tr><td>Identical accepted work</td><td>Record no-op</td><td>No</td></tr>
+              <tr><td>Human product or review decision pending</td><td>Wait; preserve owner and deadline</td><td>No</td></tr>
+              <tr><td>Deadline or two-attempt allowance exhausted</td><td>Escalate to the named owner</td><td>No</td></tr>
+              <tr><td>Missing, stale, invalid or setup evidence</td><td>Block and retain the reason</td><td>No</td></tr>
+              <tr><td>Trusted verification passes</td><td>Report; await human review where required</td><td>No automatic merge or release</td></tr>
+            </tbody>
+          </table>
+          </div></article>
+        <article class="card" id="card-pilot-rubric">
+          <div class="slide-content"><h2 class="slide-title">Choose recurring, verifiable, reversible work.</h2><ul class="slide-points"><li class="frag">Stable intake needs an accountable owner.</li><li class="frag">External checks judge the outcome.</li><li class="frag">Measure accepted outcomes, attention, duplicates, and cost.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">A strong pilot is frequent, verifiable, and reversible</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="pilot"></span>
+          <table>
+            <thead><tr><th>Question</th><th>Good loop candidate</th><th>Prefer one supervised task</th></tr></thead>
+            <tbody>
+              <tr><td>Does eligible work recur?</td><td>Repeated, stable intake with an owner</td><td>Rare or unique migration decision</td></tr>
+              <tr><td>Can an external check judge the outcome?</td><td>Fast tests, scans or exact reconciliation</td><td>Ambiguous product or clinical judgment</td></tr>
+              <tr><td>Can the action be bounded and reversed?</td><td>Comment, report or small draft change</td><td>Production, policy, credential or irreversible action</td></tr>
+              <tr><td>Can state survive a fresh run?</td><td>Inspectable durable marker and stable identity</td><td>Progress exists only in chat or model memory</td></tr>
+              <tr><td>Can failure stop safely?</td><td>Named owner, deadline and finite attempts</td><td>No accountable escalation path</td></tr>
+            </tbody>
+          </table>
+          <p>Measure accepted verified outcomes, human attention, failed or blocked exits, duplicate work and cost per accepted outcome. The synthetic telemetry in this workshop is a fixed fixture whose arithmetic and identity are checked; it is not measured business improvement.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-operation"><h2 class="chapter-label">Operation and authority</h2>
+        <article class="card" id="card-local-controller">
+          <div class="slide-content"><h2 class="slide-title">The CLI proves decisions.<br><em>Not agent execution.</em></h2><ul class="slide-points"><li class="frag">Use the prepared input and owned state directory.</li><li class="frag">Missing scope evidence blocks acceptance.</li><li class="frag">Reconcile locks; never break them automatically.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The local CLI demonstrates decisions, not agent execution</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="local"></span>
+          <p>Run the controller only with an input file supplied by the lab or operator flow. The file carries the exact identity, event and trusted fixture receipt. Keep state in an explicitly owned directory under <code>.workshop</code>.</p>
+          <div class="code"><pre><code>node platform/scripts/loop.mjs step OWNED_STATE_DIRECTORY INPUT_JSON
+node platform/scripts/loop.mjs reset OWNED_STATE_DIRECTORY INPUT_JSON</code></pre></div>
+          <p><code>step</code> accepts the prepared <code>intake</code>, <code>verify</code>, <code>waiting-human</code>, <code>stop</code>, or <code>publication</code> event and returns the state, decision, reason, dispatch flag, prior digest and new state digest. A trusted task receipt must explicitly carry <code>scopeValid: true</code>; false or missing scope evidence blocks acceptance. State is stored as <code>&lt;workId&gt;.json</code> and replaced atomically. An exclusive per-work lock is never broken automatically; an existing lock means the operator must reconcile an active or interrupted invocation.</p>
+          <p><code>reset</code> removes only the state matching the input identity. These commands spend no inference and create no GitHub issue, pull request, review, workflow run, deployment or cloud resource. A deterministic replay proves controller transitions only.</p>
+          <aside class="callout callout--warning"><p class="callout-label">Warning</p><p><strong>Do not invent input JSON.</strong> Use the exact prepared fixture and path named by the lab. Optional live station commands require a configured repository and ref, capability checks, and matching published workflow source and lock; they are not part of this account-free core.</p></aside>
+          </div></article>
+        <article class="card" id="card-profile-authority">
+          <div class="slide-content"><h2 class="slide-title">Share semantics.<br><em>Keep authority explicit.</em></h2><ul class="slide-points"><li class="frag">Local JSON and review fixtures are simulations.</li><li class="frag">Enterprise controls require effective-policy checks.</li><li class="frag">People retain product, review, and release decisions.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Both profiles share semantics, not enforcement claims</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="profiles"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Sandbox</span><h4>Sandbox keeps the core account-free</h4><p>Owned local JSON models persistence and human-decision fixtures model review. They are simulations, not live GitHub controls or security isolation.</p></div>
+            <div class="summary-item"><span class="summary-label">Enterprise</span><h4>Enterprise adds capability-gated controls</h4><p>A configured organization can add rulesets, teams, licensed security, governed runners, budgets and Azure OIDC release approval after effective-policy checks.</p></div>
+            <div class="summary-item"><span class="summary-label">Authority</span><h4>Authority stays explicit</h4><p>Copilot performs bounded work. GitHub stores governance and evidence. Azure OIDC supplies release identity. People retain product, review and release decisions.</p></div>
+          </div>
+          <p>OpenCode remains an optional experimental external harness. Shared artifacts do not imply equal permissions, security properties, model quality or benchmark equivalence.</p>
+          </div></article>
+        <article class="card" id="card-stop-glossary">
+          <div class="slide-content"><h2 class="slide-title">Name the stop path precisely.</h2><ul class="slide-points"><li class="frag">No-op means checked state, not missing evidence.</li><li class="frag">Waiting and escalation retain a named owner.</li><li class="frag">Verified exit does not erase separate approval.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Use precise words for the stop paths</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="glossary"></span>
+          <dl>
+            <dt>Work identity</dt><dd>The stable key that says which objective this state belongs to; a workflow-only revision does not create a new application task.</dd>
+            <dt>Observation</dt><dd>A revision, evidence fingerprint or current fact recorded against stable work.</dd>
+            <dt>No-op</dt><dd>A justified decision that checked state is already accepted or not actionable.</dd>
+            <dt>Blocked</dt><dd>The controller cannot safely decide because required identity, access or evidence is invalid or unavailable.</dd>
+            <dt>Waiting-human</dt><dd>A named person owns the next product, review or release decision; the model is not invoked repeatedly.</dd>
+            <dt>Escalated</dt><dd>The attempt allowance or deadline is exhausted and a named owner must decide.</dd>
+            <dt>Verified exit</dt><dd>The required external check passed and the result is persisted; any separate human approval remains separate.</dd>
+          </dl>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>A useful loop earns each next action from checked evidence, persisted state, explicit limits, and accountable ownership.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Earn the next action.<br><em>Know when to stop.</em></h2></div></section>
+    <footer class="doc-footer">Conceptual sources and changing product availability validated 15 September 2026. Synthetic pharmacy data only.</footer>
+  </div>
+</body>
+</html>

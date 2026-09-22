@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "profile": "offline-fallback",
+  "scenarioRevision": "agentic-loop-v1",
+  "artifacts": [
+    { "id": "issue-41", "type": "issue", "path": "artifacts/issue-41.json" },
+    { "id": "plan-41", "type": "plan", "path": "artifacts/plan-41.json" },
+    { "id": "pr-42", "type": "pull-request", "path": "artifacts/pr-42.json" },
+    { "id": "checks-42", "type": "checks", "path": "artifacts/checks-42.json" },
+    { "id": "review-42", "type": "review", "path": "artifacts/review-42.json" },
+    { "id": "deployment-17", "type": "deployment", "path": "artifacts/deployment-17.json" },
+    { "id": "pulse-43", "type": "repository-pulse", "path": "artifacts/pulse-43.json" }
+  ]
+}

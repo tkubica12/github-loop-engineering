@@ -1,0 +1,326 @@
+<!doctype html>
+<!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Presenter runbook for GitHub Beyond Coding: The Agentic Engineering Loop.">
+  <title>Operator guide | Agentic Engineering Loop</title>
+  <meta name="doc-id" content="teacher-agentic-loop-operator">
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/article.css">
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/slides.css">
+  <script src="../../../docs/assets/html-docs/article.js" defer></script>
+  <script src="../../../docs/assets/html-docs/slides.js" defer></script>
+  <script src="../../../docs/assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening">
+      <div class="slide-content slide-content--title"><p class="slide-eyebrow">The Agentic Engineering Loop</p><h2 class="slide-title">Make the loop visible.<br><em>Not the latency.</em></h2><p class="slide-lead">Recorded evidence preserves the lineage without pretending it is live.</p></div>
+      <p class="eyebrow">Presenter runbook · 60 minutes</p>
+      <h1>Make the loop visible, not the latency</h1>
+      <p class="subtitle">Use pre-created artifacts for the critical path, run at most one short prepared operation, and switch to recorded evidence within ten seconds of uncertainty.</p>
+      <p class="meta">Recorded-first · Offline-safe · Preview-aware</p>
+    </header>
+
+    <nav class="doc-nav" aria-label="Related material"><a href="../../../docs/index.html">Agentic Engineering Loop</a><a href="../../../docs/slides/agentic-engineering-loop.html">Showcase slides</a><a href="control-room.html">Mission control simulation</a><a href="#main">Skip to content</a></nav>
+    <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol><li><a href="#ch-story">Story and authority</a></li><li><a href="#ch-readiness">Preparation and proof</a></li><li><a href="#ch-presentation">Presentation</a></li><li><a href="#ch-recovery">Recovery and close</a></li></ol></nav>
+    <main>
+      <section class="chapter" id="ch-story"><h2 class="chapter-label">Story and authority</h2>
+        <article class="card card--lead" id="card-audience-promise" data-open>
+          <div class="slide-content"><h2 class="slide-title">Preserve one<br><em>application lineage.</em></h2><p class="slide-lead">Never assemble an apparent success from unrelated repositories or commits.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The audience follows one complete application lineage</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="main"></span><span id="promise"></span>
+          <p>In one hour, follow the synthetic export through a native CodeQL finding, a Copilot proposal, actual human review, historical release evidence and an OpenCode follow-up, then show what a genuine next run must consume. Preserve one application lineage; never assemble an apparent success from unrelated repositories or commits.</p>
+          <aside class="callout callout--rule"><p class="callout-label">Rule</p><p><strong>Core message:</strong> agents accelerate work; GitHub supplies durable coordination, evidence, policy, and authority across the complete lifecycle.</p></aside>
+          <p>Do not turn this into a feature catalogue. Every product surface appears only because the pharmacy story needs it.</p>
+          <h4>Enterprise profile</h4>
+          <p>The public sandbox records a human PR review, but this is not enforced separation of duties: it observes the review but does not enforce a code-owner rule. Its environment approval is enforced, but permits the initiator to approve. In the enterprise profile, configure rulesets for required reviews and checks, a distinct deployment-reviewer team, and organization-governed runners and network policies. The same story applies; participant identity provisioning is separate.</p>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-readiness"><h2 class="chapter-label">Preparation and proof</h2>
+        <article class="card" id="card-day-before">
+          <div class="slide-content"><h2 class="slide-title">Choose the delivery mode<br><em>before the session.</em></h2><ul class="slide-points"><li class="frag">Live needs fresh release and runtime evidence.</li><li class="frag">Recorded uses retained historical captures.</li><li class="frag">Reduced means remediation only.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">T-24h preparation fixes the mode and evidence lineage</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="prepare"></span>
+          <p>First complete the <a href="../full-day/operator-guide.html#local-tooling">instructor checkout and approved-feed preparation</a>. The <code>npm test</code> preflight below requires restored, lockfile-matching development dependencies in this checkout, not packages inherited from an author's machine. Do this before the session.</p>
+          <p>For recorded mode, inspect the retained records in the following steps rather than recreating their remote actions. A new agent run, review, release or cloud resource requires separate authorization and fresh capability checks.</p>
+          <ol class="steps">
+            <li><h4>Select the approved source</h4><p>Use the approved <a href="../security-remediation/operator-guide.html">public synthetic security demonstration</a>, not private workshop history. A private enterprise repository is an alternative only when native code scanning is available.</p></li>
+            <li><h4>Retain the original finding</h4><p>Open its actual CodeQL alert and the linked remediation issue. Keep the original finding capture before fixing it.</p></li>
+            <li><h4>Prepare the actual proposal</h4><p>Prepare the real Copilot PR, its final head, and the positive and negative HTTP tests. Do not fabricate a review comment or agent-authored commit.</p></li>
+            <li><h4>Retain the human decisions</h4><p>Have a person authorize pending checks and review the final head. Keep the actual review and merge records.</p></li>
+            <li><h4>Inspect the historical follow-up</h4><p>In recorded mode, inspect the historical OpenCode follow-up against the exact merged application SHA and its actual issue, not just a green job. This source-based maintenance issue predates the recorded deployment. For separately authorized new work, use the current Copilot-primary maintenance path; OpenCode remains optional and experimental, not a preparation prerequisite.</p></li>
+            <li><h4>Prepare the live continuation check</h4><p>Keep the retained recommendation visible, then run the security-remediation verifier during rehearsal or the closing beat. Read the printed result instead of opening a retained local receipt.</p></li>
+            <li><h4>Require release evidence</h4><p>Require matching release, artifact and environment-approval evidence before presenting the deployment scene. If those gates are incomplete, stop full-loop delivery or announce a shorter remediation-only demonstration.</p></li>
+            <li><h4>Choose live, recorded or reduced</h4><p>Decide the delivery mode, because live release evidence expires. The published artifact expires <code>2026-09-12T19:18:37Z</code> and the tagged Azure app is removed after capture. Choose one:</p>
+              <div class="summary-grid">
+                <div class="summary-item"><span class="summary-label">Live</span><p>Reprovision the app and dispatch a new reviewed release that a person approves, then update the repository, run id, artifact name and health endpoint together in the collector configuration and in this runbook.</p></div>
+                <div class="summary-item"><span class="summary-label">Recorded</span><p>Announce before the deployment scene that the release and runtime evidence is a historical capture from a completed run, and present the committed <a href="../security-remediation/evidence/release.json">release evidence</a>. Never call a recording a live check.</p></div>
+                <div class="summary-item"><span class="summary-label">Reduced</span><p>If no capture is available, deliver the remediation-only path and state that deployment is not evidenced.</p></div>
+              </div>
+            </li>
+            <li><h4>Keep fresh proof available</h4><p>Keep a live application and an unexpired artifact for the whole session if you selected live mode. The fresh collector stays strict on purpose: a recorded capture is never fresh proof.</p></li>
+            <li><h4>Rehearse the selected mode</h4><p>Run the local rehearsal in every mode. In live mode, also run the fresh live-chain collector below. Neither substitutes for human sign-off.</p></li>
+            <li><h4>Arrange the browser</h4><p>Open all links in a dedicated browser profile and arrange tabs in story order.</p></li>
+          </ol>
+
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">Inspect the prepared tab order</button><div class="reveal-body">
+          <ol class="steps">
+            <li><h4>Slides</h4></li>
+            <li><h4>Native CodeQL alert</h4></li>
+            <li><h4>Remediation issue</h4></li>
+            <li><h4>Merged pull request and the resolved alert</h4><p>For the 00:06 payoff jump.</p></li>
+            <li><h4>Agent session or assignment</h4></li>
+            <li><h4>Pull request Files changed</h4></li>
+            <li><h4>Pull request Checks</h4></li>
+            <li><h4>Pull request Conversation with human review</h4></li>
+            <li><h4>Release workflow run <code>33986708338</code></h4></li>
+            <li><h4>Release manifest</h4><p>Release manifest in the produced package, or the committed <a href="../security-remediation/evidence/release.json">release evidence</a>.</p></li>
+            <li><h4>Environment approval record for that run</h4></li>
+            <li><h4>OpenCode maintenance issue #3</h4></li>
+            <li><h4>Live continuation verifier</h4><p>Run <code>node teacher\demos\security-remediation\scripts\verify-continuation.mjs</code> and read the current result.</p></li>
+          </ol>
+          <p>Open the mission-control page only if you plan to use it. It is a separate labeled simulation of a different reservation scenario and does not mirror this story.</p>
+          </div></div>
+          </div></article>
+
+        <article class="card" id="card-preflight">
+          <div class="slide-content"><h2 class="slide-title">Fresh proof remains<br><em>strict on purpose.</em></h2><p class="slide-lead">An expired artifact or removed app blocks a fresh live collection.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">T-30m preflight separates local rehearsal from fresh proof</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="preflight"></span>
+          <p>For every mode:</p>
+          <div class="code"><pre><code>node teacher/demos/agentic-engineering-loop/scripts/preflight.mjs
+npm test
+node teacher/demos/security-remediation/scripts/rehearse.mjs
+npm run serve</code></pre></div>
+          <p>For live mode, run these additional checks in a second terminal:</p>
+          <div class="code"><pre><code>node teacher/demos/agentic-engineering-loop/scripts/preflight.mjs --live
+node teacher/demos/agentic-engineering-loop/scripts/live-chain.mjs collect --config teacher/demos/agentic-engineering-loop/fixtures/public-chain.recorded.example.json --output .workshop/public-chain-REPLACE-WITH-UNIQUE-RUN-NAME.json</code></pre></div>
+          <p>The <code>public-chain.recorded.example.json</code> file describes a completed rehearsal whose Azure target is removed; it is not a ready live configuration. Update its repository, run, artifact and health endpoint together after preparing a new live release. The recorded example selects release <code>33986708338</code>, application merge <code>dc4b270</code> and workflow revision <code>1ea98c2</code>. The reviewed PR head is <code>2d84da4</code>, not the workflow revision.</p>
+          <p>Replace <code>REPLACE-WITH-UNIQUE-RUN-NAME</code> for every collection, for example <code>20260906-morning-1</code>; increment it for another attempt on the same day. Existing captures are not overwritten. An expired artifact or a cleaned-up Azure app makes a fresh collection <code>BLOCKED</code>; do not weaken the check.</p>
+          </div></article>
+        <article class="card" id="card-live-continuation">
+          <div class="slide-content"><p class="slide-eyebrow">Live local check</p><h2 class="slide-title">Run the continuation.<br><em>Read your result.</em></h2><ul class="slide-points"><li class="frag">Original and proposal suites must pass.</li><li class="frag">Wrong-status mutation must fail.</li><li class="frag">Wrong-body mutation must fail.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Live local verification replaces retained continuation receipts</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>Run the showcase verifier without a continuation path to confirm the safe default:</p>
+          <div class="code"><pre><code>node teacher/demos/agentic-engineering-loop/scripts/showcase.mjs --mode rehearsal</code></pre></div>
+          <p>It reports <code>NOT_EXECUTED</code>. Then run the live verifier and read the current result:</p>
+          <div class="code"><pre><code>node teacher\demos\security-remediation\scripts\verify-continuation.mjs</code></pre></div>
+          <p>Expect <code>VERIFIED local maintenance verification</code> followed by four passed checks. The command runs the original suite, the suite with the prepared continuation test, and two independent mutation probes in disposable local copies.</p>
+          <p>This is the closing-beat source of truth. It does not repeat a model invocation, inspect a retained receipt, contact GitHub, approve, merge, deploy, or upgrade the historical maintenance issue.</p>
+          </div></article>
+        <article class="card" id="card-future-collection">
+          <div class="slide-content"><h2 class="slide-title">Do not recreate evidence.<br><em>Run fresh or stop.</em></h2><p class="slide-lead">A future agent attempt needs new authorization, not edited receipts.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">A future collection is separate work</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>The public repository keeps the live verifier and prepared test inputs. It does not keep the recorded receipt or replay machinery that previously revalidated a source-bound local recording.</p>
+          <p>For a separately announced future agent collection, create new authorization, new work identity, and new evidence. Do not edit retained JSON, recompute hashes, or present a verifier command as proof that an agent consumed prior state.</p>
+          <p>Accept the live verifier only for what it measures: the original suite, the prepared regression, and the two mutation probes. <code>NOT_EXECUTED</code> never supports a completed-agent claim.</p>
+          </div></article>
+        <article class="card" id="card-go-no-go">
+          <div class="slide-content"><h2 class="slide-title">Make the mode explicit.<br><em>Do not improvise authority.</em></h2><p class="slide-lead">A recording or simulation never authorizes a live claim.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The evidence must satisfy the announced delivery mode</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>Open:</p>
+          <ul>
+            <li><code>http://localhost:4173/<wbr>docs/<wbr>slides/<wbr>agentic-engineering-loop.html</code></li>
+            <li>Only for a separately announced simulation: <code>http://localhost:4173/<wbr>teacher/<wbr>demos/<wbr>agentic-engineering-loop/<wbr>control-room.html</code></li>
+          </ul>
+          <p><strong>Go condition:</strong> local rehearsals pass and the deck fits the projector. For live mode, require a fresh complete chain and accessible live tabs. For announced recorded mode, require the retained finding, remediation, release artifact, approval, health and maintenance records. Run the continuation verifier live and read its result; it is not GitHub execution, approval or release. A recording or simulation never authorizes a live claim.</p>
+          <aside class="callout callout--warning"><p class="callout-label">Warning</p><p><strong>No-go condition:</strong> never improvise permissions, secrets, account policy, or production deployment during the session. Use the prepared fallback.</p></aside>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-presentation"><h2 class="chapter-label">Presentation</h2>
+        <article class="card" id="card-minute-flow">
+          <div class="slide-content"><h2 class="slide-title">Show the payoff<br><em>before minute ten.</em></h2><p class="slide-lead">Then trace how the bounded fix earned its evidence and human approval.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The minute-by-minute flow makes evidence visible without waiting</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="run"></span>
+          <ol class="steps">
+            <li><h4>00:00-00:04 · Working export and native alert</h4><p><strong>Say and do:</strong> “The business needs one snapshot. Passing happy-path tests do not prove that only that file is accessible.” Show CodeQL's actual flow.</p><p><strong>Stop condition:</strong> Business value and a real security gap are visible.</p></li>
+            <li><h4>00:04-00:09 · Remediation issue, then merged fix</h4><p><strong>Say and do:</strong> Show the bounded contract and jump to the three-file diff plus resolved alert. Say “the fix exists; now follow how it earned approval”, then return to intent.</p><p><strong>Stop condition:</strong> The payoff is visible before minute ten.</p></li>
+            <li><h4>00:09-00:14 · Copilot assignment and context</h4><p><strong>Say and do:</strong> Open the completed native agent run. Explain attributable delegation, exact context and permissions before generated code.</p><p><strong>Stop condition:</strong> Actual agent provenance, not a recreated transcript.</p></li>
+            <li><h4>00:14-00:22 · Narrow proposal</h4><p><strong>Say and do:</strong> Read acceptance mapping, then the diff. Emphasize small scope, branch isolation and no dependency change.</p><p><strong>Stop condition:</strong> Audience can judge the proposal.</p></li>
+            <li><h4>00:22-00:29 · Tests and CodeQL</h4><p><strong>Say and do:</strong> Contrast application behavior with the original native data-flow alert. These checks answer different questions.</p><p><strong>Stop condition:</strong> No security-clearance claim based only on tests.</p></li>
+            <li><h4>00:29-00:35 · Scoped repair</h4><p><strong>Say and do:</strong> Show caller authority removed and the retained exact verifier feedback. Run the live continuation verifier and read the four check results.</p><p><strong>Stop condition:</strong> Local verifier passed; no agent-consumption claim based on source inspection alone.</p></li>
+            <li><h4>00:35-00:42 · Exact-head human review</h4><p><strong>Say and do:</strong> Distinguish deterministic checks, agent advice and a person's final approval. The sandbox records review but does not enforce code-owner approval.</p><p><strong>Stop condition:</strong> The exact PR head was approved before merge.</p></li>
+            <li><h4>00:42-00:48 · Recorded governed release</h4><p><strong>Say and do:</strong> Show matching package identity, historical environment review and OIDC result. The app is deleted and the artifact expired 12 September 2026; make no fresh live claim.</p><p><strong>Stop condition:</strong> The record identifies the reviewed application commit and its approval limits.</p></li>
+            <li><h4>00:48-00:54 · Stateful maintenance decision</h4><p><strong>Say and do:</strong> Show issue 3 requesting exact <code>GET /exports/%</code> regression behavior, then run the local verifier again if needed. Use the deterministic fixture separately to show owner escalation after the final attempt.</p><p><strong>Stop condition:</strong> Issue link alone does not satisfy continuation; verifier output is local proof, not remote execution.</p></li>
+            <li><h4>00:54-00:58 · Operating model</h4><p><strong>Say and do:</strong> Move to enterprise policy, runners, security products, component budgets, human attention and honest sandbox capability boundaries.</p><p><strong>Stop condition:</strong> Audience sees a scalable, stoppable model.</p></li>
+            <li><h4>00:58-01:00 · One-in-six reveal</h4><p><strong>Say and do:</strong> “Only one of six stages was coding.” End on the platform thesis and take questions after the close.</p><p><strong>Stop condition:</strong> Finish on time.</p></li>
+          </ol>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-recovery"><h2 class="chapter-label">Recovery and close</h2>
+        <article class="card" id="card-fallback">
+          <div class="slide-content"><h2 class="slide-title">Switch within ten seconds.<br><em>Keep the claim honest.</em></h2><p class="slide-lead">Missing release evidence means a reduced remediation-only path, not an unrelated simulation.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The ten-second fallback ladder preserves the evidence boundary</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="fallback"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Agent unfinished</span><p><strong>Failure:</strong> Agent has not finished. <strong>Immediate move:</strong> Open the prepared pull request, or the committed <a href="../security-remediation/evidence/remediation.json">remediation record</a>.</p><p><strong>What to say:</strong> “Asynchronous work is the point; we review the durable proposal, not a spinner.”</p></div>
+            <div class="summary-item"><span class="summary-label">Policy unavailable</span><p><strong>Failure:</strong> Agent policy unavailable. <strong>Immediate move:</strong> Use prepared assignment evidence.</p><p><strong>What to say:</strong> “This account path is policy-gated; the enterprise control is part of the story.”</p></div>
+            <div class="summary-item"><span class="summary-label">Workflow failure</span><p><strong>Failure:</strong> Agentic Workflow fails. <strong>Immediate move:</strong> Show the workflow source and its compiled lock file.</p><p><strong>What to say:</strong> “This is public preview; the safety contract remains inspectable.”</p></div>
+            <div class="summary-item"><span class="summary-label">Checks queued</span><p><strong>Failure:</strong> Checks are queued. <strong>Immediate move:</strong> Use completed run in another tab.</p><p><strong>What to say:</strong> “We never spend audience time waiting for compute.”</p></div>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Network unavailable</span><p><strong>Failure:</strong> GitHub or network unavailable. <strong>Immediate move:</strong> Use the captured security, release and maintenance records under <code>teacher/demos/security-remediation/evidence/</code>.</p><p><strong>What to say:</strong> “These are recorded results from this same revision, not a live check.”</p></div>
+            <div class="summary-item"><span class="summary-label">Release unproved</span><p><strong>Failure:</strong> Azure evidence missing. <strong>Immediate move:</strong> Stop the full-loop claim; use an explicitly reduced remediation-only path.</p><p><strong>What to say:</strong> “This fix reached reviewed main; deployment is not evidenced here.”</p></div>
+            <div class="summary-item"><span class="summary-label">Continuation blocked</span><p><strong>Failure:</strong> The live verifier fails or is unavailable. <strong>Immediate move:</strong> Show issue 3 as eligible intake and state that the continuation is not evidenced.</p><p><strong>What to say:</strong> “This proves the need, not a completed continuation.”</p></div>
+          </div>
+          <p>Mission control is an optional, separately labeled simulation of an unrelated reservation scenario. It is not a substitute scene for any moment in this story; use it only if you introduce it as a different synthetic example.</p>
+          <h4>Timed reduced itinerary</h4>
+          <p>Use 00:00-00:09 for finding, issue and payoff; 00:09-00:20 for delegation and diff; 00:20-00:32 for tests, CodeQL and repair; 00:32-00:40 for human review. Close at 00:40 with the remediation outcome. Omit release and maintenance because their required evidence is unavailable; do not replace them with unrelated source or lock-file inspection.</p>
+          </div></article>
+
+        <article class="card" id="card-reset">
+          <div class="slide-content"><h2 class="slide-title">Reset local content.<br><em>Retain the remote record.</em></h2><p class="slide-lead">Record actual URLs, delivery modes and timing variance after the session.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Reset and cleanup retain the remote evidence</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="reset"></span>
+          <div class="code"><pre><code>node teacher/demos/agentic-engineering-loop/scripts/reset.mjs
+node teacher/demos/agentic-engineering-loop/scripts/showcase.mjs --mode rehearsal
+node teacher/demos/agentic-engineering-loop/scripts/cleanup.mjs</code></pre></div>
+          <p>These commands only manage generated local station content. Remote issues, pull requests, workflow runs, repositories, and deployments are retained unless the presenter removes them explicitly.</p>
+          <h4>Post-session evidence</h4>
+          <ul class="arrow-list">
+            <li>Record the repository and artifact URLs used.</li>
+            <li>Record which scenes were live or fallback.</li>
+            <li>Capture timing variance greater than two minutes.</li>
+            <li>Revalidate preview and licensing claims before the next delivery.</li>
+          </ul>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>Only one of six stages was coding; the complete story depends on durable evidence and accountable authority.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Only one stage was coding.<br><em>The loop is the story.</em></h2></div></section>
+    <footer class="doc-footer"><span>Presenter material · Runbook recorded 6 September 2026 · Product state validated 5 September 2026 · Loop framing and changing availability validated 15 September 2026</span></footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+rules:
+  # gh-aw owns generated lock internals; source manifests and every other audit stay fail-closed.
+  template-injection:
+    ignore:
+      - repository-pulse.lock.yml
+      - showcase-signal.lock.yml
+  secrets-outside-env:
+    ignore:
+      - repository-pulse.lock.yml
+      - showcase-signal.lock.yml
+  undocumented-permissions:
+    ignore:
+      - repository-pulse.lock.yml
+      - showcase-signal.lock.yml
+  anonymous-definition:
+    ignore:
+      - repository-pulse.lock.yml
+      - showcase-signal.lock.yml
+  adhoc-packages:
+    ignore:
+      - repository-pulse.lock.yml
+      - showcase-signal.lock.yml

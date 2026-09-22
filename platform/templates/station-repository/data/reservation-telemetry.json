@@ -1,0 +1,10 @@
+{
+  "synthetic": true,
+  "window": "2026-07-20/2026-07-26",
+  "reservationRequests": 240,
+  "zeroStockResponses": 36,
+  "zeroStockRate": 0.15,
+  "reviewThreshold": 0.1,
+  "topZeroStockSku": "MED-003",
+  "note": "Generated workshop telemetry. It is not customer, patient, pharmacy, or production data."
+}

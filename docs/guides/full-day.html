@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hands-on guide for the full-day Loop Engineering with GitHub workshop.">
+  <title>Full-day guide | Loop Engineering with GitHub</title>
+  <meta name="doc-id" content="workshop-full-day">
+  <!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+  -->
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../assets/html-docs/article.css">
+  <link rel="stylesheet" href="../assets/html-docs/slides.css">
+  <script src="../assets/html-docs/article.js" defer></script>
+  <script src="../assets/html-docs/slides.js" defer></script>
+  <script src="../assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening">
+      <div class="slide-content slide-content--title"><p class="slide-eyebrow">Full-day builder journey</p><h2 class="slide-title">Turn intent into<br><em>verified outcomes.</em></h2><p class="slide-lead">Use GitHub evidence to decide the next safe action.</p></div>
+      <p class="eyebrow">Full-day builder journey</p>
+      <h1>Turn intent into verified outcomes and bounded next decisions</h1>
+      <p class="subtitle">Use this guide as the day map. It explains why each chapter matters, how the chapters connect, and where to open the self-contained lab that belongs to the chapter.</p>
+      <p>Full experience: 09:00-16:30 &middot; Labs run in your GitHub station repository &middot; Synthetic pharmacy data only</p>
+    </header>
+
+    <nav class="doc-nav" aria-label="Workshop navigation"><a href="../index.html">Workshop home</a><a href="#main">Skip to content</a><a href="../../student/labs/index.html">All labs</a><a href="../slides/full-day.html">Full-day deck</a><a href="loop-engineering.html">Loop reference</a><a href="platform-architecture.html">Architecture</a><a href="references.html">Product state</a></nav>
+    <nav class="toc" aria-label="Workshop sections"><p class="toc-label">Workshop path</p><ol>
+      <li><a href="#ch-prepare">Preparation</a></li>
+      <li><a href="#ch-platform-briefing">Executive platform briefing</a></li>
+      <li><a href="#ch-bounded-ai">Bounded continuous AI</a></li>
+      <li><a href="#ch-handoff">Verified handoff</a></li>
+      <li><a href="#ch-operating-model">Operating model</a></li>
+      <li><a href="#ch-delivery">Trusted delivery</a></li>
+      <li><a href="#ch-capstone">Capstone</a></li>
+      <li><a href="#ch-recovery">Recovery and cleanup</a></li>
+      <li><a href="#ch-adoption">Adoption roadmap</a></li>
+    </ol></nav>
+    <main id="main">
+      <section class="chapter" id="ch-prepare"><h2 class="chapter-label">Preparation</h2>
+        <article class="card card--lead" id="card-prepare-station" data-open>
+          <div class="slide-content"><h2 class="slide-title">Arrive with a station repository.</h2><ul class="slide-points"><li class="frag">Use the repository assigned to you.</li><li class="frag">A browser completes the core path.</li><li class="frag">Record optional capability gaps early.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Prepare GitHub access and your station repository</span><span class="card-sub">Before 09:00 &middot; 15 minutes &middot; Bring your station repository URL.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="prepare"></span>
+          <p class="eyebrow">Before 09:00 &middot; 15 minutes</p>
+          <p><strong>Outcome:</strong> you can sign in to GitHub, open your assigned station repository, and confirm that you have write access to the repository used throughout the day.</p>
+          <aside class="callout callout--rule"><p class="callout-label">Rule</p><p><strong>Use only your station repository for hands-on work.</strong> It already contains the synthetic pharmacy service, tests, CI workflows, ownership files, prepared issues, and lab artifacts. Do not use the authoring repository as your station.</p></aside>
+          <h4>You need</h4>
+          <dl>
+            <dt>Required</dt><dd>Your GitHub account, the station repository URL, write access to that repository, and a modern browser.</dd>
+            <dt>Optional</dt><dd>A local clone, Git, GitHub CLI, and a coding harness. Each lab gives a web-first path and states when command-line equivalents are useful.</dd>
+            <dt>Capability dependent</dt><dd>GitHub Agentic Workflows, Copilot coding agent, GitHub Advanced Security views, and environment approvals may depend on preview state, licensing, or repository policy. Each lab labels those moments and provides a fallback.</dd>
+          </dl>
+          <p>Open the <a href="../../student/labs/index.html">labs landing page</a> before the first exercise. It explains the shared model once: branch, change, pull request, and let GitHub evidence show whether the work is ready.</p>
+          </div></article>
+        <article class="card" id="card-station-evidence">
+          <div class="slide-content"><h2 class="slide-title">The platform provides the proof.</h2><ul class="slide-points"><li class="frag">Green checks beat local assertions.</li><li class="frag">Reviews name accountable owners.</li><li class="frag">Blocked pushes are useful evidence.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Treat the station repository as the system of record</span><span class="card-sub">The labs accumulate through GitHub artifacts, not copied local folders.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>Every lab produces a GitHub-native artifact: a pull request with a green check, a required review, a rejected protected-branch push, a security signal, or a published issue. That evidence is durable enough to discuss after the room moves on.</p>
+          <p>The station repository is safe to change because its data is synthetic and its controls are prepared for the workshop. When you fall behind, use the reference artifact in the lab guide so you can rejoin the story without inventing a private shortcut.</p>
+          <aside class="callout callout--note"><p class="callout-label">Note</p><p><strong>Local tools are helpers, not the grading surface.</strong> If you choose a local clone, keep GitHub as the place where evidence is created, reviewed, and retained.</p></aside>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-platform-briefing"><h2 class="chapter-label">Executive platform briefing</h2>
+        <article class="card" id="card-loop-shape">
+          <div class="slide-content"><h2 class="slide-title">The day follows one loop.</h2><ul class="slide-points"><li class="frag">Capture intent in GitHub.</li><li class="frag">Delegate within explicit limits.</li><li class="frag">Decide from persisted evidence.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">GitHub becomes the operating record for human-agent engineering</span><span class="card-sub">The opening briefing gives the mental model for the rest of the day.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>The workshop begins with the complete Loop Engineering picture: prompt, context, harness, loop, evidence, and stop condition. The point is not to tour features. The point is to keep intent, proposed change, automated checks, review, release evidence, and follow-up in one traceable system.</p>
+          <p>GitHub Copilot is the primary coding harness in this workshop. External harnesses such as Claude Code or OpenCode can be discussed as optional execution boundaries, but they do not inherit identical permissions, interfaces, security properties, or availability.</p>
+          <p>Use the <a href="loop-engineering.html">Loop Engineering reference</a> for the longer vocabulary and the <a href="platform-architecture.html">architecture guide</a> for the control-plane view.</p>
+          </div></article>
+        <article class="card" id="card-three-rhythm">
+          <div class="slide-content"><h2 class="slide-title">See it, work with it, connect it.</h2><ul class="slide-points"><li class="frag">Demos show the complete loop.</li><li class="frag">Labs give one durable outcome.</li><li class="frag">Discussion maps adoption constraints.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Each chapter balances outcome, practice, and adoption</span><span class="card-sub">The same rhythm prevents a product-feature tour.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p><strong>See it</strong> shows a polished end-to-end outcome, including steps that are too slow, permission-sensitive, or fragile to rebuild live. <strong>Work with it</strong> gives you one meaningful action in your station repository. <strong>Connect it</strong> turns the action into an operating model.</p>
+          <p>The rhythm matters because reasoning-based automation is only useful when it is bounded by deterministic controls and human authority. You should always know what the agent may read, what it may write, what evidence gates it, and who owns the next decision.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-bounded-ai"><h2 class="chapter-label">Bounded continuous AI</h2>
+        <article class="card" id="card-agentic-contract">
+          <div class="slide-content"><h2 class="slide-title">Automation starts with a contract.</h2><ul class="slide-points"><li class="frag">Tools and permissions must align.</li><li class="frag">Budget is a safety boundary.</li><li class="frag">Output must be owned and capped.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 1 narrows an agentic workflow before execution</span><span class="card-sub">09:30-10:20 &middot; Bounded intake, execution, output, and next decision.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="lab-1"></span>
+          <p>Natural-language automation becomes reviewable only when its contract is concrete. Chapter 1 focuses on trigger, read scope, model access, network policy, safe outputs, time budget, inference budget, and the instruction boundary around untrusted repository content.</p>
+          <p>The hands-on work narrows a repository pulse workflow so it reviews issues only, spends less, and still publishes only bounded owned issue output. The green check is the proof that the source and generated execution contract agree.</p>
+          <aside class="callout callout--warning"><p class="callout-label">Product state</p><p><strong>GitHub Agentic Workflows are public preview.</strong> The lab states which parts are ordinary GitHub work and what to read when preview execution is unavailable for your station.</p></aside>
+          <p><a href="../../student/labs/01-agentic-workflow/index.html">Open Lab 1</a></p>
+          </div></article>
+        <article class="card" id="card-continuity-gap">
+          <div class="slide-content"><h2 class="slide-title">A cap is not continuity.</h2><ul class="slide-points"><li class="frag">Per-run limits bound blast radius.</li><li class="frag">They do not deduplicate work.</li><li class="frag">State makes recurrence accountable.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 1 deliberately leaves the continuity problem visible</span><span class="card-sub">Carry this gap into the capstone.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>A per-run limit prevents one run from creating unlimited output. It does not prove that the next run understands prior work, avoids duplicates, or knows when a justified no-op is the correct outcome.</p>
+          <p>Continuous AI needs stable work identity, prior-state read-back, and an explicit next decision. Chapter 5 returns to that requirement after you have produced the evidence that a real loop must consume.</p>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-handoff"><h2 class="chapter-label">Verified handoff</h2>
+        <article class="card" id="card-intent-handoff">
+          <div class="slide-content"><h2 class="slide-title">Intent must become acceptance.</h2><ul class="slide-points"><li class="frag">Issues capture business meaning.</li><li class="frag">Specifications remove guesswork.</li><li class="frag">Tests judge the proposal.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 2 turns a business request into a verified change</span><span class="card-sub">10:35-11:35 &middot; Structured issue, bounded delegation, green checks.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="lab-2"></span>
+          <p>The pharmacy scenario asks for a safe stock suggestion when the requested medicine is unavailable. The requirement is deliberately small, but the engineering pattern is broad: write observable acceptance before any worker changes code.</p>
+          <p>The lab turns the request into a structured issue, a lightweight specification, a bounded proposed implementation, and a pull request that must satisfy deterministic acceptance and regression checks. A suggestion remains a suggestion: it reserves nothing until a person chooses the alternative.</p>
+          <p><a href="../../student/labs/02-intent-to-pr/index.html">Open Lab 2</a></p>
+          </div></article>
+        <article class="card" id="card-untrusted-proposal">
+          <div class="slide-content"><h2 class="slide-title">A proposal is still untrusted.</h2><ul class="slide-points"><li class="frag">Review changed scope.</li><li class="frag">Read the diff.</li><li class="frag">Bind handoff to a revision.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The verified handoff separates helpful output from accepted work</span><span class="card-sub">Agent work becomes useful only after evidence and review.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>Copilot can accelerate the implementation, but the platform still treats the proposal as untrusted. The evidence you want is scope control, passing tests, explainable diff, and a pull request that another person can review without reading an agent transcript.</p>
+          <p>The durable handoff is not a chat summary. It is a repository artifact bound to a concrete revision and checked by deterministic systems before anyone considers release.</p>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-operating-model"><h2 class="chapter-label">Operating model</h2>
+        <article class="card" id="card-governance-model">
+          <div class="slide-content"><h2 class="slide-title">Authority must be named.</h2><ul class="slide-points"><li class="frag">Policies belong at durable scopes.</li><li class="frag">Owners define stop authority.</li><li class="frag">Budgets need accountable limits.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 3 maps the same station to an enterprise operating model</span><span class="card-sub">11:35-12:30 &middot; Governance, ownership, budgets, and coexistence.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="lab-3"></span>
+          <p>The operating model chapter names who may grant access, which checks are required, where runners may execute, how deployment identity is issued, how attempts and spend are bounded, and who may stop or escalate the loop.</p>
+          <p>The sandbox profile and future enterprise profile share the same learner-facing concepts. The difference is policy scope, identity, ownership, and provisioning maturity, not duplicated workshop content or hidden enterprise assumptions.</p>
+          <p><a href="../../student/labs/03-operating-model/index.html">Open Lab 3</a></p>
+          </div></article>
+        <article class="card" id="card-ado-coexistence">
+          <div class="slide-content"><h2 class="slide-title">Migration is a controlled wave.</h2><ul class="slide-points"><li class="frag">Keep stable systems stable.</li><li class="frag">Move evidence-producing paths first.</li><li class="frag">Rebuild deployment identity deliberately.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Azure DevOps coexistence needs explicit boundaries</span><span class="card-sub">Keep what is stable until GitHub controls prove themselves.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>A realistic migration does not move every board, feed, repository, pipeline, and secret at once. Start with repositories where acceptance is clear, tests are fast, data is synthetic or low risk, and rollback is simple.</p>
+          <p>Convert pipelines deliberately, review the converted workflows by hand, keep existing work item or package systems where they reduce risk, and re-establish deployment with OpenID Connect rather than copying long-lived secrets.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-delivery"><h2 class="chapter-label">Trusted delivery</h2>
+        <article class="card" id="card-delivery-boundary">
+          <div class="slide-content"><h2 class="slide-title">Checks must be safe before code arrives.</h2><ul class="slide-points"><li class="frag">Use least-privilege tokens.</li><li class="frag">Pin third-party actions immutably.</li><li class="frag">Treat pull-request text as data.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 4 separates deterministic delivery from reasoning-based advice</span><span class="card-sub">13:15-14:35 &middot; CI/CD, DevSecOps, environment gates, and release evidence.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="lab-4"></span>
+          <p>Trusted delivery starts before an agent-generated pull request exists. Workflows that run on untrusted pull requests need read-only permissions, immutable action references, bounded time, explicit concurrency, and no protected secrets.</p>
+          <p>The lab uses a safe synthetic injection exercise, native GitHub security evidence, and revision mapping to show what deterministic systems can prove. Recorded artifacts cover entitlement-dependent or slow views without pretending that a simulation is a live control.</p>
+          <p><a href="../../student/labs/04-trusted-delivery/index.html">Open Lab 4</a></p>
+          </div></article>
+        <article class="card" id="card-release-decision">
+          <div class="slide-content"><h2 class="slide-title">Release authority stays human.</h2><ul class="slide-points"><li class="frag">Checks can block merge.</li><li class="frag">Approvals gate environments.</li><li class="frag">Outcomes are observed after deployment.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Ready for release is different from deployed and observed</span><span class="card-sub">Keep pre-release evidence separate from post-deployment outcome.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>A green build, passing tests, CodeQL status, dependency review, and required approval can make a change ready for a human release decision. They do not prove that the new bytes are already deployed, healthy, or producing the intended business outcome.</p>
+          <p>Post-deployment evidence answers a different question: what ran, from which revision, through which workflow identity, under which environment approval, and what health or telemetry was observed after release. Keep those records distinct.</p>
+          <p>For the deeper demonstration path, open the <a href="trusted-delivery.html">trusted delivery guide</a>.</p>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-capstone"><h2 class="chapter-label">Capstone</h2>
+        <article class="card" id="card-capstone-evidence">
+          <div class="slide-content"><h2 class="slide-title">Evidence must name one revision.</h2><ul class="slide-points"><li class="frag">Missing artifacts block release.</li><li class="frag">Wrong-revision artifacts also block.</li><li class="frag">Simulations stay labelled.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 5 judges the complete human-agent delivery loop</span><span class="card-sub">14:50-15:50 &middot; Evidence packet, release decision, and recurrence.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="lab-5"></span>
+          <p>The capstone asks you to decide, not just inspect. You read intent, proposal, checks, review, deployment record, and follow-up state. Then you decide whether the packet is ready for a human release decision, blocked, waiting for a named owner, or escalated.</p>
+          <p>Missing release evidence blocks. A green deployment record for a different commit also blocks. The lesson is not that every checklist cell can be made green; the lesson is that evidence only counts when it is complete, attributable, and tied to the exact revision under review.</p>
+          <p><a href="../../student/labs/05-capstone/index.html">Open Lab 5</a></p>
+          </div></article>
+        <article class="card" id="card-capstone-recurrence">
+          <div class="slide-content"><h2 class="slide-title">The next action must be earned.</h2><ul class="slide-points"><li class="frag">Accepted state can justify no-op.</li><li class="frag">Waiting names a human owner.</li><li class="frag">Exhausted repair escalates cleanly.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The loop closes only after it reads prior state</span><span class="card-sub">The capstone connects Chapter 1 limits to accountable recurrence.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>A loop that cannot read its previous accepted outcome will either repeat work, spend attempts on waiting states, or hide escalation behind silence. The capstone turns those failure modes into explicit decisions.</p>
+          <p>A justified no-op is a valid outcome when the same accepted work is observed again. Waiting consumes no model attempt while a named human owns the decision. A trusted failure may authorize one bounded repair; an exhausted repair escalates without starting another worker.</p>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-recovery"><h2 class="chapter-label">Recovery and cleanup</h2>
+        <article class="card" id="card-day-recovery">
+          <div class="slide-content"><h2 class="slide-title">Recover without bypassing evidence.</h2><ul class="slide-points"><li class="frag">Use each lab's reference artifact.</li><li class="frag">Declare recorded evidence as recorded.</li><li class="frag">Escalate corrupt state, not hide it.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Recovery keeps you in the story without inventing evidence</span><span class="card-sub">Use prepared references and recorded artifacts honestly.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="recovery"></span>
+          <p>Each lab guide names its recovery path. If you run out of time, copy the lab's reference artifact, continue from the next checkpoint, and say clearly which part you completed and which part came from a prepared reference.</p>
+          <p>If a preview capability, security entitlement, or environment view is unavailable, use the recorded artifact named by the lab. Treat it as evidence from a recording, not as a fresh result from your station repository.</p>
+          <aside class="callout callout--rule"><p class="callout-label">Rule</p><p><strong>Never reset or rewrite state to regain authority.</strong> If a repository rule, review requirement, attempt limit, or evidence check blocks you unexpectedly, preserve the observable message and ask the instructor to diagnose the control.</p></aside>
+          </div></article>
+        <article class="card" id="card-day-cleanup">
+          <div class="slide-content"><h2 class="slide-title">Leave durable artifacts behind.</h2><ul class="slide-points"><li class="frag">Do not delete the station repository.</li><li class="frag">Close local services you started.</li><li class="frag">Keep issues and pull requests reviewable.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Cleanup preserves the evidence created during the day</span><span class="card-sub">The repository is the record, not disposable scratch space.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>At the end of the day, leave your station repository intact unless the instructor gives explicit cleanup instructions for the classroom environment. Pull requests, checks, rejected pushes, issues, and reviews are the artifacts you may want to revisit.</p>
+          <p>If you used a local clone or started a local service, stop the service, close terminals that hold credentials, and delete only local scratch copies you created yourself. Do not delete shared classroom repositories, evidence issues, or pull requests.</p>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-adoption"><h2 class="chapter-label">Adoption roadmap</h2>
+        <article class="card" id="card-pilot-selection">
+          <div class="slide-content"><h2 class="slide-title">Start where outcomes are verifiable.</h2><ul class="slide-points"><li class="frag">Choose frequent reversible work.</li><li class="frag">Measure accepted outcomes.</li><li class="frag">Expand after controls hold.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The practical pilot is frequent, bounded, and reversible</span><span class="card-sub">15:50-16:30 &middot; Roadmap discussion and next steps.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>Good pilots have clear acceptance criteria, fast deterministic checks, low data sensitivity, active owners, and a reversible deployment path. Defer identity, payment, regulated clinical logic, and production-infrastructure repositories until governance and review capacity are proven.</p>
+          <p>Measure accepted outcomes, human attention needed, duplicate suppression, failed attempts, time to evidence, and bounded spend. Generated lines and token counts do not tell you whether the loop improved engineering quality.</p>
+          </div></article>
+        <article class="card" id="card-what-you-take-away">
+          <div class="slide-content"><h2 class="slide-title">Adopt the loop, not a demo.</h2><ul class="slide-points"><li class="frag">Intent lives in GitHub.</li><li class="frag">Evidence gates material changes.</li><li class="frag">People own release decisions.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Your next step is an operating contract, not another tool trial</span><span class="card-sub">Name the repository, checks, owners, budgets, and stop conditions.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>Leave with one candidate repository, one deterministic check set, one accountable owner for review and release, one allowed agentic workflow, one budget boundary, and one explicit stop path.</p>
+          <p>If those pieces are not named, automation will fill the gap with chat history, defaults, and optimism. If they are named, GitHub can orchestrate people, agents, checks, security signals, and deployment records in one durable loop.</p>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>Agents propose, deterministic systems provide evidence, and accountable people retain authority over material changes and production release.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Verify the outcome.<br><em>Own the next decision.</em></h2></div></section>
+    <footer class="doc-footer"><a href="../index.html">Back to workshop hub</a> &middot; Guide updated 22 September 2026. Product availability claims retain their separately dated sources; the teacher must revalidate every preview claim before delivery.</footer>
+  </div>
+</body>
+</html>

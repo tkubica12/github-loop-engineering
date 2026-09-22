@@ -1,0 +1,10 @@
+{
+  "synthetic": true,
+  "snapshot": "training-seed",
+  "items": [
+    { "sku": "MED-001", "available": 12 },
+    { "sku": "MED-002", "available": 4 },
+    { "sku": "MED-003", "available": 0 },
+    { "sku": "MED-004", "available": 6 }
+  ]
+}

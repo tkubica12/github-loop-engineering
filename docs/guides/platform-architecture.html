@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Architecture for the portable Loop Engineering with GitHub workshop.">
+  <title>Platform architecture | Loop Engineering with GitHub</title>
+  <meta name="doc-id" content="workshop-platform-architecture">
+  <!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+  -->
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../assets/html-docs/article.css">
+  <link rel="stylesheet" href="../assets/html-docs/slides.css">
+  <script src="../assets/html-docs/article.js" defer></script>
+  <script src="../assets/html-docs/slides.js" defer></script>
+  <script src="../assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening">
+      <div class="slide-content slide-content--title"><p class="slide-eyebrow">Reference architecture</p><h2 class="slide-title">Portable stations.<br><em>Durable controls.</em></h2><p class="slide-lead">Share the contract without pretending the profiles enforce identical controls.</p></div>
+      <p class="eyebrow">Reference architecture</p>
+      <h1>Portable stations, durable controls</h1>
+      <p class="subtitle">The sandbox and future enterprise organization share one bounded-loop contract, station template and decision semantics while retaining honest enforcement boundaries.</p>
+    </header>
+
+    <nav class="doc-nav" aria-label="Workshop navigation"><a href="../index.html">Loop Engineering with GitHub</a><a href="#main">Skip to content</a><a href="references.html">Product state</a></nav>
+    <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol><li><a href="#ch-controls">Control architecture</a></li><li><a href="#ch-boundaries">Profiles and trust</a></li><li><a href="#ch-stations">Station lifecycle</a></li></ol></nav>
+    <main id="main">
+      <section class="chapter" id="ch-controls"><h2 class="chapter-label">Control architecture</h2>
+        <article class="card card--lead" id="card-control-layers" data-open>
+          <div class="slide-content"><h2 class="slide-title">Give each control a distinct role.</h2><ul class="slide-points"><li class="frag">Intent and context guide work.</li><li class="frag">Execution proposes; evidence evaluates.</li><li class="frag">Authority governs release; feedback informs recurrence.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Separate the control layers</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="layers"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Intent</span><p>Issue forms and specifications define business value, acceptance criteria, constraints, and risk.</p></div>
+            <div class="summary-item"><span class="summary-label">Context</span><p>Repository instructions, agent profiles, ADRs, and ownership make team knowledge durable.</p></div>
+            <div class="summary-item"><span class="summary-label">Execution</span><p>Cloud and local agents work in bounded environments and propose changes on branches. GitHub Copilot is the native path; Claude and Codex are documented hosted partner agents in public preview; harnesses such as OpenCode and Claude Code run on the engineer's machine and are not GitHub-hosted agents.</p></div>
+            <div class="summary-item"><span class="summary-label">Evidence</span><p>Actions, tests, security products, reviews, and attestations evaluate the proposal.</p></div>
+            <div class="summary-item"><span class="summary-label">Authority</span><p>Rulesets, CODEOWNERS, environments, and human approval control merge and release.</p></div>
+            <div class="summary-item"><span class="summary-label">Feedback</span><p>Metrics and agentic workflows identify the next evidence-based action.</p></div>
+          </div>
+          </div></article>
+        <article class="card" id="card-controller">
+          <div class="slide-content"><h2 class="slide-title">Recurrence is not model work.</h2><ul class="slide-points"><li class="frag">Read stable identity and persisted state.</li><li class="frag">Allow two classroom attempts total.</li><li class="frag">Accepted duplicates and human waits start no worker.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The controller separates recurrence from model work</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="loop"></span>
+          <ol class="sequence">
+            <li><span class="seq-title">Contract</span><span class="seq-note">Scope and limits</span></li>
+            <li><span class="seq-title">Context</span><span class="seq-note">Exact facts</span></li>
+            <li><span class="seq-title">State</span><span class="seq-note">Attempts and owner</span></li>
+            <li><span class="seq-title">Evidence</span><span class="seq-note">Trusted receipt</span></li>
+            <li><span class="seq-title">Decision</span><span class="seq-note">Act or stop</span></li>
+          </ol>
+          <p>GitHub issues and marked comments are inspectable live carriers. Owned local JSON is the account-free teaching adapter. Both use the same decision semantics; neither makes a cache authoritative. The classroom controller permits two agent attempts total and starts no worker for accepted duplicate input or while a human decision is pending.</p>
+          <p><a href="loop-engineering.html">Open the compact contract, decision table and glossary</a>.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-boundaries"><h2 class="chapter-label">Profiles and trust</h2>
+        <article class="card" id="card-profile-boundaries">
+          <div class="slide-content"><h2 class="slide-title">Shared concepts do not imply shared enforcement.</h2><ul class="slide-points"><li class="frag">Sandbox keeps account-free local paths.</li><li class="frag">Enterprise policy remains configurable.</li><li class="frag">Every simulation stays visibly labeled.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Keep profile boundaries explicit</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="profiles"></span>
+          <table>
+            <thead><tr><th>Concern</th><th>Sandbox</th><th>Enterprise station</th></tr></thead>
+            <tbody>
+              <tr><td>Owner</td><td><code>tkubica12</code></td><td>Configured organization</td></tr>
+              <tr><td>Isolation</td><td>Local render or private repository; a worktree is not a security boundary</td><td>Repository per team plus configured runner and network policy</td></tr>
+              <tr><td>Policy</td><td>Repository controls and visible simulation</td><td>Enterprise baseline plus organization rulesets</td></tr>
+              <tr><td>Security</td><td>Public-repository features or demonstration</td><td>GitHub Code Security and Secret Protection</td></tr>
+              <tr><td>Identity</td><td>Individual GitHub account</td><td>Enterprise identity policy</td></tr>
+              <tr><td>Cleanup</td><td>Local by default; remote manual</td><td>Workshop-tagged central lifecycle</td></tr>
+            </tbody>
+          </table>
+          <aside class="callout callout--rule"><p class="callout-label">Rule</p><p><strong>Honesty rule:</strong> enterprise-only controls are never shown as active in the sandbox. The UI labels each fallback as a demonstration or simulation.</p></aside>
+          </div></article>
+        <article class="card" id="card-trust-boundaries">
+          <div class="slide-content"><h2 class="slide-title">Untrusted input never becomes authority.</h2><ul class="slide-points"><li class="frag">Treat issue and pull-request text as data.</li><li class="frag">Separate worker and deployment credentials.</li><li class="frag">Protect configuration and make writes explicit.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Preserve the trust boundaries</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="trust"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Untrusted</span><p>Issue and PR text supplies input.</p></div>
+            <div class="summary-item"><span class="summary-label">Bounded</span><p>Agent runtime limits execution.</p></div>
+            <div class="summary-item"><span class="summary-label">Proposed</span><p>Branch diff records the proposal.</p></div>
+            <div class="summary-item"><span class="summary-label">Measured</span><p>Checks and scans supply evidence.</p></div>
+            <div class="summary-item"><span class="summary-label">Approved</span><p>Human decision accepts risk.</p></div>
+            <div class="summary-item"><span class="summary-label">Federated</span><p>Deployment identity bounds release access.</p></div>
+          </div>
+          <ul class="arrow-list">
+            <li>Do not interpolate issue or pull request text into shell scripts.</li>
+            <li>Keep agent credentials separate from deployment credentials.</li>
+            <li>Do not expose protected secrets to untrusted pull request code.</li>
+            <li>Protect instructions, agent profiles, MCP configuration, workflows, and ownership with CODEOWNERS.</li>
+            <li>Make write operations explicit through safe outputs or narrowly scoped token permissions.</li>
+          </ul>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-stations"><h2 class="chapter-label">Station lifecycle</h2>
+        <article class="card" id="card-local-lifecycle">
+          <div class="slide-content"><h2 class="slide-title">Plan locally before provisioning.</h2><ul class="slide-points"><li class="frag">Preflight, render, and verify the sandbox.</li><li class="frag">Remote creation requires explicit application.</li><li class="frag">Sandbox remote deletion remains manual.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Run the station lifecycle locally first</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="lifecycle"></span>
+          <div class="code"><pre><code>npm run preflight
+node platform/scripts/workshop.mjs plan --profile sandbox --station team01
+node platform/scripts/workshop.mjs render --profile sandbox --station team01
+node platform/scripts/workshop.mjs verify --profile sandbox --station team01
+node platform/scripts/workshop.mjs cleanup --profile sandbox --station team01 --apply</code></pre></div>
+          <p>The default path renders and verifies locally. Remote creation requires an explicit <code>provision --apply</code>. Remote deletion is intentionally not automated in the sandbox profile.</p>
+          </div></article>
+        <article class="card" id="card-enterprise-cutover">
+          <div class="slide-content"><h2 class="slide-title">Prove one station before scaling.</h2><ul class="slide-points"><li class="frag">Configure identity, policies, teams, and isolation.</li><li class="frag">Check effective capability and release trust.</li><li class="frag">Rehearse setup, journey, reset, and cleanup.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Prove the enterprise cutover before scaling</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="enterprise"></span>
+          <ol>
+            <li>Copy <code>platform/<wbr>profiles/<wbr>enterprise.example.json</code> to <code>enterprise.json</code>.</li>
+            <li>Set the organization, visibility, repository prefix, teams, and station isolation model.</li>
+            <li>Confirm Copilot, partner agent, Agentic Workflow, Actions, Code Security, and Secret Protection policies.</li>
+            <li>Apply rulesets to protected configuration, default branches, required checks, and code owner review.</li>
+            <li>Configure GitHub-hosted or ephemeral runners and Actions allow lists.</li>
+            <li>Configure Azure workload identity federation and environment approval for the deployment demonstration.</li>
+            <li>Run one clean-room station provision, exact workshop journey, reset, and cleanup before scaling.</li>
+          </ol>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>Portability comes from shared decision semantics and explicitly verified enforcement boundaries.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Share the semantics.<br><em>Verify the boundary.</em></h2></div></section>
+    <footer class="doc-footer"><a href="../index.html">Back to workshop hub</a></footer>
+  </div>
+</body>
+</html>

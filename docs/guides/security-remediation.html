@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Follow a real CodeQL alert through a bounded Copilot fix, human review and a clean scan.">
+  <title>From security finding to reviewed fix</title>
+  <meta name="doc-id" content="workshop-security-remediation">
+  <!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+  -->
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../assets/html-docs/article.css">
+  <link rel="stylesheet" href="../assets/html-docs/slides.css">
+  <script src="../assets/html-docs/article.js" defer></script>
+  <script src="../assets/html-docs/slides.js" defer></script>
+  <script src="../assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening">
+      <div class="slide-content slide-content--title"><p class="slide-eyebrow">Native security evidence</p><h2 class="slide-title">Passing tests are not<br><em>security clearance.</em></h2><p class="slide-lead">Follow a real finding through a bounded fix and separately accountable decisions.</p></div>
+      <p class="eyebrow">Chapter 4 / Native security evidence</p>
+      <h1>A passing test suite is not a security clearance.</h1>
+      <p class="subtitle">Follow one actual CodeQL finding from an unsafe synthetic export to a small Copilot pull request, human approval and a fixed alert.</p>
+    </header>
+    <nav class="doc-nav" aria-label="Workshop navigation"><a href="../index.html">Loop Engineering with GitHub</a><a href="#main">Skip to the security journey</a><a href="full-day.html#lab-4">Workshop path</a><a href="../../teacher/demos/security-remediation/operator-guide.html">Presenter runbook</a></nav>
+    <nav class="toc" aria-label="Security journey"><p class="toc-label">Inspect the chain</p><ol><li><a href="#ch-finding">Intent and finding</a></li><li><a href="#ch-remediation">Remediation and review</a></li><li><a href="#ch-release">Governed release</a></li><li><a href="#ch-local">Local verification and recovery</a></li></ol></nav>
+    <main id="main">
+      <section class="chapter" id="ch-finding"><h2 class="chapter-label">Intent and finding</h2>
+        <article class="card card--lead" id="card-export-scope" data-open>
+          <div class="slide-content"><h2 class="slide-title">Export stock.<br><em>Not arbitrary files.</em></h2><ul class="slide-points"><li class="frag">One synthetic snapshot is the business requirement.</li><li class="frag">Normal tests do not prove filesystem confinement.</li><li class="frag">The unsafe starter stays on loopback.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Export stock, not arbitrary files</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="intent"></span>
+          <p>The pharmacy service offers one downloadable synthetic seed snapshot: <code>/exports/stock.json</code>. The starter instead builds a filesystem path from a caller-supplied name. Its normal export and reservation tests pass, but those tests do not establish that other files are inaccessible.</p>
+          <aside class="callout callout--warning"><p class="callout-label">Warning</p><p><strong>Safety boundary:</strong> all data is synthetic. The deliberately unsafe starter runs on loopback only and was never deployed. The local proof reads only the miniapp's own harmless <code>package.json</code>, not a system file or credential.</p></aside>
+          </div></article>
+        <article class="card" id="card-data-flow">
+          <div class="slide-content"><h2 class="slide-title">Trace the caller-controlled value.</h2><ul class="slide-points"><li class="frag">Read the native path-injection finding.</li><li class="frag">Match the analysis to its source revision.</li><li class="frag">Green tests and a real finding can coexist.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Read the actual data flow</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="finding"></span>
+          <ol>
+            <li>Open <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/security/code-scanning/1">CodeQL alert #1</a> in the public synthetic repository.</li>
+            <li>Find rule <code>js/path-injection</code> and the path from request data to filesystem access in <code>src/server.mjs</code>.</li>
+            <li>Open <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/issues/1">the remediation issue</a>. Its workflow-generated evidence links the CodeQL analysis to the exact source revision.</li>
+          </ol>
+          <p>The <a href="../../teacher/demos/security-remediation/evidence/baseline-codeql.json">recorded baseline</a> preserves the original finding even after the current alert becomes fixed. It is an actual scanner observation, not fabricated SARIF.</p>
+          <p><strong>Checkpoint:</strong> point to the caller-controlled value and the operation that trusts it. A green unit-test run and a security finding can both be correct.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-remediation"><h2 class="chapter-label">Remediation and review</h2>
+        <article class="card" id="card-reduce-authority">
+          <div class="slide-content"><h2 class="slide-title">Reduce authority.<br><em>Do not clean up strings.</em></h2><ul class="slide-points"><li class="frag">Permit exactly stock.json.</li><li class="frag">Read a literal trusted path.</li><li class="frag">Preserve reservation behavior and reviewer-controlled scope.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Reduce authority instead of cleaning up strings</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="fix"></span>
+          <p>Open <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/pull/2/files">Copilot PR #2</a>. The reviewed change permits exactly <code>stock.json</code>, rejects other decoded names before reading a file, and reads a literal trusted path. It does not try to remove suspicious characters while retaining arbitrary-path access.</p>
+          <ol>
+            <li>Verify the diff changes only the server, its HTTP tests and README.</li>
+            <li>Inspect the normal export test and the encoded-traversal rejection test.</li>
+            <li>Confirm that reservations still return 409 without changing stock, and that an explicit successful reservation still decrements it.</li>
+          </ol>
+          <p>The reviewer controls the scope. Copilot does not change workflow permissions, approve its own fix, or deploy it.</p>
+          </div></article>
+        <article class="card" id="card-separate-review">
+          <div class="slide-content"><h2 class="slide-title">A fixed alert is not release approval.</h2><ul class="slide-points"><li class="frag">Human-triggered checks establish execution provenance.</li><li class="frag">Review covers the final proposal head.</li><li class="frag">Main-branch analysis covers the merge.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Separate execution, review and merge</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="review"></span>
+          <table><thead><tr><th>Gate</th><th>Recorded result</th><th>What it proves</th></tr></thead><tbody>
+            <tr><td>Human-triggered execution</td><td>GitHub records <code>tkubica12</code> as the triggering actor for attempt 2 of Quality and CodeQL</td><td>These successful runs were started by a person, not by the original Copilot invocation</td></tr>
+            <tr><td>Quality and CodeQL</td><td><a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979846786">Tests passed</a>; <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979846782">PR CodeQL passed</a></td><td>The tested proposal has corresponding automated evidence</td></tr>
+            <tr><td>Human review</td><td>Approval recorded on head <code>2d84da4</code></td><td>A person reviewed that final head before merge</td></tr>
+            <tr><td>Main-branch analysis</td><td><a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33983231482">Clean CodeQL run on merge <code>dc4b270</code></a>; alert #1 fixed</td><td>The remediation reached main and removed the observed flow</td></tr>
+          </tbody></table>
+          <p><a href="../../teacher/demos/security-remediation/evidence/remediation.json">Inspect exact SHAs, review timestamps and native analysis IDs</a>. A PR head, its test-merge commit and its final squash-merge commit are different identities; do not compare them as though they were the same SHA.</p>
+          <aside class="callout callout--rule"><p class="callout-label">Rule</p><p><strong>Limit:</strong> this evidence proves a real human review, not an enforced branch-protection rule. A fixed alert is not a production-release approval.</p></aside>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-release"><h2 class="chapter-label">Governed release</h2>
+        <article class="card" id="card-approved-bytes">
+          <div class="slide-content"><h2 class="slide-title">Deploy approved bytes.<br><em>Not a convenient checkout.</em></h2><ul class="slide-points"><li class="frag">Application and workflow revisions have different identities.</li><li class="frag">The manifest and captured health response must agree.</li><li class="frag">Recorded gating allowed sandbox self-approval.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Deploy the approved bytes, not a convenient checkout</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="release"></span>
+          <p>Open the completed <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33986708338">governed release</a>. The gate checks the real review and scans; the package job tests the selected merge; deployment waits for a person before requesting an Azure OIDC token.</p>
+          <table><thead><tr><th>Identity</th><th>Recorded value</th><th>Verify</th></tr></thead><tbody>
+            <tr><td>Reviewed application</td><td><code>dc4b270</code></td><td>The manifest and live health capture identify the same merge.</td></tr>
+            <tr><td>Release workflow</td><td><code>1ea98c2</code></td><td>A later workflow packages the approved application, not its own latest checkout.</td></tr>
+            <tr><td>Release execution</td><td><code>33986708338</code></td><td>Artifact, environment approval and runtime identify this run.</td></tr>
+          </tbody></table>
+          <p><a href="../../teacher/demos/security-remediation/evidence/release.json">Read the captured approval, manifest and health response</a>, or inspect the <a href="../../teacher/demos/security-remediation/evidence/release-artifact.zip">retained artifact</a>. Every packaged source file was matched to its Git blob in the reviewed commit. A matching checksum is not a signed attestation.</p>
+          <aside class="callout callout--source"><p class="callout-label">Source</p><p><strong>Recorded demonstration, 6 September 2026:</strong> the required environment approval was real; the one-person sandbox allowed the initiator to approve. It does not demonstrate independent separation of duties. Azure cleanup and GitHub artifact expiry do not erase this historical record.</p></aside>
+          <p><strong>Checkpoint:</strong> explain why approving the PR is not approving deployment, and why the workflow SHA can differ from the application SHA.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-local"><h2 class="chapter-label">Local verification and recovery</h2>
+        <article class="card" id="card-local-contrast">
+          <div class="slide-content"><h2 class="slide-title">Reproduce behavior locally.</h2><ul class="slide-points"><li class="frag">Observe the harmless starter contrast.</li><li class="frag">Verify rejection and preserved approved behavior.</li><li class="frag">Local checks require no cloud account.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Reproduce the contrast locally</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="rehearse"></span>
+          <p>From the workshop repository root, with Node.js 22 or newer:</p>
+          <div class="code"><pre><code>node teacher/demos/security-remediation/scripts/rehearse.mjs</code></pre></div>
+          <p>Expect a harmless manifest read in the starter, then rejection of traversal, double encoding, null bytes, separators and unknown names in the solution. The approved export and reservation tests must still pass.</p>
+          <p>The script creates two temporary copies, binds ephemeral loopback ports, closes every server and removes only its own copies. Run it again to reset; no GitHub or Azure account is needed.</p>
+          </div></article>
+        <article class="card" id="card-retained-recommendation">
+          <div class="slide-content"><h2 class="slide-title">Verify the continuation separately.</h2><ul class="slide-points"><li class="frag">The requested regression must detect both mutations.</li><li class="frag">Accepted replay starts no additional worker.</li><li class="frag">Local evidence does not upgrade historical GitHub evidence.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Verify the retained recommendation separately</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body">
+          <p>The maintenance issue requests one exact regression: <code>GET /exports/%</code> must return HTTP <code>400</code> and exact JSON <code>{"error":"invalid export name"}</code>. Inspect it without changing the historical repository or evidence:</p>
+          <div class="code"><pre><code>node teacher/demos/security-remediation/scripts/verify-continuation.mjs
+node teacher/demos/security-remediation/scripts/verify-continuation.mjs --report &lt;NEW-REPORT.json&gt;</code></pre></div>
+          <p>The committed “before” receipt is correctly <code>BLOCKED</code>: the original suite exits successfully, but the required new test is absent. That is missing work, not a task failure and not permission to repair production code.</p>
+          <p>The trusted verifier builds an owned disposable copy from the original fixture and solution. It runs the full suite with the proposed <code>teacher/demos/security-remediation/continuation/test/export-name.test.mjs</code>, then changes the expected response to a wrong status and a wrong body in separate copies. A passing receipt requires the new regression to catch both mutations. <code>--report</code> accepts only a new path so a previous receipt is never overwritten.</p>
+          <aside class="callout callout--source"><p class="callout-label">Source</p><p><strong>Live local continuation:</strong> the recorded local receipt was removed before public publication. Run <code>node teacher\demos\security-remediation\scripts\verify-continuation.mjs</code> and read your own result. The verifier uses disposable local copies to run the original suite, the prepared malformed-percent regression, and wrong-status plus wrong-body mutation probes. This is local deterministic verification, not a signed provider attestation, OS sandbox, GitHub Actions run, pull request, review, merge, deployment, or historical-chain upgrade.</p></aside>
+          </div></article>
+        <article class="card" id="card-honest-fallback">
+          <div class="slide-content"><h2 class="slide-title">Use the right fallback.</h2><ul class="slide-points"><li class="frag">Recorded evidence is not a fresh scan.</li><li class="frag">Missing native evidence cannot be invented.</li><li class="frag">A fixed exercise is not production-ready.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Use the right fallback</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="limits"></span>
+          <p>This isolated repository is public because native code scanning on private repositories requires GitHub Code Security availability. It contains only the approved synthetic miniapp, tests and workflows, not private workshop history.</p>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">GitHub is unavailable</button><div class="reveal-body"><p>Use the captured JSON records and local rehearsal. Say “recorded GitHub evidence” and “local behavior check,” not “a live scan just passed.”</p></div></div>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">The scan finds nothing in a modified starter</button><div class="reveal-body"><p>Stop and inspect the analysis commit, query suite and extraction logs. One equivalent string expression was not modeled by the pinned CodeQL version; the prepared starter uses the verified expression. Do not replace missing native evidence with a hand-written result.</p></div></div>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">A learner asks whether the fixed service is production-ready</button><div class="reveal-body"><p>No. It is an in-memory synthetic exercise. The alert is fixed, but production design, identity, persistence and operational controls are outside this change.</p></div></div>
+          <p>Product reference: <a href="https://docs.github.com/en/code-security/concepts/code-scanning/code-scanning">GitHub code scanning</a>. Recorded run dates and versions are in the linked evidence.</p>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>A bounded fix needs native security evidence, attributable human review, and a separately authorized release.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Fix the finding.<br><em>Keep authority separate.</em></h2></div></section>
+    <footer class="doc-footer">Real native finding and reviewed remediation / Synthetic data only</footer>
+  </div>
+</body>
+</html>

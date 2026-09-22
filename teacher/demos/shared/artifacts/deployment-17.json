@@ -1,0 +1,16 @@
+{
+  "scenarioRevision": "agentic-loop-v1",
+  "changeId": "demo-change-42",
+  "id": "deployment-17",
+  "type": "deployment-simulation",
+  "state": "simulated-success",
+  "synthetic": true,
+  "environment": "illustrative-production",
+  "controls": [
+    "Required code owner approved.",
+    "Artifact provenance linked to demo-change-42.",
+    "Environment approval attributable to release owner.",
+    "OIDC exchange represented without a stored cloud secret."
+  ],
+  "warning": "This is not a live Azure or GitHub deployment record."
+}

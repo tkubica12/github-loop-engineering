@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GitHub Beyond Coding: The Agentic Engineering Loop one-hour showcase.">
+  <meta name="doc-id" content="workshop-agentic-engineering-showcase-deck">
+  <title>GitHub Beyond Coding</title>
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../assets/html-docs/deck.css">
+  <script src="../assets/materials.js" defer></script>
+  <script src="../assets/html-docs/deck.js" defer></script>
+</head>
+<body>
+<!--
+html-docs runtime: MIT License
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<main class="deck-stage">
+  <section class="slide slide--title" id="s-opening" data-title="GitHub Beyond Coding">
+    <span id="slide-1" hidden></span>
+    <p class="slide-eyebrow">One-hour showcase</p>
+    <h1>GitHub<br><em>Beyond Coding</em></h1>
+    <p class="slide-sub">The Agentic Engineering Loop</p>
+    <p class="slide-meta">One synthetic export. One reviewed change. One bounded continuation.</p>
+  </section>
+
+  <section class="slide" id="s-signal" data-title="Cold open">
+    <span id="slide-2" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Signal / 00:00</p><h2 class="slide-title">The export works.<br><em>The boundary does not.</em></h2></div>
+    <div class="slide-body"><aside class="callout callout--warning">
+      <p class="callout-label">Warning</p>
+      <p>Normal API tests pass. CodeQL identifies a caller-controlled path reaching a filesystem read.</p>
+    </aside></div>
+    <p class="slide-note">Recorded synthetic repository: pharmacy-agentic-loop-demo.</p>
+  </section>
+
+  <section class="slide" id="s-contract" data-title="The issue is a contract">
+    <span id="slide-3" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Intent / 00:04</p><h2 class="slide-title">The issue is <em>a contract.</em><br>Not just a prompt.</h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Export only the approved stock snapshot.</li>
+      <li class="frag">Reject every other filename.</li>
+      <li class="frag">Remain synthetic, dependency-free and compatible.</li>
+    </ul></div>
+    <p class="slide-note">Durable context makes scope and acceptance reviewable.</p>
+  </section>
+
+  <section class="slide" id="s-payoff" data-title="The payoff">
+    <span id="slide-4" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Payoff preview / 00:06</p><h2 class="slide-title">The fix exists.<br>Follow how it <em>earned approval.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li>Three-file diff: allowlist, literal path, regression tests.</li>
+      <li>The native alert no longer reproduces.</li>
+      <li>A person approved the exact proposal head.</li>
+    </ul></div>
+    <p class="slide-note">Recorded merged PR #2. The next decision stays accountable.</p>
+  </section>
+
+  <section class="slide" id="s-delegate" data-title="Delegate">
+    <span id="slide-5" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Delegate / 00:09</p><h2 class="slide-title">Pick a worker.<br><em>Keep the contract.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Copilot proposes through a pull request.</li>
+      <li class="frag">CodeQL and tests provide external evidence.</li>
+      <li class="frag">OpenCode proposes a bounded source-based follow-up.</li>
+    </ul></div>
+    <p class="slide-note">Recorded OpenCode integration: experimental imported engine, not a hosted partner agent.</p>
+  </section>
+
+  <section class="slide" id="s-workstreams" data-title="Asynchronous work">
+    <span id="slide-6" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Parallel work / 00:12</p><h2 class="slide-title">Three workstreams.<br><em>One control plane.</em></h2></div>
+    <div class="slide-body"><ol class="sequence">
+      <li><span class="seq-title">Implementation</span></li>
+      <li><span class="seq-title">Quality review</span></li>
+      <li><span class="seq-title">Deterministic evidence</span></li>
+    </ol></div>
+    <p class="slide-note">Workstreams are responsibilities, not a claim that every step is an AI agent.</p>
+  </section>
+
+  <section class="slide" id="s-proposal" data-title="Pull request">
+    <span id="slide-7" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Proposal / 00:15</p><h2 class="slide-title">A pull request makes<br><em>agent work inspectable.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Trace the proposal to its issue and actor.</li>
+      <li class="frag">Review a narrow diff against acceptance.</li>
+      <li class="frag">Inspect checks before any merge decision.</li>
+    </ul></div>
+    <p class="slide-note">The remediation changes three files, not workflows or release authority.</p>
+  </section>
+
+  <section class="slide" id="s-checks" data-title="The gate blocks">
+    <span id="slide-8" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Challenge / 00:22</p><h2 class="slide-title">Different checks answer<br><em>different questions.</em></h2></div>
+    <div class="slide-body"><div class="summary-grid">
+      <div class="summary-item"><span class="summary-label">Tests</span>Expected behavior works.</div>
+      <div class="summary-item"><span class="summary-label">Scope</span>No dependency was added.</div>
+      <div class="summary-item"><span class="summary-label">CodeQL</span>Untrusted input reaches a file read.</div>
+      <div class="summary-item"><span class="summary-label">Human</span>Permission to run is not merge approval.</div>
+    </div></div>
+    <p class="slide-note">A green build is necessary, not sufficient.</p>
+  </section>
+
+  <section class="slide" id="s-remediation" data-title="Remediation">
+    <span id="slide-9" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Collaborate / 00:29</p><h2 class="slide-title">Remove the authority<br>to choose <em>arbitrary files.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Accept one allowed filename.</li>
+      <li class="frag">Read one literal filesystem path.</li>
+      <li class="frag">Test accepted and rejected requests.</li>
+    </ul></div>
+    <p class="slide-note">Copilot proposes; a person reviews. Never deploy or probe the starter against real files.</p>
+  </section>
+
+  <section class="slide" id="s-proof" data-title="Deterministic evidence">
+    <span id="slide-10" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Prove / 00:36</p><h2 class="slide-title">Probabilistic work meets<br><em>external verification.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Unit, API and security checks measure behavior.</li>
+      <li class="frag">Scope and revision identify the reviewed change.</li>
+      <li class="frag">The human owner retains authority.</li>
+    </ul></div>
+    <p class="slide-note">The agent's claim of success is not the gate.</p>
+  </section>
+
+  <section class="slide" id="s-review" data-title="Human decision">
+    <span id="slide-11" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Approve / 00:40</p><h2 class="slide-title">Strong evidence makes<br><em>the decision focused.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Acceptance criteria map to tests.</li>
+      <li class="frag">Permissions and dependencies did not expand.</li>
+      <li class="frag">The export permits only stock.json.</li>
+    </ul></div>
+    <p class="slide-note">The person approves the exact head. Accountability is not automated away.</p>
+  </section>
+
+  <section class="slide" id="s-release" data-title="Release">
+    <span id="slide-12" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Release / 00:43</p><h2 class="slide-title">Release exactly<br><em>what was reviewed.</em></h2></div>
+    <div class="slide-body"><ol class="sequence">
+      <li><span class="seq-title">Bound package</span></li>
+      <li><span class="seq-title">Human approval</span></li>
+      <li><span class="seq-title">Azure OIDC</span></li>
+      <li><span class="seq-title">Runtime evidence</span></li>
+    </ol></div>
+    <p class="slide-note">Historical target: removed. Checksum is not attestation. Sandbox self-approval does not prove independent separation of duties.</p>
+  </section>
+
+  <section class="slide" id="s-maintenance" data-title="Continuous loop">
+    <span id="slide-13" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Persist / 00:48</p><h2 class="slide-title">The recommendation<br>becomes <em>eligible intake.</em></h2></div>
+    <div class="slide-body"><div class="code">
+      <p class="code-label">Missing regression assertion</p>
+      <pre><code>GET /exports/%
+400 {"error":"invalid export name"}</code></pre>
+    </div></div>
+    <p class="slide-note">Recorded source-based maintenance predates deployment. The issue alone does not prove continuation or grant approval.</p>
+  </section>
+
+  <section class="slide" id="s-continuation" data-title="Stateful continuation">
+    <span id="slide-14" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Decide / 00:51</p><h2 class="slide-title">A fresh run consumes<br><em>the prior result.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Run the verifier during the closing beat.</li>
+      <li class="frag">Original and proposal suites must pass.</li>
+      <li class="frag">Wrong-status and wrong-body mutations must fail.</li>
+    </ul></div>
+    <p class="slide-note">Read the current local verifier result. It is not GitHub Actions, approval, merge, deployment, or retained recorded evidence.</p>
+  </section>
+
+  <section class="slide" id="s-governance" data-title="Governance">
+    <span id="slide-15" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">Enterprise scale / 00:55</p><h2 class="slide-title">Govern the system,<br><em>not every prompt.</em></h2></div>
+    <div class="slide-body"><ul class="arrow-list">
+      <li class="frag">Bound access, runners, tools and networks.</li>
+      <li class="frag">Require evidence and named human authority.</li>
+      <li class="frag">Measure cost and review attention.</li>
+    </ul></div>
+    <p class="slide-note">Rulesets, policies and capability checks turn local practice into an operating model.</p>
+  </section>
+
+  <section class="slide" id="s-reveal" data-title="What changed">
+    <span id="slide-16" hidden></span>
+    <div class="slide-head"><p class="slide-eyebrow">The reveal / 00:58</p><h2 class="slide-title">Only one step<br>was <em>coding.</em></h2></div>
+    <div class="slide-body"><figure class="figure">
+      <svg viewBox="0 0 1100 340" role="img" aria-labelledby="show-loop-title show-loop-desc">
+        <title id="show-loop-title">Work returns through an accountable decision</title>
+        <desc id="show-loop-desc">Intake leads to delegation, action, verification, persistence and decision. A return edge carries prior evidence into the next intake; waiting, escalation, no-op and exit are explicit alternatives.</desc>
+        <defs><marker id="show-loop-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="var(--accent)"/></marker></defs>
+        <g fill="var(--surface-2)" stroke="var(--border-strong)">
+          <rect x="10" y="60" width="155" height="100" rx="12"/><rect x="195" y="60" width="155" height="100" rx="12"/><rect x="380" y="60" width="155" height="100" rx="12"/>
+          <rect x="565" y="60" width="155" height="100" rx="12"/><rect x="750" y="60" width="155" height="100" rx="12"/><rect x="935" y="60" width="155" height="100" rx="12"/>
+        </g>
+        <g fill="var(--text)" font-size="28" text-anchor="middle">
+          <text x="87" y="120">Intake</text><text x="272" y="120">Delegate</text><text x="457" y="120">Act</text><text x="642" y="120">Verify</text><text x="827" y="120">Persist</text><text x="1012" y="120">Decide</text>
+        </g>
+        <g fill="none" stroke="var(--accent)" stroke-width="3" marker-end="url(#show-loop-arrow)">
+          <path d="M167 110H191"/><path d="M352 110H376"/><path d="M537 110H561"/><path d="M722 110H746"/><path d="M907 110H931"/><path d="M1012 164V250H87V164"/>
+        </g>
+        <text x="550" y="230" fill="var(--accent)" font-size="26" text-anchor="middle">Return with evidence</text>
+        <text x="550" y="315" fill="var(--text-muted)" font-size="24" text-anchor="middle">Wait / Escalate / No-op / Exit</text>
+      </svg>
+    </figure></div>
+    <p class="slide-note">GitHub preserves the work, evidence and accountable next decision.</p>
+  </section>
+
+  <section class="slide slide--end" id="s-closing" data-title="Close">
+    <span id="slide-17" hidden></span>
+    <p>Verified outcomes.<br><em>Accountable next decisions.</em><br>That closes the loop.</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Loop Engineering with GitHub full-day workshop and separate Agentic Engineering Loop showcase for the organization.">
+  <title>Loop Engineering with GitHub</title>
+  <meta name="doc-id" content="workshop-hub">
+  <!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+  -->
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="assets/html-docs/article.css">
+  <link rel="stylesheet" href="assets/html-docs/slides.css">
+  <script src="assets/html-docs/article.js" defer></script>
+  <script src="assets/html-docs/slides.js" defer></script>
+  <script src="assets/materials.js" defer></script>
+</head>
+<body>
+<div class="controls" role="group" aria-label="Article controls">
+  <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+  <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+  <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+  <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+  <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+</div>
+<div class="doc">
+  <header class="doc-header" id="opening">
+    <div class="slide-content slide-content--title">
+      <p class="slide-eyebrow">Loop Engineering with GitHub</p>
+      <h2 class="slide-title">Engineer the loop.<br><em>Not only the prompt.</em></h2>
+      <p class="slide-lead">Bound work, verify outcomes, persist evidence, and assign the next decision.</p>
+    </div>
+    <p class="eyebrow">From intent to verified outcomes</p>
+    <h1>Engineer the loop, not only the prompt.</h1>
+    <p class="subtitle">Use GitHub Copilot as the primary worker and GitHub as the durable governance platform. Bound the work, verify the outcome, persist what happened, and make the next decision explicit.</p>
+  </header>
+  <nav class="doc-nav" aria-label="Workshop navigation">
+    <a href="index.html">Loop Engineering with GitHub</a>
+    <a href="#main">Skip to content</a>
+    <a href="guides/references.html">Product state</a>
+    <a href="slides/full-day.html">Open full-day deck</a>
+    <a href="slides/agentic-engineering-loop.html">Run the one-hour showcase</a>
+  </nav>
+  <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol>
+    <li><a href="#ch-lifecycle">The operating lifecycle</a></li>
+    <li><a href="#ch-experiences">Two experiences</a></li>
+    <li><a href="#ch-profiles">Portable controls</a></li>
+  </ol></nav>
+  <main id="main">
+    <section class="chapter" id="ch-lifecycle">
+      <h2 class="chapter-label">The operating lifecycle</h2>
+      <article class="card card--lead" id="card-read-back" data-open>
+        <div class="slide-content"><h2 class="slide-title">Read back before acting again.</h2><ul class="slide-points"><li class="frag">Intake carries stable identity.</li><li class="frag">Verification produces independent evidence.</li><li class="frag">Persisted state bounds the next decision.</li></ul></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">A useful loop reads back before it acts again</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+        <div class="card-body">
+          <figure class="figure">
+            <svg viewBox="0 0 960 370" width="100%" role="img" aria-labelledby="hub-loop-title hub-loop-desc">
+              <title id="hub-loop-title">Loop Engineering lifecycle</title>
+              <desc id="hub-loop-desc">Intake leads to Delegate, Act, Verify, Persist, and Decide. A return edge from Decide to Intake reads prior state before another action.</desc>
+              <defs><marker id="hub-loop-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--accent)"/></marker></defs>
+              <g fill="var(--surface)" stroke="var(--border-strong)" stroke-width="2">
+                <rect x="30" y="25" width="260" height="110" rx="10"/><rect x="350" y="25" width="260" height="110" rx="10"/><rect x="670" y="25" width="260" height="110" rx="10"/>
+                <rect x="670" y="215" width="260" height="110" rx="10"/><rect x="350" y="215" width="260" height="110" rx="10"/><rect x="30" y="215" width="260" height="110" rx="10"/>
+              </g>
+              <g fill="none" stroke="var(--accent)" stroke-width="3" marker-end="url(#hub-loop-arrow)">
+                <path d="M290 80H338"/><path d="M610 80H658"/><path d="M800 135V203"/><path d="M670 270H622"/><path d="M350 270H302"/><path d="M160 215V147"/>
+              </g>
+              <g fill="var(--text)" font-family="var(--font-sans)" font-size="25" text-anchor="middle">
+                <text x="160" y="70">Intake</text><text x="480" y="70">Delegate</text><text x="800" y="70">Act</text>
+                <text x="800" y="260">Verify</text><text x="480" y="260">Persist</text><text x="160" y="260">Decide</text>
+              </g>
+              <g fill="var(--text-muted)" font-family="var(--font-sans)" font-size="17" text-anchor="middle">
+                <text x="160" y="105">Eligible signal and stable identity</text><text x="480" y="105">Bounded worker and exact context</text><text x="800" y="105">Reviewable, reversible proposal</text>
+                <text x="800" y="290">Independent checks and</text><text x="800" y="312">human judgment</text>
+                <text x="480" y="295">State, evidence, attempts and owner</text><text x="160" y="295">Retry, wait, escalate, no-op or exit</text>
+                <text x="455" y="183">Read prior state before another action</text>
+              </g>
+            </svg>
+            <figcaption>Decide returns to Intake. Reads prior state before retry, wait, escalation, no-op, or verified exit.</figcaption>
+          </figure>
+          <p><a href="guides/loop-engineering.html">Open the compact loop guide</a>.</p>
+        </div>
+      </article>
+    </section>
+    <section class="chapter" id="ch-experiences">
+      <h2 class="chapter-label">Two experiences</h2>
+      <article class="card" id="card-choose-experience">
+        <div class="slide-content"><h2 class="slide-title">One platform story.<br><em>Two formats.</em></h2><ul class="slide-points"><li class="frag">Full day: guided depth.</li><li class="frag">One hour: the governed story.</li><li class="frag">Mission control: an explicitly separate simulation.</li></ul></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Choose an experience with the right depth</span><span class="card-sub">Full-day workshop, 60-minute showcase, or offline-safe mission control.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+        <div class="card-body">
+          <h4>One platform story, two formats.</h4>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Full day</span><h4>Loop Engineering with GitHub</h4><p>Five progressive chapters combine bounded continuation, guided work, deterministic evidence, and enterprise architecture decisions.</p><p><a href="guides/full-day.html">Open the workshop guide</a></p></div>
+            <div class="summary-item"><span class="summary-label">60 minutes</span><h4>GitHub Beyond Coding</h4><p>A historical issue-to-release story with coding agents, security controls and human approval, followed by an explicitly separate maintenance continuation.</p><p><a href="guides/agentic-engineering-loop.html">Open the audience guide</a></p></div>
+            <div class="summary-item"><span class="summary-label">Hands-on</span><h4>The five labs</h4><p>Each lab is one directory with its guide and artifacts. You work in your own station repository, and GitHub&rsquo;s own checks decide whether it worked.</p><p><a href="../student/labs/index.html">Open the labs</a></p></div>
+            <div class="summary-item"><span class="summary-label">Offline-safe</span><h4>Mission control</h4><p>A labeled reservation scenario illustrates GitHub concepts offline. It is separate from the recorded export-remediation story.</p><p><a href="../teacher/demos/agentic-engineering-loop/control-room.html">Open mission control</a></p></div>
+          </div>
+        </div>
+      </article>
+    </section>
+    <section class="chapter" id="ch-profiles">
+      <h2 class="chapter-label">Portable controls</h2>
+      <article class="card" id="card-share-contract">
+        <div class="slide-content"><h2 class="slide-title">Share the contract.<br><em>Verify the controls.</em></h2><ul class="slide-points"><li class="frag">Sandbox works without enterprise access.</li><li class="frag">Enterprise controls remain configurable.</li><li class="frag">A simulation never becomes platform evidence.</li></ul></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">One engineering contract supports two deployment profiles</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+        <div class="card-body">
+          <p>Portable by design.</p>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Sandbox profile</span><p>Runs against <code>tkubica12</code>, local station renders, and repository-level controls available today.</p></div>
+            <div class="summary-item"><span class="summary-label">Enterprise profile</span><p>Map team repositories, central policy, security, and release approvals to your organization's supported capabilities.</p></div>
+            <div class="summary-item"><span class="summary-label">Capability map</span><p>Every state is labeled live, preview, demonstration, or simulation. The fallback never masquerades as GitHub.</p></div>
+          </div>
+          <ul class="arrow-list">
+            <li><a href="guides/platform-architecture.html">Explore the architecture</a>.</li>
+            <li><a href="guides/trusted-delivery.html">Run the delivery demonstration</a>.</li>
+            <li><a href="guides/security-remediation.html">Inspect the real security remediation</a>.</li>
+            <li><a href="guides/secret-protection.html">Inspect Secret Protection</a>.</li>
+            <li><a href="guides/references.html">Review sources and availability</a>.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </main>
+  <section class="takeaway" id="closing"><p>Engineer a loop that verifies its outcome, persists its evidence, and makes the next decision explicit.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Verified outcomes.<br><em>Explicit next decisions.</em></h2></div></section>
+  <footer class="doc-footer">Synthetic pharmacy scenario. Loop references and changing product availability validated 15 September 2026.</footer>
+</div>
+</body>
+</html>

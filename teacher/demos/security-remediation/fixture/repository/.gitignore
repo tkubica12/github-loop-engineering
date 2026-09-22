@@ -1,0 +1,4 @@
+node_modules/
+release-manifest.json
+release.zip
+*.log

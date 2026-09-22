@@ -1,0 +1,27 @@
+{
+  "name": "github-loop-engineering",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/content.test.mjs tests/platform.test.mjs tests/showcase.test.mjs tests/solution-integration.test.mjs tests/trusted-delivery.test.mjs tests/delivery-demo.test.mjs tests/delivery-parity.test.mjs tests/live-chain.test.mjs tests/release-artifact.test.mjs tests/security-scene.test.mjs tests/security-release.test.mjs tests/secret-protection.test.mjs tests/screenshot-evidence.test.mjs tests/loop-state.test.mjs platform/templates/station-repository/test/inventory.test.mjs platform/templates/station-repository/test/server.test.mjs platform/templates/station-repository/test/public.test.mjs",
+    "validate": "node tests/validate-content.mjs && node platform/scripts/workshop.mjs verify --profile sandbox",
+    "validate:workflows": "gh aw validate repository-pulse showcase-signal --strict && gh aw validate --dir platform/templates/station-repository/.github/workflows --strict && gh aw compile --dir teacher/demos/security-remediation/workflows --no-emit --strict",
+    "compile:workflows": "gh aw compile repository-pulse showcase-signal --schedule-seed workshop/github-loop-engineering --validate && gh aw compile --dir platform/templates/station-repository/.github/workflows --validate && gh aw compile --dir teacher/demos/security-remediation/workflows --validate",
+    "preflight": "node platform/scripts/workshop.mjs preflight --profile sandbox",
+    "plan:station": "node platform/scripts/workshop.mjs plan --profile sandbox --station demo01",
+    "rehearse": "node teacher/demos/agentic-engineering-loop/scripts/showcase.mjs --mode rehearsal",
+    "rehearse:security": "node teacher/demos/security-remediation/scripts/rehearse.mjs",
+    "test:browser": "node tests/browser.mjs",
+    "validate:html": "node tests/html-docs.mjs",
+    "capture": "node tests/browser.mjs --capture",
+    "serve": "node tests/serve.mjs"
+  },
+  "devDependencies": {
+    "fflate": "0.8.2",
+    "playwright": "1.62.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

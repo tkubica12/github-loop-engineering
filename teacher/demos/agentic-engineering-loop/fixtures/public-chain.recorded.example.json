@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "repository": "tkubica12/pharmacy-agentic-loop-demo",
+  "issueNumber": 1,
+  "pullRequestNumber": 2,
+  "agentLogins": ["Copilot"],
+  "requiredChecks": ["test", "CodeQL"],
+  "workflows": {
+    "build": { "runId": 33986708338, "path": ".github/workflows/release.yml" },
+    "release": { "runId": 33986708338, "path": ".github/workflows/release.yml" }
+  },
+  "artifact": {
+    "name": "release-33986708338",
+    "run": "release",
+    "releaseManifest": true,
+    "maxBytes": 5242880
+  },
+  "health": {
+    "url": "https://pharmacy-reviewed-20260905-tk12.azurewebsites.net/health",
+    "allowedOrigins": ["https://pharmacy-reviewed-20260905-tk12.azurewebsites.net"],
+    "path": "/health",
+    "service": "synthetic-pharmacy"
+  },
+  "maintenance": { "issueNumbers": [3] },
+  "controls": {
+    "requireReviewEnforcement": false,
+    "requireEnvironmentGate": true,
+    "environmentName": "test"
+  }
+}

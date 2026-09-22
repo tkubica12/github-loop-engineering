@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "loopId": "pharmacy-bounded-maintenance",
+  "contractVersion": 1,
+  "objective": "Consume verified feedback for one synthetic pharmacy task and leave a reviewable outcome or an accountable next decision.",
+  "nonGoals": [
+    "Autonomous approval, merge, deployment, policy changes or credential access",
+    "Production telemetry or clinical decisions",
+    "A general-purpose multi-agent runtime"
+  ],
+  "intake": {
+    "trigger": "Explicit manual invocation; scheduled maintainer reporting remains a separate workflow.",
+    "identityFields": ["profile", "station", "repository", "objectiveId"],
+    "revisionRule": "Bind evidence to the application revision; a workflow-only revision does not create new work.",
+    "eligibleTask": "One owned maintenance recommendation or exact failed-check receipt."
+  },
+  "scope": {
+    "read": ["contract", "prior work state", "exact-revision source", "trusted verifier receipts"],
+    "write": ["task-authorized proposal files", "owned state and evidence receipts"],
+    "forbidden": ["approve", "merge", "deploy", "change permissions", "read credentials", "edit trusted verification"]
+  },
+  "roles": {
+    "worker": "GitHub Copilot is the primary worker; optional harnesses retain their own capability boundaries.",
+    "verifier": "Deterministic checks run outside the worker's authorized edit scope.",
+    "owner": "Workshop maintainer or configured station owner",
+    "releaseOwner": "Explicit human release authority, separate from this loop"
+  },
+  "verification": {
+    "required": ["identity", "evidence validity", "full process exit status", "authorized file scope"],
+    "human": ["product suitability", "proposal review", "release approval"],
+    "failureRule": "Only specific trusted task failure authorizes repair; missing evidence and setup failures are blocked, not no-op."
+  },
+  "persistence": {
+    "local": "Owned station-local JSON state with explicit profile and work identity",
+    "github": "An owned, marked issue or comment; no implicit downstream workflow trigger",
+    "rules": [
+      "Persist attempt reservation before worker execution.",
+      "Read previous state in every fresh invocation.",
+      "Reconcile publication references before retrying interrupted work.",
+      "Reject mismatched identity or unsupported versions.",
+      "Reset only explicitly owned task state; retain unrelated learner work."
+    ]
+  },
+  "limits": {
+    "maxAttempts": 2,
+    "workerTimeoutMinutes": 8,
+    "presenterWaitSeconds": 30,
+    "escalationAfterHours": 24,
+    "inferencePolicy": "Existing workflow-specific worker and detector credit caps remain separate; local replay spends no inference."
+  },
+  "decisions": ["delegate", "retry", "report", "no-op", "waiting-human", "blocked", "escalated", "stopped"],
+  "enforcement": {
+    "controller": "Identity, evidence, attempt accounting and next-decision validation",
+    "adapter": "Owned persistence, configured serialization and side-effect reconciliation",
+    "github": "Least-privilege tools, safe outputs, deterministic checks and explicit human controls",
+    "sandboxLimitation": "Local JSON and human approval fixtures model decisions; they are not live GitHub controls or a security sandbox."
+  }
+}

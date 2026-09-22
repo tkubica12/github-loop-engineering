@@ -1,0 +1,22 @@
+{
+  "id": "sandbox",
+  "label": "tkubica12 public GitHub sandbox",
+  "githubHost": "github.com",
+  "owner": "tkubica12",
+  "authoringRepository": "github-loop-engineering",
+  "repositoryPrefix": "workshop-lab",
+  "visibility": "private",
+  "stationMode": "local-or-per-team",
+  "allowRemoteProvision": true,
+  "allowRemoteDelete": false,
+  "capabilities": {
+    "agenticWorkflows": "preview-check",
+    "copilotCloudAgent": "account-check",
+    "thirdPartyCodingAgents": "account-check",
+    "organizationRulesets": "demonstration",
+    "enterprisePolicies": "simulation",
+    "codeSecurity": "public-repository-or-license",
+    "secretProtection": "public-repository-or-license",
+    "environments": "repository-check"
+  }
+}

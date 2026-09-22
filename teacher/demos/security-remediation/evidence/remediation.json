@@ -1,0 +1,121 @@
+{
+  "kind": "live-codeql-remediation-capture",
+  "capturedAt": "2026-09-05T18:46:16.777Z",
+  "repository": "tkubica12/pharmacy-agentic-loop-demo",
+  "issue": {
+    "number": 1,
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/issues/1"
+  },
+  "baseline": {
+    "kind": "workflow-published-codeql-observation",
+    "repository": "tkubica12/pharmacy-agentic-loop-demo",
+    "commit": "8128c76707a3aa91cf4880ca0f72daf337e2d7ea",
+    "analysisId": 1729751492,
+    "workflowRun": {
+      "id": 33979615194,
+      "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979615194"
+    },
+    "origin": {
+      "kind": "authenticated-codeql-workflow-report",
+      "issue": 1,
+      "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/issues/1",
+      "createdAt": "2026-09-05T17:01:43Z"
+    },
+    "openAlerts": [
+      {
+        "number": 1,
+        "rule": "js/path-injection",
+        "path": "src/server.mjs",
+        "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/security/code-scanning/1"
+      }
+    ],
+    "applicationDeployed": false,
+    "independentHumanApproval": false
+  },
+  "pullRequest": {
+    "number": 2,
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/pull/2",
+    "author": "Copilot",
+    "head": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+    "merge": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+    "mergedAt": "2026-09-05T18:10:34Z",
+    "files": [
+      "README.md",
+      "src/server.mjs",
+      "test/server.test.mjs"
+    ]
+  },
+  "humanReview": {
+    "id": 5122408217,
+    "login": "tkubica12",
+    "state": "APPROVED",
+    "commit": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+    "submittedAt": "2026-09-05T18:10:00Z"
+  },
+  "quality": {
+    "conclusion": "success",
+    "databaseId": 33979846786,
+    "headSha": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+    "status": "completed",
+    "updatedAt": "2026-09-05T18:06:26Z",
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979846786"
+  },
+  "prCodeql": {
+    "conclusion": "success",
+    "databaseId": 33979846782,
+    "headSha": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+    "status": "completed",
+    "updatedAt": "2026-09-05T18:07:10Z",
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979846782"
+  },
+  "executions": [
+    {
+      "id": 33979846786,
+      "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979846786",
+      "commit": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+      "actor": "Copilot",
+      "triggeringActor": "tkubica12",
+      "triggeringActorType": "User",
+      "attempt": 2,
+      "startedAt": "2026-09-05T18:06:15Z",
+      "conclusion": "success"
+    },
+    {
+      "id": 33979846782,
+      "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33979846782",
+      "commit": "2d84da4ce6cb30f846032e3d497c36b477eaf6c2",
+      "actor": "Copilot",
+      "triggeringActor": "tkubica12",
+      "triggeringActorType": "User",
+      "attempt": 2,
+      "startedAt": "2026-09-05T18:06:15Z",
+      "conclusion": "success"
+    }
+  ],
+  "currentMainAtCapture": "e3ca13bc6c9a0c0c83536acf601e396dbc3e099c",
+  "codeqlRun": {
+    "conclusion": "success",
+    "databaseId": 33983231482,
+    "headSha": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+    "status": "completed",
+    "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/actions/runs/33983231482"
+  },
+  "analysis": {
+    "id": 1729884031,
+    "commit": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+    "tool": "CodeQL",
+    "results": 0,
+    "category": "javascript-security"
+  },
+  "alerts": [
+    {
+      "number": 1,
+      "rule": "js/path-injection",
+      "url": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/security/code-scanning/1",
+      "state": "fixed",
+      "fixedAt": "2026-09-05T18:11:22Z"
+    }
+  ],
+  "deploymentClaimed": false,
+  "enforcedBranchProtectionClaimed": false
+}
