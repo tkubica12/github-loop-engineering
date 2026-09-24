@@ -10,6 +10,7 @@
     "compile:workflows": "gh aw compile repository-pulse showcase-signal --schedule-seed workshop/github-loop-engineering --validate && gh aw compile --dir platform/templates/station-repository/.github/workflows --validate && gh aw compile --dir teacher/demos/security-remediation/workflows --validate",
     "preflight": "node platform/scripts/workshop.mjs preflight --profile sandbox",
     "plan:station": "node platform/scripts/workshop.mjs plan --profile sandbox --station demo01",
+    "seed:station": "node platform/scripts/workshop.mjs seed --profile sandbox --station demo01",
     "rehearse": "node teacher/demos/agentic-engineering-loop/scripts/showcase.mjs --mode rehearsal",
     "rehearse:security": "node teacher/demos/security-remediation/scripts/rehearse.mjs",
     "test:browser": "node tests/browser.mjs",

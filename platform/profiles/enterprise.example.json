@@ -8,6 +8,7 @@
   "visibility": "internal",
   "stationMode": "per-team",
   "allowRemoteProvision": false,
+  "allowRemoteSeed": true,
   "allowRemoteDelete": false,
   "teams": {
     "platform": "workshop-platform",

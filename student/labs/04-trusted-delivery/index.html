@@ -302,11 +302,18 @@ jobs:
           <div class="slide-content"><h2 class="slide-title">Recover without weakening controls.</h2><ul class="slide-points"><li class="frag">Use the reference workflow.</li><li class="frag">Check whether the workflow merged.</li><li class="frag">Label recorded evidence honestly.</li></ul></div>
           <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Troubleshooting, reset and cleanup</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
           <div class="card-body"><span id="recover"></span>
+          <h4 id="blockers">Common blockers</h4>
+          <table aria-label="Lab 4 common blockers">
+            <thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr></thead>
+            <tbody>
+              <tr><td>The title workflow is red.</td><td>The GitHub expression is read inside <code>run</code>, <code>env</code> is missing, or <code>"$PR_TITLE"</code> lost its quotes.</td><td>Compare your file with <a href="artifacts/title-check.reference.yml">the reference workflow</a> and push the fix to the same branch.</td></tr>
+              <tr><td>The proof pull request does not run the title check.</td><td>The hardening pull request has not merged yet.</td><td>Merge the hardening pull request first. Pull-request workflows are evaluated from the default branch for this proof path.</td></tr>
+              <tr><td>CodeQL cannot upload results.</td><td>The job lacks <code>security-events: write</code>, or the repository or license does not allow code scanning.</td><td>Add the job-level permission. If code scanning is unavailable, use the recorded evidence and label it as recorded.</td></tr>
+              <tr><td>The Security tab shows no alert.</td><td>Extraction did not complete, or the scan found nothing on this revision.</td><td>Open the CodeQL run logs and verify extraction. A zero-alert scan is still evidence; use the recorded finding for the security discussion.</td></tr>
+            </tbody>
+          </table>
+          <h4 id="reset">Reset and cleanup</h4>
           <dl>
-            <dt>The title workflow is red</dt><dd>Compare your file with <a href="artifacts/title-check.reference.yml">the reference workflow</a>. The usual errors are reading the GitHub expression inside <code>run</code>, missing <code>env</code>, or forgetting quotes around <code>"$PR_TITLE"</code>.</dd>
-            <dt>The proof pull request does not run the title check</dt><dd>Confirm the hardening pull request was merged first. Pull-request workflows are evaluated from the default branch for this proof path.</dd>
-            <dt>CodeQL cannot upload results</dt><dd>Check that the job-level permissions include <code>security-events: write</code>. If the repository or license does not allow code scanning, use the recorded evidence and label it honestly.</dd>
-            <dt>Security tab shows no alert</dt><dd>Open the CodeQL run logs and verify extraction completed. A zero-alert scan is still evidence, but it is not the path-injection finding. Use the recorded finding for the security discussion.</dd>
             <dt>You need to reset</dt><dd>Close the proof pull request, delete lab branches, and leave the merged hardening and CodeQL workflow only if your facilitator wants the station to retain them.</dd>
           </dl>
           </div></article>

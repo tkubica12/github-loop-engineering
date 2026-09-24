@@ -8,6 +8,7 @@
   "visibility": "private",
   "stationMode": "local-or-per-team",
   "allowRemoteProvision": true,
+  "allowRemoteSeed": true,
   "allowRemoteDelete": false,
   "capabilities": {
     "agenticWorkflows": "preview-check",

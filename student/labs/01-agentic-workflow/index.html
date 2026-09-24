@@ -248,6 +248,19 @@ git switch -c narrow-repository-pulse</code></pre></div>
           <div class="slide-content"><h2 class="slide-title">Recovery is planned.</h2><ul class="slide-points"><li class="frag">The reference contract resets the edits.</li><li class="frag">Steps 1 to 3 are the graded path.</li></ul></div>
           <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">If you fall behind or get stuck</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
           <div class="card-body"><span id="recover"></span>
+          <h4 id="blockers">Common blockers</h4>
+          <table aria-label="Lab 1 common blockers">
+            <thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Workflow contract</strong> is red and names a toolset or permission.</td><td>The toolset is still wider than the permission grant.</td><td>Set <code>toolsets: [repos, issues]</code> and confirm <code>pull-requests: read</code> and <code>actions: read</code> are gone. Push to the same branch.</td></tr>
+              <tr><td><strong>Workflow contract</strong> is red with a YAML or frontmatter error.</td><td>An indentation slip, or an edit placed below the closing <code>---</code>.</td><td>Compare the frontmatter indentation with the lines around it. Keys belong above the closing <code>---</code>; the instruction text belongs below it.</td></tr>
+              <tr><td>No <strong>Workflow contract</strong> check appears on the pull request.</td><td>The pull request targets another branch, or Actions are disabled on the station.</td><td>Retarget the pull request to the default branch. If Actions are disabled, tell the facilitator.</td></tr>
+              <tr><td>Your push is rejected.</td><td>You committed on the protected default branch.</td><td>Create <code>narrow-repository-pulse</code>, redo the edits there, and push that branch.</td></tr>
+              <tr><td><strong>Run workflow</strong> is missing in Actions.</td><td>The pull request is not merged yet, or the preview engine is not enabled for your station.</td><td>Merge the green pull request first. If the button is still missing, use the recorded run described below.</td></tr>
+              <tr><td>The run stops at threat detection.</td><td>The detector rejected the output, which is the intended stop.</td><td>Read the detector log and keep <code>continue-on-error: false</code>. Do not raise budgets or weaken the detector to get a green run.</td></tr>
+            </tbody>
+          </table>
+          <h4 id="reset">Catch up or reset</h4>
           <dl>
             <dt>You ran out of time on the edits</dt><dd>Copy <a href="artifacts/repository-pulse.reference.md">the reference contract</a> over your file, commit, and continue from Step 3. You still see the check, the review and the run.</dd>
             <dt>The preview engine is not enabled for your station</dt><dd>Steps 1 to 3 still complete and are the graded part of this lab. For Step 4, read the recorded run output in the <a href="../../../docs/guides/full-day.html">full-day guide</a> and answer the same three questions against it. Say out loud that you are reading a recording, not your own run.</dd>

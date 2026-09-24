@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "labels": [
+    { "name": "backlog", "color": "c5def5", "description": "Planned work outside the current iteration" },
+    { "name": "workshop-seed", "color": "ededed", "description": "Synthetic backlog item created by the workshop seed" }
+  ],
+  "issues": [
+    {
+      "id": "low-stock-alert",
+      "title": "[Backlog] Alert when stock falls below a threshold",
+      "labels": ["backlog", "workshop-seed"],
+      "body": "Planned for a later iteration.\n\nStores want a warning before a synthetic medicine reaches zero stock. The threshold and the notification channel are not decided yet.\n\nSynthetic workshop backlog item. Do not implement in Lab 2."
+    },
+    {
+      "id": "reservation-expiry",
+      "title": "[Backlog] Expire unconfirmed reservations after 30 minutes",
+      "labels": ["backlog", "workshop-seed"],
+      "body": "Planned for a later iteration.\n\nUnconfirmed reservations currently hold stock indefinitely. Expiry needs a clock and a release rule, which the service does not have yet.\n\nSynthetic workshop backlog item. Do not implement in Lab 2."
+    },
+    {
+      "id": "dashboard-dark-mode",
+      "title": "[Backlog] Dark mode for the stock dashboard",
+      "labels": ["backlog", "workshop-seed"],
+      "body": "Planned for a later iteration.\n\nNight-shift staff report that the stock dashboard is too bright. The dashboard should follow the operating system color scheme.\n\nSynthetic workshop backlog item. Do not implement in Lab 2."
+    },
+    {
+      "id": "audit-csv-export",
+      "title": "[Backlog] Export the reservation audit log as CSV",
+      "labels": ["backlog", "workshop-seed"],
+      "body": "Planned for next quarter.\n\nThe regional office needs reservations as a spreadsheet for the quarterly audit. The service does not store an audit log yet.\n\nSynthetic workshop backlog item. Do not implement in Lab 2."
+    },
+    {
+      "id": "stock-freshness",
+      "title": "[Backlog] Show when stock was last updated",
+      "labels": ["backlog", "workshop-seed"],
+      "body": "Planned for a later iteration.\n\nStaff cannot tell how current the stock figures are. The dashboard should show the time of the last stock update.\n\nSynthetic workshop backlog item. Do not implement in Lab 2."
+    }
+  ]
+}

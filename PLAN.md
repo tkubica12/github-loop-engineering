@@ -103,9 +103,9 @@ Keep four durable artifacts visible all day: issue, pull request, workflow run, 
 
 ### Chapter 2: From intent to a verified handoff - 10:35 to 11:35
 
-- **Outcome:** A business request becomes a structured issue, lightweight specification, bounded implementation proposal, and reviewable pull request.
+- **Outcome:** Noisy organizational context becomes a confirmed need, then a structured issue, lightweight specification, bounded implementation proposal, and reviewable pull request.
 - **Demonstrate:** Issue intake, Project context, specification, architecture decision, Copilot-assisted plan, linked pull request, tests, and review.
-- **Lab:** `student\labs\02-intent-to-pr\index.html` turns a stock suggestion requirement into a merged change judged by deterministic acceptance checks.
+- **Lab:** `student\labs\02-intent-to-pr\index.html` starts with seven minutes of coached intake: a read-only `requirement-refiner` custom agent asks questions about the synthetic team chat thread, ticket digest, and stakeholder email in the station `context\intake\` folder, and drafts a requirement only after the attendee confirms it. The attendee compares the draft with the product-owner requirement, then turns that requirement into a merged change judged by deterministic acceptance checks. The station also carries path-scoped `.github\instructions\` files and a seeded synthetic backlog that supplies realistic duplicates (ADR 0011).
 - **Connect:** Pull requests are the common control point for human- and agent-authored work; a proposal remains untrusted until scope, diff, tests, and review are clear.
 
 ### Chapter 3: GitHub Enterprise operating model - 11:35 to 12:30
@@ -148,6 +148,8 @@ Current lab index: `student\labs\index.html`. Current labs: `01-agentic-workflow
 Complete before delivery:
 
 - prepare station repositories with the pharmacy service, tests, workflows, CODEOWNERS, issues, Project view, and lab artifacts;
+- seed each station's synthetic backlog with `workshop.mjs seed`, dry run first and `--apply` second; the command creates only missing items and never edits or deletes;
+- confirm the `requirement-refiner` custom agent is visible in Copilot CLI and VS Code for one station, and probe that it asks rather than answers;
 - confirm every participant can sign in, open the assigned station repository, and create a branch;
 - confirm default branch protection or rulesets, required checks, required review, Actions availability, and runner capacity;
 - identify which stations can use Agentic Workflows public preview, Copilot coding agent, code scanning, Secret Protection, environments, and deployment records;
@@ -155,7 +157,7 @@ Complete before delivery:
 - restore instructor dependencies from approved feeds and run repository validation;
 - keep a clean instructor station repository for live fallback.
 
-The Copilot coding agent requires the appropriate entitlement and repository policy. GitHub Agentic Workflows are public preview. Enterprise station provisioning is represented by configuration contracts and preparation guidance; automated enterprise organization rollout is not implemented here.
+The Copilot coding agent requires the appropriate entitlement and repository policy. GitHub Agentic Workflows are public preview. Enterprise station provisioning is represented by configuration contracts and preparation guidance; automated enterprise organization rollout is not implemented here. Sandbox automation creates one station repository at a time and does not configure protection, Projects, or access; the operator guide's pre-event checklist lists those manual steps.
 
 ## 8. Demonstration reliability and fallbacks
 

@@ -15,6 +15,7 @@ import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { assertCompilerStamp, compilerProbeVersion, expectedCompilerVersion } from "./workflow-version.mjs";
+import { issueBody, loadBacklog, missingLabels, planSeed } from "./backlog.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const args = process.argv.slice(2);
@@ -149,6 +150,7 @@ function printPlan(profile, station) {
     stationMode: profile.stationMode,
     localOutput: relative(root, outputPath(profile, station)),
     remoteProvisionAllowed: profile.allowRemoteProvision,
+    remoteSeedAllowed: profile.allowRemoteSeed ?? profile.allowRemoteProvision,
     remoteDeleteAllowed: profile.allowRemoteDelete,
     capabilities: profile.capabilities
   }, null, 2));
@@ -179,10 +181,85 @@ function help() {
   plan      --profile sandbox --station demo01
   render    --profile sandbox --station demo01
   provision --profile sandbox --station demo01 [--apply]
+  seed      --profile sandbox --station demo01 [--repository OWNER/REPO] [--offline] [--apply]
   verify    --profile sandbox [--station demo01]
   cleanup   --profile sandbox --station demo01 [--apply]
 
-Remote provision and cleanup are plan-only unless --apply is explicit.`);
+Remote provision, seed, and cleanup are plan-only unless --apply is explicit.
+Seed creates only missing synthetic backlog issues; it never edits or deletes issues.`);
+}
+
+function seed(profile, station) {
+  const repository = option("repository", `${profile.owner}/${stationName(profile, station)}`);
+  if (!/^[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9._-]+$/.test(repository)) {
+    throw new Error(`Repository '${repository}' must use OWNER/REPO syntax.`);
+  }
+  const backlog = loadBacklog(join(root, "platform", "templates", "station-backlog.json"));
+  const apply = hasFlag("apply");
+  if (apply && hasFlag("offline")) {
+    throw new Error("Seed cannot apply offline; the existing issues must be read first.");
+  }
+  if (apply && !(profile.allowRemoteSeed ?? profile.allowRemoteProvision)) {
+    throw new Error(`Remote seeding is disabled by profile '${profile.id}'.`);
+  }
+  const [targetOwner, targetName] = repository.split("/");
+  if (apply && (targetOwner !== profile.owner || targetName !== stationName(profile, station))) {
+    throw new Error(`Seed applies only to ${profile.owner}/${stationName(profile, station)}, the requested station repository.`);
+  }
+  let existing = null;
+  let labels = null;
+  if (!hasFlag("offline")) {
+    const issues = run("gh", ["issue", "list", "--repo", repository, "--state", "all", "--limit", "1000",
+      "--json", "number,title,body"], false);
+    existing = issues === null ? null : JSON.parse(issues);
+    const labelList = run("gh", ["label", "list", "--repo", repository, "--limit", "1000", "--json", "name"], false);
+    labels = labelList === null ? null : JSON.parse(labelList).map((label) => label.name);
+  }
+  console.log(`Seed target: ${profile.githubHost}/${repository} (${backlog.issues.length} synthetic backlog issues)`);
+  if (existing === null) {
+    console.log(hasFlag("offline")
+      ? "OFFLINE existing issues not read; every item is unverified."
+      : "UNKNOWN existing issues could not be read; check gh auth status and repository access.");
+  }
+  const actions = planSeed(backlog, existing);
+  for (const action of actions) {
+    if (action.action === "skip") console.log(`SKIP   #${action.number} ${action.title} (${action.reason})`);
+    else if (action.action === "create") console.log(`CREATE ${action.title}`);
+    else console.log(`UNVERIFIED ${action.title}`);
+  }
+  const labelsToCreate = labels === null ? backlog.labels : missingLabels(backlog, labels);
+  for (const label of labelsToCreate) console.log(`${labels === null ? "UNVERIFIED" : "CREATE"} label ${label.name}`);
+  if (!apply) {
+    console.log("DRY RUN: add --apply to create missing labels and issues. Existing issues are never edited or deleted.");
+    return;
+  }
+  if (existing === null || labels === null) {
+    throw new Error(`Cannot apply: repository state for ${repository} is unknown.`);
+  }
+  const markerFile = run("gh", ["api", `repos/${repository}/contents/.workshop-station.json`, "--jq", ".content"], false);
+  let marker = null;
+  try {
+    marker = markerFile === null ? null : JSON.parse(Buffer.from(markerFile, "base64").toString("utf8"));
+  } catch {
+    marker = null;
+  }
+  if (marker?.owner !== "github-loop-engineering/station" || marker.profile !== profile.id || marker.station !== station) {
+    throw new Error(`Refusing seed: ${repository} has no matching .workshop-station.json ownership marker.`);
+  }
+  for (const label of labelsToCreate) {
+    run("gh", ["label", "create", label.name, "--repo", repository, "--color", label.color,
+      "--description", label.description ?? ""]);
+    console.log(`CREATED label ${label.name}`);
+  }
+  let created = 0;
+  for (const action of actions.filter((item) => item.action === "create")) {
+    const issue = backlog.issues.find((item) => item.id === action.id);
+    const url = run("gh", ["issue", "create", "--repo", repository, "--title", issue.title, "--body", issueBody(issue),
+      ...(issue.labels ?? []).flatMap((label) => ["--label", label])]);
+    console.log(`CREATED ${url}`);
+    created += 1;
+  }
+  console.log(`PASS seed ${repository}: ${created} created, ${actions.length - created} already present.`);
 }
 
 try {
@@ -294,6 +371,8 @@ try {
       run("gh", ["repo", "create", repository, `--${profile.visibility}`, "--source", destination, "--remote", "origin", "--push"]);
       console.log(`Created https://${profile.githubHost}/${repository}`);
     }
+  } else if (command === "seed") {
+    seed(profile, station);
   } else if (command === "cleanup") {
     const destination = outputPath(profile, station);
     console.log(`Local cleanup target: ${relative(root, destination)}`);

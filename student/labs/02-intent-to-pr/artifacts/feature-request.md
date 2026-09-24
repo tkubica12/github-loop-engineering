@@ -24,8 +24,8 @@ CONSTRAINTS
 - Prefer the smallest reviewable change.
 - Authorized proposal files: src/inventory.mjs and optional new
   test/suggestion.test.mjs. Keep the server, workflows, dependencies and all
-  existing required tests unchanged. Run the author-checkout lab verifier;
-  a green summary printed by the worker is not acceptance evidence.
+  existing required tests unchanged. Acceptance evidence is the green
+  GitHub Actions check on the pull request, not a summary printed by the worker.
 
 RISK
 Medium - API response behavior

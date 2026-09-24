@@ -31,19 +31,12 @@ Keep the server, workflows, dependencies, existing tests and
 `test/suggestion.acceptance.test.mjs` unchanged. The original HTTP feature remains
 part of acceptance; test-only changes cannot satisfy it.
 
-The author-checkout runner hashes the station against a setup baseline outside
-the proposal directory, checks required test bytes, and executes trusted
-unit/HTTP tests against a fresh copy of the proposed inventory implementation.
-Both complete test processes must succeed, including learner regression tests.
-Skipped, todo and cancelled learner tests block verification and remove any
-previous handoff, even when the test process exits successfully. Run `npm test`
-from the station directory for the portable direct-test command.
-The checker also compares execution-tree and proposal digests before and after
-the processes; any changed test, source or extra output blocks the handoff.
-A successful verification persists a revision-bound `lab02-handoff.json` receipt
-under `.workshop/lab-verification/` for the capstone.
+Acceptance evidence is the green GitHub Actions **Test service** check on the pull request,
+which runs `npm test` from a fresh checkout of the proposed head. Run `npm test`
+from the station directory for the same direct-test command locally. The check
+does not detect skipped, todo or cancelled tests, so reviewers reject them in
+the diff. A green summary printed by the worker never replaces the check.
 
-Do not edit the author-checkout verifier, its baseline or receipts. This is an
-enforced file-scope check within the local exercise, not OS isolation: a malicious
-process with the same filesystem permissions could tamper with the checker.
-Real deployments need a separately trusted CI checkout and protected controls.
+The merged revision is the handoff that the capstone consumes. Human review
+confirms that the diff stays within the authorized files; the check alone does
+not prove scope.

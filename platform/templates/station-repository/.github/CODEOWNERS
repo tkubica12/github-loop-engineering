@@ -3,3 +3,4 @@
 /src/ {{CODEOWNER}}
 /AGENTS.md {{CODEOWNER}}
 /CLAUDE.md {{CODEOWNER}}
+/context/ {{CODEOWNER}}

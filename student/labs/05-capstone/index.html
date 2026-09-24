@@ -307,13 +307,17 @@ gh pr view &lt;number&gt; --json number,title,headRefOid,mergeCommit,reviews,sta
           <div class="slide-content"><h2 class="slide-title">Troubleshoot the claim.</h2><ul class="slide-points"><li class="frag">Find the SHA first.</li><li class="frag">Then interpret the signal.</li><li class="frag">When unsure, escalate.</li></ul></div>
           <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Troubleshooting symptoms</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
           <div class="card-body"><span id="troubleshooting"></span>
-          <dl>
-            <dt>A check is green but has no obvious SHA</dt><dd>Open the workflow run details. GitHub records the event, branch, actor, and commit near the run summary.</dd>
-            <dt>A review predates the latest commit</dt><dd>Record the approval as stale unless repository policy dismissed stale approvals or a later approval exists.</dd>
-            <dt>CODEOWNERS does not cover the changed file</dt><dd>Record a governance defect. The correct decision may be escalate to the repository owner.</dd>
-            <dt>An agent comment says the feature is ready</dt><dd>Treat it as advisory. Only deterministic checks, review records, and named owners can support the decision.</dd>
-            <dt>Your table disagrees</dt><dd>Write both interpretations in the defects section and escalate to the named release owner.</dd>
-          </dl>
+          <h4 id="troubleshooting-blockers">Common blockers</h4>
+          <table aria-label="Lab 5 common blockers">
+            <thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr></thead>
+            <tbody>
+              <tr><td>A check is green but shows no obvious SHA.</td><td>The commit is recorded on the workflow run, not on the check summary.</td><td>Open the workflow run details. GitHub records the event, branch, actor, and commit near the run summary.</td></tr>
+              <tr><td>A review predates the latest commit.</td><td>Commits were pushed after the approval.</td><td>Record the approval as stale unless repository policy dismissed stale approvals or a later approval exists.</td></tr>
+              <tr><td>CODEOWNERS does not cover the changed file.</td><td>The ownership map has a gap for that path.</td><td>Record a governance defect. The correct decision may be escalate to the repository owner.</td></tr>
+              <tr><td>An agent comment says the feature is ready.</td><td>Reasoning output is being read as evidence.</td><td>Treat it as advisory. Only deterministic checks, review records, and named owners can support the decision.</td></tr>
+              <tr><td>Your table disagrees about the decision.</td><td>The evidence supports more than one reading.</td><td>Write both interpretations in the defects section and escalate to the named release owner.</td></tr>
+            </tbody>
+          </table>
           </div></article>
 
         <article class="card" id="card-extensions">

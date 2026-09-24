@@ -172,6 +172,7 @@ SOFTWARE.
           <h4>You need</h4>
           <dl>
             <dt>Required</dt><dd>Your GitHub account, the station repository URL, write access to that repository, and a modern browser.</dd>
+            <dt>Recommended for Lab 2</dt><dd>Copilot CLI or VS Code with Copilot, signed in, with your station cloned on the default branch. Lab 2 opens with a coaching agent that runs there; without it you pair with a partner.</dd>
             <dt>Optional</dt><dd>A local clone, Git, GitHub CLI, and a coding harness. Each lab gives a web-first path and states when command-line equivalents are useful.</dd>
             <dt>Capability dependent</dt><dd>GitHub Agentic Workflows, Copilot coding agent, GitHub Advanced Security views, and environment approvals may depend on preview state, licensing, or repository policy. Each lab labels those moments and provides a fallback.</dd>
           </dl>
@@ -226,10 +227,11 @@ SOFTWARE.
       <section class="chapter" id="ch-handoff"><h2 class="chapter-label">Verified handoff</h2>
         <article class="card" id="card-intent-handoff">
           <div class="slide-content"><h2 class="slide-title">Intent must become acceptance.</h2><ul class="slide-points"><li class="frag">Issues capture business meaning.</li><li class="frag">Specifications remove guesswork.</li><li class="frag">Tests judge the proposal.</li></ul></div>
-          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 2 turns a business request into a verified change</span><span class="card-sub">10:35-11:35 &middot; Structured issue, bounded delegation, green checks.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Chapter 2 turns a business request into a verified change</span><span class="card-sub">10:35-11:35 &middot; Coached intake, structured issue, bounded delegation, green checks.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
           <div class="card-body"><span id="lab-2"></span>
           <p>The pharmacy scenario asks for a safe stock suggestion when the requested medicine is unavailable. The requirement is deliberately small, but the engineering pattern is broad: write observable acceptance before any worker changes code.</p>
-          <p>The lab turns the request into a structured issue, a lightweight specification, a bounded proposed implementation, and a pull request that must satisfy deterministic acceptance and regression checks. A suggestion remains a suggestion: it reserves nothing until a person chooses the alternative.</p>
+          <p>The lab starts before the requirement exists. A synthetic team chat thread, ticket digest, and stakeholder email agree on one need but also carry backlog duplicates, unrelated complaints, and a conflicting proposal. A read-only coaching agent asks questions and drafts nothing until the attendee confirms the need in their own words. The attendee then compares that draft with the requirement the product owner confirmed.</p>
+          <p>The lab then turns the request into a structured issue, a lightweight specification, a bounded proposed implementation, and a pull request that must satisfy deterministic acceptance and regression checks. A suggestion remains a suggestion: it reserves nothing until a person chooses the alternative.</p>
           <p><a href="../../student/labs/02-intent-to-pr/index.html">Open Lab 2</a></p>
           </div></article>
         <article class="card" id="card-untrusted-proposal">

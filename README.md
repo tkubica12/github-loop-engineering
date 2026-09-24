@@ -44,6 +44,15 @@ Screenshots live in `docs/assets/screenshots/`; they are local captures, not Git
 node platform/scripts/workshop.mjs plan --profile sandbox --station demo01
 ```
 
+Seed each created station with the synthetic backlog that Lab 2 treats as noise. The default is a dry run that reads existing issues; `--apply` creates only missing labels and issues and never edits or deletes anything:
+
+```powershell
+npm run seed:station
+node platform/scripts/workshop.mjs seed --profile sandbox --station demo01 --apply
+```
+
+The facilitator pre-event checklist is in the [full-day operator guide](teacher/demos/full-day/operator-guide.html#pre-event-checklist).
+
 The `sandbox` profile needs no enterprise organization. `platform/profiles/enterprise.example.json` is the configuration contract for a future dedicated organization; its provisioning stays disabled until that organization exists.
 
 ## Contributing

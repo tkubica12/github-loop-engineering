@@ -24,7 +24,7 @@ By the end of the day, participants will understand how GitHub Enterprise can:
 | 09:00-09:30 | **Executive platform briefing** | The complete Loop Engineering picture: prompt, context, harness and loop; the compact operating contract; GitHub as system of record; Copilot as primary worker; deterministic controls; enterprise governance; and a pragmatic Azure DevOps transition. |
 | 09:30-10:20 | **1. Bounded continuous AI with GitHub Agentic Workflows** | Intake, safe delegation, explicit outputs and next decisions for issue triage, documentation, CI investigation, reporting and remediation, using the Copilot coding engine within GitHub Actions guardrails. |
 | 10:20-10:35 | **Break** |  |
-| 10:35-11:35 | **2. From intent to a verified handoff** | GitHub Issues and Projects, lightweight specifications, architecture decisions, repository context, GitHub Copilot, trusted acceptance checks and a durable handoff. |
+| 10:35-11:35 | **2. From intent to a verified handoff** | Coached intake from synthetic organizational context with a custom agent, GitHub Issues and Projects, lightweight specifications, architecture decisions, repository context, GitHub Copilot, trusted acceptance checks and a durable handoff. |
 | 11:35-12:30 | **3. GitHub Enterprise operating model** | Organization and repository structure, policies, ownership, stop and escalation authority, budgets, multi-harness choices, platform governance and migration from Azure DevOps. |
 | 12:30-13:15 | **Lunch** |  |
 | 13:15-14:35 | **4. Trusted delivery with CI/CD and DevSecOps** | GitHub Actions, reusable workflows, Azure deployment with federated identity, environments, approvals and security. Verification may authorize a bounded repair; it never grants release authority. |
@@ -45,7 +45,7 @@ Every technical chapter follows the same rhythm:
 Participants will work with a fictional pharmacy stock and reservation service. During the day, they will progressively:
 
 - configure a safe repository-level agentic workflow with bounded intake and explicit outcomes;
-- turn a business requirement into a structured issue and lightweight specification;
+- refine noisy synthetic intake into a confirmed requirement, then a structured issue and lightweight specification;
 - use GitHub Copilot to prepare a change and collaborate through a pull request;
 - run build, test, security and deployment controls in GitHub Actions;
 - investigate and remediate a security finding;

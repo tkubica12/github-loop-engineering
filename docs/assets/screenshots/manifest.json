@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-09-22T19:43:18.144Z",
+  "capturedAt": "2026-09-23T20:08:33.159Z",
   "browser": "151.0.7922.34",
   "sourceHashFormat": "sha256-utf8-lf",
   "captures": [
@@ -17,7 +17,7 @@
       "inputs": [
         {
           "path": "docs/guides/full-day.html",
-          "sha256": "76d115134e42c405d0dfe0e4ed56816fa3bc230251e9f8efa4b9d4eb8939fd8b"
+          "sha256": "51c2659771ae5fd14aa781da75ca8a5ef90e0f161888850061e3056332b59721"
         },
         {
           "path": "docs/assets/html-docs/article.css",
@@ -399,7 +399,7 @@
       "inputs": [
         {
           "path": "docs/guides/full-day.html",
-          "sha256": "76d115134e42c405d0dfe0e4ed56816fa3bc230251e9f8efa4b9d4eb8939fd8b"
+          "sha256": "51c2659771ae5fd14aa781da75ca8a5ef90e0f161888850061e3056332b59721"
         },
         {
           "path": "docs/assets/html-docs/article.css",

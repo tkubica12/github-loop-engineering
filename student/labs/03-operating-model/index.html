@@ -267,11 +267,19 @@ Remove-Item .\lab-03-direct-push.txt -ErrorAction SilentlyContinue</code></pre><
           <div class="slide-content"><h2 class="slide-title">Recover without pretending.</h2><ul class="slide-points"><li class="frag">Use reference artifacts for speed.</li><li class="frag">Label sandbox limits plainly.</li><li class="frag">Never call a simulation live control.</li></ul></div>
           <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Troubleshooting and recovery</span><span class="card-sub">Use when the path diverges.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
           <div class="card-body"><span id="recover"></span>
+          <h4 id="blockers">Common blockers</h4>
+          <table aria-label="Lab 3 common blockers">
+            <thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause</th><th scope="col">Fix</th></tr></thead>
+            <tbody>
+              <tr><td>You cannot find the named reviewer.</td><td>The prepared GitHub user or team was not shared with you.</td><td>Ask the instructor for the prepared user or team. Do not create a fake enterprise team in the sandbox repository.</td></tr>
+              <tr><td>The required-review box is missing.</td><td>Code owner review is not enabled, or base-branch CODEOWNERS has not merged yet.</td><td>Confirm code owner review is enabled for the default branch. Merge the ownership pull request first, then run the workflow probe pull request.</td></tr>
+              <tr><td>The direct push succeeds.</td><td>The station is missing the expected branch or ruleset protection.</td><td>Stop and tell the instructor. The stop-authority evidence is not valid until protection is restored.</td></tr>
+              <tr><td>A later pull or push fails after the probe.</td><td>The rejected direct-push commit is still on your local default branch.</td><td>Run the reset commands in Step 4. They remove the rejected local commit and return you to the protected default branch.</td></tr>
+              <tr><td>Placeholders remain in the committed record.</td><td>The reference artifacts were copied without replacing names.</td><td>Replace every placeholder with a real station user or team, then commit again on the same branch.</td></tr>
+            </tbody>
+          </table>
+          <h4 id="reset">Catch up</h4>
           <dl>
-            <dt>You cannot find the named reviewer</dt><dd>Ask the instructor for the prepared GitHub user or team. Do not create a fake enterprise team in the sandbox repository.</dd>
-            <dt>The required-review box is missing</dt><dd>Confirm code owner review is enabled for the default branch. If base-branch CODEOWNERS is required, merge the ownership PR first and run the workflow probe PR.</dd>
-            <dt>The direct push succeeds</dt><dd>Stop and tell the instructor. The station is missing the expected branch or ruleset protection, so the stop-authority evidence is not valid.</dd>
-            <dt>You committed the direct-push probe locally</dt><dd>Run the reset commands in Step 4. They remove the rejected local commit and return you to the protected default branch.</dd>
             <dt>You need to catch up</dt><dd>Use <a href="artifacts/CODEOWNERS.reference">the CODEOWNERS reference</a> and <a href="artifacts/governance-decisions.md">the decision template</a>. Replace placeholders with real station names before committing.</dd>
           </dl>
           </div></article>
