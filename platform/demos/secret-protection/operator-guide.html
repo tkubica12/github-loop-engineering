@@ -1,0 +1,214 @@
+<!doctype html>
+<!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Run a bounded native GitHub push-protection demonstration without a real credential or a commit.">
+  <title>Secret Protection / Presenter runbook</title>
+  <meta name="doc-id" content="teacher-secret-protection-operator">
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/article.css">
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/slides.css">
+  <script src="../../../docs/assets/html-docs/article.js" defer></script>
+  <script src="../../../docs/assets/html-docs/slides.js" defer></script>
+  <script src="../../../docs/assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening"><div class="slide-content slide-content--title"><p class="slide-eyebrow">Secret Protection</p><h2 class="slide-title">Block the value.<br><em>Create no commit.</em></h2><p class="slide-lead">A prepared native rejection, not a real credential or bypass.</p></div><p class="eyebrow">Teacher demonstration / Five minutes</p><h1>Block the value without creating a commit.</h1><p class="subtitle">Use a prepared native rejection and one clean control request. No real credential, bypass or cloud resource is needed.</p></header>
+    <nav class="doc-nav" aria-label="Related material"><a href="../../../docs/index.html">Secret Protection</a><a href="../../../docs/labs/04-trusted-delivery/index.html#secret-protection">Audience guide</a><a href="#main">Skip to the runbook</a></nav>
+    <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol><li><a href="#ch-target">Target boundary</a></li><li><a href="#ch-demonstration">Native rejection</a></li><li><a href="#ch-recovery">Recovery</a></li></ol></nav>
+    <main>
+      <section class="chapter" id="ch-target"><h2 class="chapter-label">Target boundary</h2>
+        <article class="card card--lead" id="card-target" data-open>
+          <div class="slide-content"><h2 class="slide-title">Check the exact target<br><em>before writing.</em></h2><ul class="slide-points"><li class="frag">Require matching ownership topics and enabled protection.</li><li class="frag">The inactive sample is never authentication.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Check the exact target before writing</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="main"></span><span id="prepare"></span>
+          <p>Use Node.js 22 or newer and GitHub CLI authenticated to the intended account. The account needs repository write access and enough administration visibility to read the security settings. The target must carry <code>workshop-synthetic-pharmacy</code> and the exact <code>run-RUN-ID</code> ownership topics.</p>
+          <p>The prepared public target is <code>tkubica12/pharmacy-agentic-loop-demo</code>, run <code>pharmacy-loop-20260905</code>. The run ID identifies the prepared station, not the date of each capture. For an enterprise station, supply its repository and ownership run ID; both secret scanning and repository push protection must already be enabled. The script never changes policies or enables billable features.</p>
+          <p>Before the event, open the <a href="../../../docs/labs/04-trusted-delivery/index.html#secret-protection">audience guide</a> and <a href="evidence/push-protection.json">recorded result</a>. Keep the inactive sample out of displayed terminals and screenshots. The executable pins its source and redacts sample and bypass identifiers.</p>
+          <p>The script removes the pinned lesson's documentation marker in memory, as instructed by GitHub Skills, to restore the inactive token pattern. It sends that sample only as file content, not authentication, and never saves it locally.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-demonstration"><h2 class="chapter-label">Native rejection</h2>
+        <article class="card" id="card-native-request">
+          <div class="slide-content"><h2 class="slide-title">Reject the sample.<br><em>Verify clean bytes.</em></h2><ul class="slide-points"><li class="frag">A REST write, not a terminal Git push.</li><li class="frag">Neither request creates a commit.</li><li class="frag">Generic conflicts are not protection evidence.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Reject one request, accept its credential-free counterpart</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="run"></span>
+          <div class="code"><pre><code>node --version
+gh auth status
+node platform/demos/secret-protection/scripts/protection.mjs plan --repo tkubica12/pharmacy-agentic-loop-demo --run-id pharmacy-loop-20260905
+node platform/demos/secret-protection/scripts/protection.mjs preflight --repo tkubica12/pharmacy-agentic-loop-demo --run-id pharmacy-loop-20260905
+node -e "require('node:fs').mkdirSync('.workshop', {recursive:true})"
+node platform/demos/secret-protection/scripts/protection.mjs exercise --repo tkubica12/pharmacy-agentic-loop-demo --run-id pharmacy-loop-20260905 --apply --output .workshop/secret-protection-REPLACE-WITH-UNIQUE-RUN-NAME.json</code></pre></div>
+          <p>These commands work in PowerShell and a POSIX shell. Replace the output suffix for every attempt. For a new station, replace both repository and run ID in all three commands. Read the plan before using <code>--apply</code>.</p>
+          <p>The plan is local only; preflight and exercise require authenticated GitHub access. Only the demonstration payload avoids a real credential. Show the <a href="https://github.com/tkubica12/pharmacy-agentic-loop-demo/settings/security_analysis">repository security settings</a> in a browser, then the terminal output and redacted JSON file.</p>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">Expected output from the recorded sandbox run</button><div class="reveal-body"><div class="code"><pre><code>PASS native push protection blocked the inactive sample (HTTP 422)
+PASS safe remediation bytes verified; default branch remained 1ea98c29d0cfcd0032a04a3a3aa40442b3267678</code></pre></div><p>A new run may report HTTP 409 and a different unchanged branch SHA. Its JSON must still carry native secret-scanning classification and verified clean bytes.</p></div></div>
+          <p>Expect a native secret-scanning rejection, a successful clean blob write whose returned bytes match, and an unchanged default-branch SHA. The exercise refuses an existing output file. A missing scope, unsupported pattern or accepted inactive sample is a failed demonstration, not an invitation to bypass.</p>
+          <aside class="callout callout--warning"><p class="callout-label">Warning</p><p><strong>Bounded remote effect:</strong> the clean request creates an unreferenced Git blob. Neither request creates a commit or updates a branch. The workflow does not assign an agent, create an alert, modify settings, or deploy an application.</p></aside>
+          </div></article>
+        <article class="card" id="card-five-minute-flow">
+          <div class="slide-content"><h2 class="slide-title">Agents use the platform.<br><em>They do not outrank it.</em></h2><p class="slide-lead">Keep the scene to five minutes; switch to captured evidence within ten seconds.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Keep the story to five minutes</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="present"></span>
+          <ol class="steps" aria-label="Five-minute presentation flow">
+            <li><h4>00:00-01:00</h4><p>The pharmacy integration needs a runtime credential, but colleagues and coding agents need only the code.</p></li>
+            <li><h4>01:00-02:00</h4><p>The real repository settings and rejected API response. Call it a REST write, not a terminal Git push.</p></li>
+            <li><h4>02:00-03:00</h4><p>The clean environment-variable reference, accepted blob hash and unchanged branch. No CI ran because no commit was created.</p></li>
+            <li><h4>03:00-04:00</h4><p>Ask the audience whether adding a later deletion commit removes a leaked value from history. Explain revocation and commit-history repair.</p></li>
+            <li><h4>04:00-05:00</h4><p>Connect this deterministic pre-commit boundary to Loop Engineering: it can block unsafe intake or evidence, but it does not choose the next product action. Agents use the platform; they do not outrank its controls.</p></li>
+          </ol>
+          <p>If the network or capability is uncertain, switch to the recorded evidence within ten seconds. The same discussion works offline; say that the response was captured, not produced live.</p>
+          </div></article>
+      </section>
+      <section class="chapter" id="ch-recovery"><h2 class="chapter-label">Recovery</h2>
+        <article class="card" id="card-recover">
+          <div class="slide-content"><h2 class="slide-title">Recover without<br><em>lowering the guard.</em></h2><ul class="slide-points"><li class="frag">Keep failures visible.</li><li class="frag">Unknown writes are not verified rejections.</li><li class="frag">Never retry automatically or bypass protection.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Recover without lowering the guard</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="recover"></span>
+          <div class="summary-grid" aria-label="Secret Protection recovery decisions">
+            <div class="summary-item"><span class="summary-label">Missing CLI</span><p><strong>Symptom:</strong> ENOENT before an API request. <strong>Action:</strong> Install GitHub CLI and authenticate before the event, then repeat preflight. This is not a server-side rejection.</p></div>
+            <div class="summary-item"><span class="summary-label">Access unavailable</span><p><strong>Symptom:</strong> 401, 403 or unavailable security settings. <strong>Action:</strong> Stop. Fix account access before the next rehearsal; use the recorded path now.</p></div>
+            <div class="summary-item"><span class="summary-label">Missing metadata</span><p><strong>Symptom:</strong> 409 or 422 without secret metadata. <strong>Action:</strong> Treat it as an API failure. Do not count a generic conflict as protection.</p></div>
+            <div class="summary-item"><span class="summary-label">Sample accepted</span><p><strong>Symptom:</strong> Inactive sample accepted. <strong>Action:</strong> Stop and inspect pattern availability. Do not create a commit or exercise a bypass to obtain a more impressive result.</p></div>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Unknown write</span><p><strong>Symptom:</strong> Write response lost or timed out. <strong>Action:</strong> The result is unknown; an unreferenced inactive-sample blob may remain. An unchanged branch does not prove the blob was rejected. Keep the failure record and do not automatically retry.</p></div>
+            <div class="summary-item"><span class="summary-label">Existing output</span><p><strong>Symptom:</strong> Output already exists. <strong>Action:</strong> Use a new filename; preserve earlier observations.</p></div>
+            <div class="summary-item"><span class="summary-label">Reset</span><p><strong>Symptom:</strong> Need to reset. <strong>Action:</strong> Run preflight again and use a new output filename. The requests do not change branch history.</p></div>
+          </div>
+          <p>Local rehearsal outputs under <code>.workshop/</code> are git-ignored. Retain the compact redacted result; do not copy raw debug logs into the repository. No Azure resources, branches, commits or repositories need deletion. Clean blobs may remain unreferenced in GitHub object storage; the demo does not promise immediate object deletion. Never remove the shared synthetic repository just to reset this scene.</p>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>A native rejection is evidence only when the classification and unchanged branch are verified.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Keep the guard.<br><em>Verify the rejection.</em></h2></div></section>
+    <footer class="doc-footer"><span>Inactive sample only / Deterministic control / No bypass or policy changes</span></footer>
+  </div>
+</body>
+</html>

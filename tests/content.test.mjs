@@ -11,6 +11,29 @@ test("attendee content and internal links satisfy repository standards", () => {
   assert.ok(result.htmlCount >= 8);
 });
 
+test("workshop examples do not promise unavailable station controls", () => {
+  const read = (...segments) => readFileSync(join(root, ...segments), "utf8");
+  const opening = sourceElement(read("docs", "index.html"), "card-platform-loop", "card");
+  const lab1 = read("docs", "labs", "01-agentic-workflow", "index.html");
+  const lab3 = read("docs", "labs", "03-operating-model", "index.html");
+  const lab5 = read("docs", "labs", "05-capstone", "index.html");
+  const operator = read("platform", "demos", "full-day", "operator-guide.html");
+  const stationCI = read("platform", "templates", "station-repository", ".github", "workflows", "ci.yml");
+
+  assert.match(opening, /consecutive reservations/);
+  assert.doesNotMatch(opening, /stock-suggestion|feature-request\.md|inventory\.reference\.mjs/);
+  assert.match(operator, /separate instructor station/);
+  assert.match(operator, /test-only PR/);
+  assert.match(stationCI, /run: npm test/);
+  assert.doesNotMatch(stationCI, /gh aw|repository-pulse\.md/);
+  assert.match(lab1, /Test service<\/strong> check runs automatically; it does not validate this workflow edit/);
+  assert.match(lab1, /Keep this pull request in draft unless a facilitator can compile/);
+  assert.match(lab1, /no actionable change correctly produces a no-op/);
+  assert.match(lab3, /If they cannot, skip this push entirely/);
+  assert.match(lab3, /If the push unexpectedly succeeded, do not run the reset/);
+  assert.match(lab5, /attendee-created continuity record, not an Agentic Workflow output/);
+});
+
 test("raw script strings and comments do not invent DOM links or duplicate IDs", () => {
   const source = '<!-- <a id="old" href="gone.html"> --><style>.x::after{content:\'id="cue"\';}</style>' +
     '<script data-doc-bootstrap>const example = \'<a id="cue" href="#absent">\';</script>' +
@@ -54,7 +77,7 @@ test("every material uses canonical first-paint tokens, identity and presentatio
   const canonical = (name) => readFileSync(join(root, "docs", "assets", "html-docs", name), "utf8")
     .replaceAll("\r\n", "\n").trim();
   const files = materialFiles();
-  assert.equal(files.length, 24, "All 24 attendee, lab and operator materials must be covered");
+  assert.equal(files.length, 10, "The workshop hub, five labs and four operator runbooks must be covered");
   let decks = 0;
   for (const file of files) {
     const source = readFileSync(file, "utf8").replaceAll("\r\n", "\n");
@@ -94,5 +117,5 @@ test("every material uses canonical first-paint tokens, identity and presentatio
         `${label}: initialize canonical reading and presentation before command/recovery helpers`);
     }
   }
-  assert.equal(decks, 2);
+  assert.equal(decks, 0, "The workshop and labs use their own article presentation mode");
 });

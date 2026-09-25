@@ -1,15 +1,6 @@
 import { spawnSync } from "node:child_process";
-import { readdirSync } from "node:fs";
 import { join, relative } from "node:path";
-import { root } from "./validation.mjs";
-
-function materials(directory) {
-  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if (entry.name.startsWith(".")) return [];
-    const path = join(directory, entry.name);
-    return entry.isDirectory() ? materials(path) : entry.name.endsWith(".html") ? [path] : [];
-  });
-}
+import { materialFiles, root } from "./validation.mjs";
 
 const args = process.argv.slice(2);
 const viewportFlag = args.indexOf("--viewport");
@@ -18,7 +9,7 @@ if (!/^\d+x\d+$/.test(viewport ?? "")) throw new Error("Use --viewport WIDTHxHEI
 const selected = args.filter((arg, index) =>
   viewportFlag === -1 || (index !== viewportFlag && index !== viewportFlag + 1));
 const files = selected.length ? selected.map((file) => join(root, file))
-  : [...materials(join(root, "docs")), ...materials(join(root, "student")), ...materials(join(root, "teacher"))];
+  : materialFiles();
 const runtime = join(root, "docs", "assets", "html-docs");
 
 function run(script, arguments_) {

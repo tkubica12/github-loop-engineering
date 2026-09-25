@@ -4,11 +4,11 @@ import { readFileSync } from "node:fs";
 import { join, win32 } from "node:path";
 import test from "node:test";
 import { root } from "./validation.mjs";
-import { acceptsCheckCommit, assertBranchPolicy, assertDefaultOidc, assertReleaseProvenance } from "../teacher/demos/security-remediation/scripts/azure.mjs";
-import { azureMsiInvocation } from "../teacher/demos/trusted-delivery/scripts/lib.mjs";
-import { inspectReleaseArtifact } from "../teacher/demos/security-remediation/scripts/release-artifact.mjs";
+import { acceptsCheckCommit, assertBranchPolicy, assertDefaultOidc, assertReleaseProvenance } from "../platform/demos/security-remediation/scripts/azure.mjs";
+import { azureMsiInvocation } from "../platform/demos/trusted-delivery/scripts/lib.mjs";
+import { inspectReleaseArtifact } from "../platform/demos/security-remediation/scripts/release-artifact.mjs";
 
-const demo = join(root, "teacher", "demos", "security-remediation");
+const demo = join(root, "platform", "demos", "security-remediation");
 const workflow = readFileSync(join(demo, "workflows", "release.yml"), "utf8");
 const helper = readFileSync(join(demo, "scripts", "azure.mjs"), "utf8");
 

@@ -4,7 +4,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { root } from "./validation.mjs";
 
-const artifacts = join(root, "student", "labs", "04-trusted-delivery", "artifacts");
+const artifacts = join(root, "docs", "labs", "04-trusted-delivery", "artifacts");
 const read = (name) => readFileSync(join(artifacts, name), "utf8");
 
 test("the starter workflow still carries the injection the lab repairs", () => {

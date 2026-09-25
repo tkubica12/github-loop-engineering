@@ -30,7 +30,7 @@ Agents remain replaceable. Work is inspectable by humans and automation. Accepta
 
 ## Validation
 
-The one-hour story must be understandable by following only the issue, pull request, checks, review, deployment, and repository pulse.
+The artifact chain must be understandable in the full-day opening demonstration and capstone by following the issue, pull request, checks, review, release decision, and repository pulse. The former one-hour story was retired by [ADR 0012](0012-one-full-day-html-journey.md).
 
 ## Assumptions
 

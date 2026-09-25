@@ -2,10 +2,7 @@
 
 ## 1. Purpose and central proposition
 
-This repository prepares two public, audience-neutral GitHub learning experiences built on one synthetic pharmacy stock and reservation service:
-
-1. the full-day **Loop Engineering with GitHub** technical workshop defined in `AGENDA.md`;
-2. the separate one-hour showcase, **GitHub Beyond Coding: The Agentic Engineering Loop**.
+This repository prepares one public, audience-neutral **Loop Engineering with GitHub** full-day workshop, defined in `AGENDA.md`, using a synthetic pharmacy stock and reservation service.
 
 The central proposition is:
 
@@ -90,7 +87,7 @@ Keep four durable artifacts visible all day: issue, pull request, workflow run, 
 ### Executive platform briefing - 09:00 to 09:30
 
 - **Outcome:** Participants understand GitHub as the durable control plane for human and agent work, not just a code host.
-- **Demonstrate:** The complete map: prompt, context, harness, loop, evidence, and stop condition.
+- **Demonstrate:** The complete map through a prepared instructor-station reservation regression issue, test-only PR, CI and review; keep Lab 2's stock-suggestion requirement undisclosed.
 - **Hands-on:** None; this protects the highest-attention strategic window.
 - **Connect:** Copilot as primary worker, GitHub artifacts as durable record, deterministic controls as non-negotiable, and Azure DevOps migration as an incremental path.
 
@@ -98,35 +95,35 @@ Keep four durable artifacts visible all day: issue, pull request, workflow run, 
 
 - **Outcome:** Participants can explain how an agentic workflow is bounded by trigger, tools, permissions, network, budget, safe outputs, and human review.
 - **Demonstrate:** A repository workflow that reports or triages through constrained output, followed by inspection of the generated lock workflow and Actions boundary.
-- **Lab:** `student\labs\01-agentic-workflow\index.html` narrows `repository-pulse` to issue review only and proves the change through a green compile check in the station repository.
+- **Lab:** `docs\labs\01-agentic-workflow\index.html` proposes a narrower `repository-pulse` in a draft PR. Station CI tests the service, not Agentic Workflow source; merge and live execution require a facilitator to compile, commit and validate the matching lock.
 - **Connect:** GitHub Agentic Workflows are public preview; they complement CI/CD and should start with comments, reports, or draft pull requests rather than autonomous high-impact changes.
 
 ### Chapter 2: From intent to a verified handoff - 10:35 to 11:35
 
 - **Outcome:** Noisy organizational context becomes a confirmed need, then a structured issue, lightweight specification, bounded implementation proposal, and reviewable pull request.
 - **Demonstrate:** Issue intake, Project context, specification, architecture decision, Copilot-assisted plan, linked pull request, tests, and review.
-- **Lab:** `student\labs\02-intent-to-pr\index.html` starts with seven minutes of coached intake: a read-only `requirement-refiner` custom agent asks questions about the synthetic team chat thread, ticket digest, and stakeholder email in the station `context\intake\` folder, and drafts a requirement only after the attendee confirms it. The attendee compares the draft with the product-owner requirement, then turns that requirement into a merged change judged by deterministic acceptance checks. The station also carries path-scoped `.github\instructions\` files and a seeded synthetic backlog that supplies realistic duplicates (ADR 0011).
+- **Lab:** `docs\labs\02-intent-to-pr\index.html` starts with seven minutes of coached intake: a read-only `requirement-refiner` custom agent asks questions about the synthetic team chat thread, ticket digest, and stakeholder email in the station `context\intake\` folder, and drafts a requirement only after the attendee confirms it. The attendee compares the draft with the product-owner requirement, then turns that requirement into a merged change judged by deterministic acceptance checks. The station also carries path-scoped `.github\instructions\` files and a seeded synthetic backlog that supplies realistic duplicates (ADR 0011).
 - **Connect:** Pull requests are the common control point for human- and agent-authored work; a proposal remains untrusted until scope, diff, tests, and review are clear.
 
 ### Chapter 3: GitHub Enterprise operating model - 11:35 to 12:30
 
 - **Outcome:** Participants can place the same station workflow into a scalable model for ownership, policy, budgets, identity, and migration waves.
 - **Demonstrate:** Teams, CODEOWNERS, rulesets or branch protection, required review, reusable workflows, Projects, and links from work item to evidence.
-- **Lab:** `student\labs\03-operating-model\index.html` makes workflow ownership visible, shows a protected-branch rejection, and records governance decisions.
+- **Lab:** `docs\labs\03-operating-model\index.html` makes workflow ownership visible and records governance decisions. A direct-push rejection is shown only where protection is verified; unsupported sandbox stations record the missing control.
 - **Connect:** Harness and model choice can vary, but controls should converge on GitHub artifacts, explicit ownership, least privilege, and measurable migration exit criteria.
 
 ### Chapter 4: Trusted delivery with CI/CD and DevSecOps - 13:15 to 14:35
 
 - **Outcome:** Participants see that deterministic automation remains the authority for build, test, security, packaging, deployment approval, and release evidence.
 - **Demonstrate:** Live trusted-delivery path with GitHub Actions, dependency or code security signal, Secret Protection where available, environment approval, and OIDC deployment boundary. If a capability is unavailable, label the fallback as captured evidence or simulation.
-- **Lab:** `student\labs\04-trusted-delivery\index.html` hardens a workflow against untrusted pull request input and reads native security evidence.
+- **Lab:** `docs\labs\04-trusted-delivery\index.html` hardens a workflow against untrusted pull request input and reads native security evidence.
 - **Connect:** Agentic investigation may authorize one bounded repair attempt; it never grants merge or release authority. MDASH remains an optional, clearly labelled preview discussion, not a dependency.
 
 ### Chapter 5: Capstone: governed human-agent delivery loop - 14:50 to 15:50
 
 - **Outcome:** Participants make an accountable next decision from the evidence produced during the day.
 - **Demonstrate:** Prior-state read-back, accepted evidence, failure or no-op decision, and escalation boundary.
-- **Lab:** `student\labs\05-capstone\index.html` produces a release decision bound to one revision, naming evidence, defects, and the owner of the next action.
+- **Lab:** `docs\labs\05-capstone\index.html` produces a release decision bound to one revision, naming evidence, defects, and the owner of the next action.
 - **Connect:** Continuity requires stable work identity, persisted state, external verification, and a justified next decision; a per-run cap is not enough.
 
 ### Adoption roadmap and discussion - 15:50 to 16:30
@@ -139,9 +136,9 @@ Keep four durable artifacts visible all day: issue, pull request, workflow run, 
 
 The fictional **Pharmacy Stock and Reservation Service** stays small enough for a live room and realistic enough to exercise APIs, tests, dependency and code scanning, ownership, delivery evidence, and operational maintenance. Use only synthetic products, stores, personas, and transactions.
 
-Attendee labs now run in each participant's GitHub station repository. Each lab is one directory containing `index.html` and an `artifacts\` folder. Verification is GitHub's own evidence: a green check, a required review, a rejected push, a security signal, a deployment or environment record, or a published issue. Do not add local pass/fail runners or metadata manifests to the learner path.
+Attendee labs run in each participant's GitHub station repository. Each lab is one directory containing `index.html` and an `artifacts\` folder. Verification uses the GitHub evidence actually available in that profile: a green service check, review, rejected push where enforced, a security signal or a published issue. A draft source proposal is not a compiled executable workflow. Do not add local pass/fail runners or metadata manifests to the learner path.
 
-Current lab index: `student\labs\index.html`. Current labs: `01-agentic-workflow`, `02-intent-to-pr`, `03-operating-model`, `04-trusted-delivery`, and `05-capstone`.
+The single attendee entry point is `docs\index.html`, with direct timed-agenda links to `01-agentic-workflow`, `02-intent-to-pr`, `03-operating-model`, `04-trusted-delivery`, and `05-capstone` under `docs\labs\`. Each lab's HTML combines reading and presentation modes.
 
 ## 7. Environment preparation
 
@@ -151,7 +148,7 @@ Complete before delivery:
 - seed each station's synthetic backlog with `workshop.mjs seed`, dry run first and `--apply` second; the command creates only missing items and never edits or deletes;
 - confirm the `requirement-refiner` custom agent is visible in Copilot CLI and VS Code for one station, and probe that it asks rather than answers;
 - confirm every participant can sign in, open the assigned station repository, and create a branch;
-- confirm default branch protection or rulesets, required checks, required review, Actions availability, and runner capacity;
+- verify whether default-branch protection, required checks and code-owner review are enforceable for each repository's plan and visibility; record missing controls and skip push probes on unprotected stations; confirm Actions availability and runner capacity;
 - identify which stations can use Agentic Workflows public preview, Copilot coding agent, code scanning, Secret Protection, environments, and deployment records;
 - prepare explicit fallbacks for unavailable previews, entitlements, security products, queues, or deployment targets;
 - restore instructor dependencies from approved feeds and run repository validation;
@@ -164,7 +161,8 @@ The Copilot coding agent requires the appropriate entitlement and repository pol
 | Scenario | Primary demonstration | Prepared fallback |
 | --- | --- | --- |
 | Copilot or coding harness access fails | Live Copilot plan or change | Continue from a prepared branch; participants inspect the diff, pull request, and evidence. |
-| Agentic Workflow preview is unavailable or changes | Live compile and run | Inspect the Markdown source, generated lock workflow, permissions, and a labelled captured result. |
+| Agentic Workflow compiler or preview is unavailable | Validated lock and live run after review | Keep the source-only PR in draft; compare it with the old lock and permissions without claiming an executed result. |
+| Private sandbox cannot enforce protection | Protected-station push probe | Record the missing control without attempting a push; use a labelled instructor demonstration if a protected station is available. |
 | Actions queue is slow | Live workflow run | Open a completed run from the same prepared path and inspect logs and checks. |
 | Security feature is unavailable | Live native security signal | Use labelled captured evidence or a safe synthetic exercise; do not present it as fresh platform enforcement. |
 | Azure deployment target is unavailable | OIDC deployment to test environment | Show workflow, environment approval, identity boundary, and captured successful deployment evidence. |
@@ -183,29 +181,9 @@ Develop and validate one implementation with two profiles:
 
 Source profiles live under `platform\profiles\`. Keep organization names, repository prefixes, teams, environments, and feature flags configurable. Remote creation must be explicit; destructive cleanup must target only resources carrying the workshop identifier.
 
-## 10. One-hour side experience
+## 10. One attendee journey
 
-Deliver **GitHub Beyond Coding: The Agentic Engineering Loop** as a separate fast-paced showcase using the same pharmacy scenario and control-plane language.
-
-The story is:
-
-1. a bounded workflow or prepared signal identifies a product or security need;
-2. a human turns it into a complete issue contract;
-3. GitHub Copilot proposes a pull request;
-4. deterministic checks, native security evidence, and human review challenge the proposal;
-5. a code owner approves only after evidence is complete;
-6. governed deployment uses provenance, environment approval, and federated identity;
-7. a repository pulse proposes the next improvement through safe output;
-8. live continuation is demonstrated separately with `teacher\demos\security-remediation\scripts\verify-continuation.mjs`, or explicitly not claimed when the live proof is unavailable.
-
-Primary assets:
-
-- `docs\slides\agentic-engineering-loop.html`
-- `docs\guides\agentic-engineering-loop.html`
-- `teacher\demos\agentic-engineering-loop\operator-guide.html`
-- `teacher\demos\agentic-engineering-loop\control-room.html`
-
-Keep mission-control and controller exercises visibly labelled as simulations. The one-hour showcase is not a compressed lab; it is a coherent story with a payoff in the first ten minutes and no hidden reliance on private engagement-specific evidence.
+Start in `docs\index.html`: show the complete GitHub issue-to-reviewed-PR-to-checks-and-release-boundary story in a prepared instructor station, then open each lab directly from the timed agenda. The facilitator uses the same page's Slides mode to introduce the day and each lab's Slides mode for its own chapter. There is no separate showcase, guide or slide deck. If the instructor chain cannot be shown live, distinguish the local Lab 2 reference change from Lab 4's historical security evidence; neither proves a current release.
 
 ## 11. Open decisions to confirm before delivery
 

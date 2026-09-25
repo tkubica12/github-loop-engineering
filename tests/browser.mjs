@@ -71,7 +71,7 @@ async function pharmacyJourney() {
     for (const state of ["baseline", "suggestion"]) {
       const directory = join(temporary, state);
       cpSync(join(root, "platform", "templates", "station-repository"), directory, { recursive: true });
-      if (state === "suggestion") cpSync(join(root, "student", "labs", "02-intent-to-pr", "artifacts", "inventory.reference.mjs"),
+      if (state === "suggestion") cpSync(join(root, "docs", "labs", "02-intent-to-pr", "artifacts", "inventory.reference.mjs"),
         join(directory, "src", "inventory.mjs"));
       const { buildServer } = await import(pathToFileURL(join(directory, "src", "server.mjs")).href);
       const service = buildServer();
@@ -95,7 +95,7 @@ async function pharmacyJourney() {
             `Pharmacy ${state}: suggestion must not reserve stock`);
           const source = state === "baseline"
             ? "platform/templates/station-repository/src/inventory.mjs"
-            : "student/labs/02-intent-to-pr/artifacts/inventory.reference.mjs";
+            : "docs/labs/02-intent-to-pr/artifacts/inventory.reference.mjs";
           await screenshot(page, `pharmacy-${state}`, source, theme,
             "Actual local HTTP 409 response; synthetic data, not GitHub or a cloud deployment.");
           await page.setViewportSize({ width: 1280, height: 720 });
@@ -312,12 +312,11 @@ async function deepLink(page, url, id, label) {
 }
 async function readingCaptures(page, path, url, theme) {
   const capturesByPath = {
-    "docs/guides/full-day.html": [["full-day-guide", "", "Full-day guide in a local browser."]],
-    "docs/guides/loop-engineering.html": [["loop-engineering-guide", "", "Local guide to bounded loop decisions; not a live agent dashboard."]],
-    "docs/guides/security-remediation.html": [
-      ["security-remediation", "review", "Local guide view of a real CodeQL finding, human review, merge and fixed alert; not GitHub UI."],
-      ["security-release", "release", "Guide view of the recorded reviewed package, human environment approval and Azure runtime; not GitHub UI."]],
-    "docs/guides/secret-protection.html": [["secret-protection", "evidence", "Guide view of native GitHub REST push protection and its clean control; no credential values or GitHub UI."]]
+    "docs/index.html": [["workshop-agenda", "ch-agenda", "Local workshop agenda; not GitHub UI."]],
+    "docs/labs/04-trusted-delivery/index.html": [
+      ["security-evidence", "codeql", "Local lab view of recorded CodeQL evidence; not GitHub UI."],
+      ["release-boundary", "release-boundary", "Local lab view of the human release boundary; not GitHub UI."],
+      ["secret-protection", "secret-protection", "Local lab view of recorded push-protection evidence; not GitHub UI."]]
   };
   for (const [name, id, description] of capturesByPath[path] || []) {
     if (id) await deepLink(page, url, id, path);
@@ -347,8 +346,7 @@ async function presentation(page, path, url, isDeck, theme, accent, viewport) {
   const progress = page.locator(isDeck ? ".deck-progress" : ".slide-progress");
   check(await progress.getAttribute("aria-live") === "polite" &&
     await page.locator("main").getAttribute("aria-live") === null, `${label}: only concise progress is a live region`);
-  const reviewPage = Boolean(pageFilter) || isDeck || path === "docs/guides/loop-engineering.html" ||
-    path.endsWith("/control-room.html");
+  const reviewPage = Boolean(pageFilter) || path === "docs/index.html";
   // validate:html owns exhaustive authored-surface budgets, density and traversal.
   // These samples exercise the workshop integration and produce actual review images.
   const special = await page.evaluate(({ ids, deck }) => {
@@ -386,6 +384,12 @@ async function presentation(page, path, url, isDeck, theme, accent, viewport) {
     } else {
       check(await page.locator(".card-toggle:visible, .card-body:visible").count() === 0,
         `${label}: reading prose and controls stay off presentation surfaces`);
+      if (accent === "blue" && viewport.width === 1920 && path === "docs/index.html" &&
+          (index === 0 || index === 1 || index === expected.length - 1)) {
+        await screenshot(page, ["workshop-opening", "workshop-slides", "workshop-closing"][index === 0 ? 0 :
+          index === 1 ? 1 : 2], `${path}#${id}`, theme,
+          "Full-day workshop presenter view in a local browser; not GitHub UI.");
+      }
     }
     check(await panel.locator('.frag[aria-hidden="true"]').count() === 0, `${label}: reduced-motion points are accessible`);
     if (paletteOutput && reviewPage && viewport.width !== 1280) {
@@ -614,10 +618,13 @@ try {
         await page.locator('[data-action="expand-all"]').click();
         await expandReadingDepth(page, `${path} mobile`);
         await documentChecks(page, `${path} ${theme}/${accent} mobile expanded`);
-        if (path === "docs/guides/full-day.html") await deepLink(page, url, "recovery", path);
-        if (path.endsWith("/control-room.html")) {
-          check(await page.locator(".card").count() === 8, `${path}: eight simulation cards`);
-          for (let scene = 1; scene <= 8; scene++) await deepLink(page, url, `scene-${scene}`, path);
+        if (path === "docs/index.html") {
+          for (const lab of ["01-agentic-workflow", "02-intent-to-pr", "03-operating-model",
+            "04-trusted-delivery", "05-capstone"]) {
+            const href = `labs/${lab}/index.html`;
+            check(await page.locator(`#card-day-map a[href="${href}"]`).count() === 1,
+              `${path}: agenda links directly to ${lab}`);
+          }
         }
       }
       for (const viewport of [{ width: 1440, height: 900 }, { width: 1920, height: 1080 },

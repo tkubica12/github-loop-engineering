@@ -1,0 +1,291 @@
+<!doctype html>
+<!--
+MIT License
+
+Copyright (c) 2026 Tomáš Kubica
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<html lang="en" data-default-accent="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Presenter runbook for the isolated trusted delivery demonstration.">
+  <title>Operator guide | Trusted delivery</title>
+  <meta name="doc-id" content="teacher-trusted-delivery-operator">
+  <script data-doc-bootstrap>
+/* Inline in the head before styles with sync-head.js. No deferred bootstrap. */
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const id = document.querySelector('meta[name="doc-id"]')?.content ||
+    location.pathname.replace(/\.standalone(?=\.html$)/i, "");
+  const prefix = "html-docs:" + id + ":";
+  const choices = { theme: ["light", "dark"], accent: ["blue", "orange", "green"] };
+  const read = (name) => {
+    try { return localStorage.getItem(prefix + name); }
+    catch { return null; /* Storage may be unavailable for local files. */ }
+  };
+  const write = (name, value) => {
+    try { localStorage.setItem(prefix + name, value); }
+    catch { /* The current view still works without persistence. */ }
+  };
+  function refresh() {
+    for (const name of Object.keys(choices)) {
+      const current = root.getAttribute("data-" + name);
+      const next = choices[name][(choices[name].indexOf(current) + 1) % choices[name].length];
+      document.querySelectorAll('[data-action="toggle-' + name + '"]').forEach(button => {
+        button.textContent = name === "theme" ? (next === "dark" ? "Dark" : "Light") :
+          "Accent: " + current[0].toUpperCase() + current.slice(1);
+        button.setAttribute("aria-label", name === "theme" ? "Switch to " + next + " theme" :
+          "Accent: " + current + ". Switch to " + next);
+      });
+    }
+  }
+  for (const [name, values] of Object.entries(choices)) {
+    const fallback = name === "theme" && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : values[0];
+    const value = [params.get(name), read(name), root.getAttribute("data-default-" + name), fallback]
+      .find(candidate => values.includes(candidate));
+    root.setAttribute("data-" + name, value);
+  }
+  root.classList.add("js");
+  if (params.get("view") === "slides") root.setAttribute("data-view", "slides");
+  window.HtmlDocs = { read, write, refresh };
+  document.addEventListener("DOMContentLoaded", refresh);
+  document.addEventListener("click", event => {
+    const button = event.target.closest('[data-action="toggle-theme"], [data-action="toggle-accent"]');
+    if (!button) return;
+    const name = button.getAttribute("data-action").slice(7);
+    const values = choices[name];
+    const next = values[(values.indexOf(root.getAttribute("data-" + name)) + 1) % values.length];
+    root.setAttribute("data-" + name, next);
+    write(name, next);
+    // Replace a URL override too, so reloading preserves a deliberate change.
+    const url = new URL(location.href);
+    if (url.searchParams.has(name)) {
+      url.searchParams.set(name, next);
+      history.replaceState(null, "", url.href);
+    }
+    refresh();
+  });
+})();
+</script>
+  <style data-doc-tokens>
+/* Canonical tokens. Inline with sync-head.js; one accent family at a time. */
+:root {
+  color-scheme: light;
+  --bg: #fafafa; --surface: #ffffff; --surface-2: #f2f2f2; --surface-3: #e8e8e8;
+  --border: #dedede; --border-strong: #b8b8b8;
+  --text: #161616; --text-muted: #565656; --text-faint: #686868;
+  --accent-light: #0068bd; --accent-dark: #69b8ff;
+  --accent: var(--accent-light);
+  --accent-strong: var(--accent);
+  --accent-quiet: var(--accent);
+  --accent-soft: color-mix(in srgb, var(--accent) 9%, var(--bg));
+  --accent-border: color-mix(in srgb, var(--accent) 36%, var(--bg));
+  --warn: var(--accent); --warn-soft: var(--accent-soft); --warn-border: var(--accent-border);
+  --code-bg: var(--surface-2); --code-border: var(--border);
+  --focus: var(--accent);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.04), 0 12px 28px rgba(0,0,0,.06);
+  --radius: 10px; --radius-sm: 6px; --canvas: 1160px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Mono", "Cascadia Code", ui-monospace, Consolas, "SF Mono", "Liberation Mono", Menlo, monospace;
+}
+[data-theme="dark"], :root:not([data-theme])[data-default-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101010; --surface: #191919; --surface-2: #232323; --surface-3: #2c2c2c;
+  --border: #363636; --border-strong: #595959;
+  --text: #f2f2f2; --text-muted: #b5b5b5; --text-faint: #a0a0a0;
+  --accent: var(--accent-dark);
+  --shadow-1: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-2: 0 2px 4px rgba(0,0,0,.3), 0 12px 28px rgba(0,0,0,.4);
+}
+[data-accent="orange"], :root:not([data-accent])[data-default-accent="orange"] {
+  --accent-light: #a94000; --accent-dark: #ffae72;
+}
+[data-accent="green"], :root:not([data-accent])[data-default-accent="green"] {
+  --accent-light: #137344; --accent-dark: #6cd6a0;
+}
+</style>
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/article.css">
+  <link rel="stylesheet" href="../../../docs/assets/html-docs/slides.css">
+  <script src="../../../docs/assets/html-docs/article.js" defer></script>
+  <script src="../../../docs/assets/html-docs/slides.js" defer></script>
+  <script src="../../../docs/assets/materials.js" defer></script>
+</head>
+<body>
+  <div class="controls" role="group" aria-label="Article controls">
+    <button type="button" class="ctrl" data-action="expand-all">Expand all</button>
+    <button type="button" class="ctrl" data-action="collapse-all">Collapse all</button>
+    <button type="button" class="ctrl" data-action="toggle-slides" aria-pressed="false">Slides</button>
+    <button type="button" class="ctrl" data-action="toggle-theme">Dark</button>
+    <button type="button" class="ctrl" data-action="toggle-accent">Accent: Blue</button>
+  </div>
+  <div class="doc">
+    <header class="doc-header" id="opening">
+      <div class="slide-content slide-content--title"><p class="slide-eyebrow">Trusted delivery</p><h2 class="slide-title">Move one SHA.<br><em>Keep every boundary.</em></h2><p class="slide-lead">Deterministic checks, exact packages and scoped identity precede test deployment.</p></div>
+      <p class="eyebrow">Presenter runbook · 25 minutes</p>
+      <h1>Move one reviewed SHA through evidence, identity, and deployment</h1>
+      <p class="subtitle">A disposable private repository turns a safe reservation-boundary regression red, corrects it to green, packages the exact main commit, and deploys only to an isolated Azure test app through OIDC.</p>
+      <p class="meta">Live when verified · Local fallback · No production claim</p>
+    </header>
+
+    <nav class="doc-nav" aria-label="Related material"><a href="../../../docs/index.html">Trusted delivery</a><a href="../../../docs/labs/04-trusted-delivery/index.html#release-boundary">Audience guide</a><a href="#main">Skip to content</a></nav>
+    <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol><li><a href="#ch-boundaries">Control boundaries</a></li><li><a href="#ch-preparation">Preparation</a></li><li><a href="#ch-delivery">Delivery story</a></li><li><a href="#ch-recovery">Recovery and cleanup</a></li></ol></nav>
+    <main>
+      <section class="chapter" id="ch-boundaries"><h2 class="chapter-label">Control boundaries</h2>
+        <article class="card card--lead" id="card-control-contract" data-open>
+          <div class="slide-content"><h2 class="slide-title">Evidence and identity<br><em>constrain the release.</em></h2><ul class="slide-points"><li class="frag">Test and package the exact main SHA.</li><li class="frag">Scope Azure identity to one app.</li><li class="frag">Operator intent is not independent approval.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The control contract constrains the release</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="main"></span><span id="contract"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">Deterministic gate</span><p>The PR adds quantity-contract checks and exposes a safe zero-quantity regression. After correction, the new checks remain a useful change. No agent executes and no security weakness is introduced.</p></div>
+            <div class="summary-item"><span class="summary-label">Immutable evidence</span><p>CI artifact names and manifests contain the 40-character commit SHA. Release packages are rebuilt and tested from the entered main SHA.</p></div>
+            <div class="summary-item"><span class="summary-label">Federated identity</span><p>Only the deployment job receives <code>id-token: write</code>. Azure trusts GitHub’s immutable owner ID, repository ID, and exact <code>refs/heads/main</code> subject.</p></div>
+            <div class="summary-item"><span class="summary-label">Human boundary</span><p>The operator inspects and enters the release SHA. On this private personal repository it is intent, not an independent approval.</p></div>
+          </div>
+          <aside class="callout callout--warning"><p class="callout-label">Warning</p><p><strong>Scope:</strong> this deploys a synthetic Node service to a test App Service. It does not claim production readiness, policy enforcement, or a second-person approval.</p></aside>
+          </div></article>
+        <article class="card" id="card-repair-authorization">
+          <div class="slide-content"><h2 class="slide-title">Only the exact failure<br><em>authorizes correction.</em></h2><p class="slide-lead">Infrastructure failures and historical captures cannot authorize repair, review, merge or release.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Only the exact trusted failure authorizes bounded correction</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><p><strong>Loop role:</strong> authorize a bounded correction only when setup succeeded, the failing step ran exactly <code>npm test -- --test-reporter=tap</code>, and the original quantity assertion reports expected HTTP <code>400</code> and actual HTTP <code>201</code>. Infrastructure failure or any other red result is blocked or unclassified evidence. The retained 5 September capture predates this stronger command receipt and remains historical, not repair authorization. A green correction does not authorize review, merge or release.</p></div>
+        </article>
+      </section>
+
+      <section class="chapter" id="ch-preparation"><h2 class="chapter-label">Preparation</h2>
+        <article class="card" id="card-access-cost">
+          <div class="slide-content"><h2 class="slide-title">Check access and cost<br><em>before provisioning.</em></h2><ul class="slide-points"><li class="frag">Require exact repository and resource ownership.</li><li class="frag">Stop if Linux F1 is unavailable.</li><li class="frag">Never broaden deployment identity.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Access and cost checks precede provisioning</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="access"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">GitHub</span><p><strong>Required capability:</strong> Create and delete a private repository under the configured owner; push workflows; create variables, pull requests, and workflow runs. A classic <code>gh</code> token needs <code>repo</code> and <code>workflow</code>; cleanup also needs <code>delete_repo</code>. Equivalent fine-grained access is supported.</p><p><strong>Stop condition:</strong> Do not reuse an existing repository unless it is private and carries the exact <code>workshop-trusted-delivery</code> topic.</p></div>
+            <div class="summary-item"><span class="summary-label">Azure</span><p><strong>Required capability:</strong> Create a resource group, Linux F1 plan, web app, user-assigned identity, federated credential, and scoped role assignment. The operator needs resource creation rights plus             <code>Microsoft.Authorization/<wbr>roleAssignments/<wbr>write</code>.</p><p><strong>Stop condition:</strong> Stop if the providers are unregistered, F1 is unavailable in the selected region, or the existing resource-group tag differs.</p></div>
+            <div class="summary-item"><span class="summary-label">Deployment identity</span><p><strong>Required capability:</strong> <code>Website Contributor</code> on the one web app. No client secret is created.</p><p><strong>Stop condition:</strong> Never broaden the scope to the resource group or subscription to make a failed deployment pass.</p></div>
+          </div>
+          <p>Allow 6–12 minutes for setup, 2–5 minutes per Actions transition, up to two minutes for the first F1 health response, and 3–10 minutes for cleanup. Rehearse and warm the service before presenting. Linux F1 has no compute charge where the subscription and region offer it. Bandwidth, logs, policy, quotas, and later SKU changes can still create cost. The scripts never upgrade the SKU.</p>
+          </div></article>
+
+        <article class="card" id="card-prepare">
+          <div class="slide-content"><h2 class="slide-title">Prepare without mutation.<br><em>Inspect before applying.</em></h2><p class="slide-lead">Keep one terminal and one run suffix across every isolated resource.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Prepare without mutation</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="prepare"></span>
+          <p>Run every command from the <strong>workshop repository root</strong>, the folder containing <code>AGENTS.md</code> and <code>package.json</code>. Keep the same PowerShell terminal open so the chosen run settings persist.</p>
+          <p>Select the approved subscription first. Generate a run suffix once so every command addresses the same isolated resources. If <code>GH_TOKEN</code> shadows the approved cached <code>gh</code> credential, remove it only from this PowerShell process; never print or copy its value.</p>
+          <div class="code"><pre><code>$priorGhToken = $env:GH_TOKEN
+Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
+
+az account set --subscription "tokubica"
+$suffix = Get-Date -Format "MMddHHmm"
+$env:TRUSTED_DELIVERY_WORKSHOP_ID = "td-$suffix"
+$env:TRUSTED_DELIVERY_REPOSITORY = "tkubica12/trusted-delivery-$suffix"
+$env:AZURE_SUBSCRIPTION_ID = az account show --query id -o tsv
+$env:AZURE_LOCATION = "westeurope"
+$env:AZURE_WEBAPP_NAME = "ghw-td-$suffix"
+
+node platform/demos/trusted-delivery/scripts/plan.mjs
+node platform/demos/trusted-delivery/scripts/preflight.mjs --live</code></pre></div>
+          <p><strong>Go condition:</strong> local tests pass; GitHub authenticates as <code>tkubica12</code> with classic <code>repo</code> and <code>workflow</code> scopes when scopes are exposed; Azure uses subscription <code>tokubica</code>; both providers are registered; Linux F1 and Node 22 are listed in West Europe. GitHub setup must print an immutable subject shaped as           <code>repo:OWNER@OWNER_ID/<wbr>REPO@REPO_ID:<wbr>ref:<wbr>refs/<wbr>heads/<wbr>main</code>. Preflight changes nothing.</p>
+          <p>Review the printed names. Git pushes use the same <code>gh</code> credential as preflight, without changing your global Git configuration. Then provision each boundary separately:</p>
+          <div class="code"><pre><code>node platform/demos/trusted-delivery/scripts/setup.mjs --target github --apply
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect red
+node platform/demos/trusted-delivery/scripts/setup.mjs --target azure --apply</code></pre></div>
+          <p>The first command creates the private repository, green main baseline, and red demonstration pull request. It explicitly enables and reads back immutable OIDC subjects if the repository still has the default name-only setting; an existing custom template is never overwritten. Verification waits up to five minutes for the exact PR head; an older run cannot satisfy it. The Azure command creates only the tagged F1 resources, the main-ref-bound identity, and non-secret repository variables. No GitHub Environment is required in the free private-repository sandbox.</p>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-delivery"><h2 class="chapter-label">Delivery story</h2>
+        <article class="card" id="card-run-story">
+          <div class="slide-content"><h2 class="slide-title">Make each transition<br><em>earn its evidence.</em></h2><ul class="slide-points"><li class="frag">Correct the bounded regression.</li><li class="frag">Inspect before merge.</li><li class="frag">Reject wrong identity before any OIDC exchange.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Run the story through exact-SHA evidence</span><span class="card-sub">25-minute operator flow</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="run"></span>
+          <ol class="steps">
+            <li><h4>00:00–00:04 · Red pull request</h4><p><strong>Do and say:</strong> Open the failing zero-boundary test. “The proposal is safe to inspect, but evidence blocks confidence.”</p><p><strong>Evidence:</strong> Failed <em>Deterministic CI</em> run tied to the branch SHA.</p></li>
+            <li><h4>00:04–00:08 · Workflow source</h4><p><strong>Do and say:</strong> Show read-only permissions, pinned actions, timeout, concurrency, and SHA-named artifact.</p><p><strong>Evidence:</strong> <code>ci.yml</code> and <code>manifest.json</code>.</p></li>
+            <li><h4>00:08–00:12 · Correction</h4><p><strong>Do and say:</strong> Run the bounded correction; do not invoke an agent.</p><p><strong>Evidence:</strong> Same PR receives one focused commit and turns green.</p></li>
+            <li><h4>00:12–00:16 · Review and merge</h4><p><strong>Do and say:</strong> Inspect the diff and green run, then merge deliberately. State that a self-operated sandbox does not demonstrate independent approval.</p><p><strong>Evidence:</strong> Merge commit on main.</p></li>
+            <li><h4>00:16–00:22 · Release boundary</h4><p><strong>Do and say:</strong> Show the pre-recorded wrong-SHA rejection: package and deploy were skipped. Read the correct main SHA, then dispatch or open the completed valid run.</p><p><strong>Evidence:</strong> A failed gate before any OIDC exchange, then the exact-SHA release artifact and successful deployment.</p></li>
+            <li><h4>00:22–00:25 · Live health</h4><p><strong>Do and say:</strong> Open <code>/health</code>; connect the response to the release SHA and exact web app scope.</p><p><strong>Evidence:</strong> Successful workflow URL and synthetic service response.</p></li>
+          </ol>
+          <div class="code"><pre><code>node platform/demos/trusted-delivery/scripts/advance.mjs --apply
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect green
+
+gh pr view demo/reservation-zero-boundary --repo $env:TRUSTED_DELIVERY_REPOSITORY --web
+gh pr merge demo/reservation-zero-boundary --repo $env:TRUSTED_DELIVERY_REPOSITORY --squash --delete-branch
+
+# Rehearse this rejection before the session; show its completed run during delivery.
+node platform/demos/trusted-delivery/scripts/release.mjs --sha 0000000000000000000000000000000000000000 --apply
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect rejected
+
+$releaseSha = gh api "repos/$env:TRUSTED_DELIVERY_REPOSITORY/commits/main" --jq .sha
+Write-Host "Review this main SHA before release: $releaseSha"
+node platform/demos/trusted-delivery/scripts/release.mjs --sha $releaseSha --apply
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect deployed</code></pre></div>
+          <aside class="callout callout--rule"><p class="callout-label">Rule</p><p><strong>Authority statement:</strong> entering the SHA is an explicit operator action, not an independent approval. Required environment reviewers are unavailable for this free private personal repository. Configure and demonstrate them only in a capable enterprise profile.</p></aside>
+          </div></article>
+      </section>
+
+      <section class="chapter" id="ch-recovery"><h2 class="chapter-label">Recovery and cleanup</h2>
+        <article class="card" id="card-fallback">
+          <div class="slide-content"><h2 class="slide-title">Keep the evidence.<br><em>Stop at the failed boundary.</em></h2><ul class="slide-points"><li class="frag">No paid-tier escalation or secret fallback.</li><li class="frag">Local verification is not a live deployment.</li><li class="frag">Fresh Actions runs anchor narration.</li></ul></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Stop at the failed boundary and use an honest fallback</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="fallback"></span>
+          <div class="summary-grid">
+            <div class="summary-item"><span class="summary-label">F1 unavailable</span><p><strong>Observed failure:</strong> F1 is absent or quota rejects creation. <strong>Immediate move:</strong> Do not choose a paid tier. Continue through the package job only.</p><p><strong>Honest narration:</strong> “Azure deployment is unavailable in this subscription; no live deployment occurred.”</p></div>
+            <div class="summary-item"><span class="summary-label">Identity failure</span><p><strong>Observed failure:</strong> OIDC or role propagation fails. <strong>Immediate move:</strong> Compare the Azure credential with the immutable subject printed by setup; do not use the legacy name-only subject, add a secret, or broaden scope.</p><p><strong>Honest narration:</strong> “The identity boundary failed closed. The package remains valid evidence, not a deployment.”</p></div>
+            <div class="summary-item"><span class="summary-label">Actions queued</span><p><strong>Observed failure:</strong> Actions is queued. <strong>Immediate move:</strong> Run local verification and inspect workflow source. Resume when the same run completes.</p><p><strong>Honest narration:</strong> “This is local deterministic evidence; it is not a GitHub check or Azure deployment record.”</p></div>
+            <div class="summary-item"><span class="summary-label">Network unavailable</span><p><strong>Observed failure:</strong> GitHub or network is unavailable. <strong>Immediate move:</strong> Run <code>verify.mjs --expect local</code> and stop before release.</p><p><strong>Honest narration:</strong> “No live evidence has been captured for this run.”</p></div>
+          </div>
+          <p><strong>Live path:</strong> run the demo against a fresh repository and inspect GitHub Actions directly.</p>
+          <p>Call the run live only after <code>verify.mjs --expect deployed</code> prints the matching live URL.</p>
+          <div class="reveal"><button type="button" class="reveal-toggle" aria-expanded="false">Verify the live chain before cleanup</button><div class="reveal-body">
+            <p>Use the current repository's Actions runs as the system of record.</p>
+            <div class="code"><pre><code>node platform/demos/trusted-delivery/scripts/verify.mjs --expect red
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect green
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect rejected
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect deployed</code></pre></div>
+            <p>If any stage is unavailable, state the missing boundary and stop before claiming release evidence.</p>
+          </div></div>
+          </div></article>
+
+        <article class="card" id="card-owned-cleanup">
+          <div class="slide-content"><h2 class="slide-title">Reset the demo.<br><em>Delete only owned resources.</em></h2><p class="slide-lead">Cleanup requires the exact workshop ID and preserves other runs.</p></div>
+          <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Reset and cleanup target only the owned run</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+          <div class="card-body"><span id="reset"></span>
+          <p>Reset closes only the demonstration pull request, replaces its named branch, and recreates the red state. It preserves main and Azure.</p>
+          <div class="code"><pre><code>node platform/demos/trusted-delivery/scripts/reset.mjs
+node platform/demos/trusted-delivery/scripts/reset.mjs --apply
+node platform/demos/trusted-delivery/scripts/verify.mjs --expect red</code></pre></div>
+          <p>Cleanup is destructive, defaults to a plan, and requires the exact workshop ID. It refuses a repository without both the demo topic and <code>run-&lt;workshop-id&gt;</code>, and an Azure group without the matching tag. Other runs' local workspaces are preserved.</p>
+          <div class="code"><pre><code>node platform/demos/trusted-delivery/scripts/cleanup.mjs
+node platform/demos/trusted-delivery/scripts/cleanup.mjs --apply --confirm $env:TRUSTED_DELIVERY_WORKSHOP_ID
+
+# Restore only this process after cleanup.
+$env:GH_TOKEN = $priorGhToken</code></pre></div>
+          <p><strong>Done:</strong> the private repository is absent, the tagged resource group is absent, and the local <code>.state.json</code> and workspace are removed.</p>
+          </div></article>
+      </section>
+    </main>
+    <section class="takeaway" id="closing"><p>Evidence must identify the same change all the way to the test app, without widening authority.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Trace the change.<br><em>Never widen the trust.</em></h2></div></section>
+    <footer class="doc-footer"><span>Operator material · Product and action versions validated 5 September 2026 · <a href="https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims">Immutable GitHub OIDC subjects</a> · <a href="https://learn.microsoft.com/azure/developer/github/connect-from-azure-openid-connect">Azure OIDC</a> · <a href="https://learn.microsoft.com/azure/app-service/deploy-github-actions">App Service deployment</a></span></footer>
+  </div>
+</body>
+</html>

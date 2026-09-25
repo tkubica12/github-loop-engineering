@@ -7,9 +7,9 @@ import { pathToFileURL } from "node:url";
 import { root } from "./validation.mjs";
 import {
   assertOwnedTopics, azureMsiInvocation, normalizeLocation, selectRunForSha
-} from "../teacher/demos/trusted-delivery/scripts/lib.mjs";
+} from "../platform/demos/trusted-delivery/scripts/lib.mjs";
 
-const demo = join(root, "teacher", "demos", "trusted-delivery");
+const demo = join(root, "platform", "demos", "trusted-delivery");
 const repository = join(demo, "fixture", "repository");
 
 function read(...parts) {
@@ -110,19 +110,20 @@ test("remote scripts default to plans and cleanup has two guards", () => {
   assert.doesNotMatch(setupSource, /repo:\$\{config\.repository\}:/);
 });
 
-test("guides distinguish live evidence, fallback, and personal-repo limits", () => {
-  for (const file of [
-    join(demo, "operator-guide.html"),
-    join(root, "docs", "guides", "trusted-delivery.html")
-  ]) {
-    const html = readFileSync(file, "utf8");
+test("operator and lab distinguish live evidence from recorded examples", () => {
+  const operator = readFileSync(join(demo, "operator-guide.html"), "utf8");
+  const lab = readFileSync(join(root, "docs", "labs", "04-trusted-delivery", "index.html"), "utf8");
+  for (const html of [operator, lab]) {
     assert.doesNotMatch(html, /evidence\.html/);
-    assert.match(html, /Live (?:path|run)/i);
-    assert.match(html, /not (?:an )?independent (?:protected-environment )?approval/i);
+    assert.match(html, /recorded/i);
     assert.match(html, /OIDC/i);
-    assert.match(html, /F1/);
-    assert.match(html, /no production (?:claim|deployment is represented)/i);
   }
+  assert.match(operator, /Live (?:path|run)/i);
+  assert.match(operator, /not (?:an )?independent (?:protected-environment )?approval/i);
+  assert.match(operator, /F1/);
+  assert.match(operator, /no production (?:claim|deployment is represented)/i);
+  assert.match(lab, /not your station.s scan/i);
+  assert.match(lab, /not proof that your change was deployed/i);
 });
 
 test("demo contains no committed credential-shaped values or non-synthetic pharmacy data", () => {

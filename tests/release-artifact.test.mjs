@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { strToU8, zipSync } from "fflate";
-import { inspectReleaseArtifact, inspectReleasePackage } from "../teacher/demos/security-remediation/scripts/release-artifact.mjs";
+import { inspectReleaseArtifact, inspectReleasePackage } from "../platform/demos/security-remediation/scripts/release-artifact.mjs";
 
 const manifest = { commit: "1".repeat(40), prHead: "2".repeat(40), workflowSha: "3".repeat(40),
   runId: "42", sourceRepo: "example/pharmacy", prNumber: 2 };

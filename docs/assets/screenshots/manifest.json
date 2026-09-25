@@ -1,14 +1,14 @@
 {
-  "capturedAt": "2026-09-23T20:08:33.159Z",
+  "capturedAt": "2026-09-25T07:31:57.742Z",
   "browser": "151.0.7922.34",
   "sourceHashFormat": "sha256-utf8-lf",
   "captures": [
     {
-      "file": "full-day-guide-light.png",
-      "source": "docs/guides/full-day.html",
+      "file": "workshop-agenda-light.png",
+      "source": "docs/index.html#ch-agenda",
       "theme": "light",
       "accent": "blue",
-      "description": "Full-day guide in a local browser.",
+      "description": "Local workshop agenda; not GitHub UI.",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -16,8 +16,8 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "docs/guides/full-day.html",
-          "sha256": "51c2659771ae5fd14aa781da75ca8a5ef90e0f161888850061e3056332b59721"
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
         },
         {
           "path": "docs/assets/html-docs/article.css",
@@ -50,11 +50,149 @@
       ]
     },
     {
-      "file": "loop-engineering-guide-light.png",
-      "source": "docs/guides/loop-engineering.html",
+      "file": "workshop-opening-light.png",
+      "source": "docs/index.html#opening",
       "theme": "light",
       "accent": "blue",
-      "description": "Local guide to bounded loop decisions; not a live agent dashboard.",
+      "description": "Full-day workshop presenter view in a local browser; not GitHub UI.",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "workshop-slides-light.png",
+      "source": "docs/index.html#ch-agenda",
+      "theme": "light",
+      "accent": "blue",
+      "description": "Full-day workshop presenter view in a local browser; not GitHub UI.",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "workshop-closing-light.png",
+      "source": "docs/index.html#closing",
+      "theme": "light",
+      "accent": "blue",
+      "description": "Full-day workshop presenter view in a local browser; not GitHub UI.",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "security-evidence-light.png",
+      "source": "docs/labs/04-trusted-delivery/index.html#codeql",
+      "theme": "light",
+      "accent": "blue",
+      "description": "Local lab view of recorded CodeQL evidence; not GitHub UI.",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -62,8 +200,54 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "docs/guides/loop-engineering.html",
-          "sha256": "0fe98b7f1d86169b636b7c8388975228f31ac5934dc8340b53206fcd17e7eea3"
+          "path": "docs/labs/04-trusted-delivery/index.html",
+          "sha256": "32c0b64bb1bf28513ca9f2a2dd2413415139d624e0872d0b64cf1bcdb1f50145"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "release-boundary-light.png",
+      "source": "docs/labs/04-trusted-delivery/index.html#release-boundary",
+      "theme": "light",
+      "accent": "blue",
+      "description": "Local lab view of the human release boundary; not GitHub UI.",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/labs/04-trusted-delivery/index.html",
+          "sha256": "32c0b64bb1bf28513ca9f2a2dd2413415139d624e0872d0b64cf1bcdb1f50145"
         },
         {
           "path": "docs/assets/html-docs/article.css",
@@ -97,10 +281,10 @@
     },
     {
       "file": "secret-protection-light.png",
-      "source": "docs/guides/secret-protection.html#evidence",
+      "source": "docs/labs/04-trusted-delivery/index.html#secret-protection",
       "theme": "light",
       "accent": "blue",
-      "description": "Guide view of native GitHub REST push protection and its clean control; no credential values or GitHub UI.",
+      "description": "Local lab view of recorded push-protection evidence; not GitHub UI.",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -108,8 +292,8 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "docs/guides/secret-protection.html",
-          "sha256": "b4ee1690ee72beb66c55d74e41035d53ebcea40a84a0f07a1227adbb2b2ae4b5"
+          "path": "docs/labs/04-trusted-delivery/index.html",
+          "sha256": "32c0b64bb1bf28513ca9f2a2dd2413415139d624e0872d0b64cf1bcdb1f50145"
         },
         {
           "path": "docs/assets/html-docs/article.css",
@@ -142,255 +326,11 @@
       ]
     },
     {
-      "file": "security-remediation-light.png",
-      "source": "docs/guides/security-remediation.html#review",
-      "theme": "light",
-      "accent": "blue",
-      "description": "Local guide view of a real CodeQL finding, human review, merge and fixed alert; not GitHub UI.",
-      "viewport": {
-        "width": 1440,
-        "height": 1000
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/guides/security-remediation.html",
-          "sha256": "d8bb2a885f95559b6b010cefa800506b86e795d5a5ff567d69496cbf453cea3a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.css",
-          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.css",
-          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.js",
-          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.js",
-          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "security-release-light.png",
-      "source": "docs/guides/security-remediation.html#release",
-      "theme": "light",
-      "accent": "blue",
-      "description": "Guide view of the recorded reviewed package, human environment approval and Azure runtime; not GitHub UI.",
-      "viewport": {
-        "width": 1440,
-        "height": 1000
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/guides/security-remediation.html",
-          "sha256": "d8bb2a885f95559b6b010cefa800506b86e795d5a5ff567d69496cbf453cea3a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.css",
-          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.css",
-          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.js",
-          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.js",
-          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "showcase-slides-light.png",
-      "source": "docs/slides/agentic-engineering-loop.html#slide-2",
-      "theme": "light",
-      "accent": "blue",
-      "description": "Presentation slide at the target projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/agentic-engineering-loop.html",
-          "sha256": "14336d8a83b1c80ba604b58588be65331290e40f803e8aa2680414d04f76e311"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "loop-engineering-opening-light.png",
-      "source": "docs/slides/full-day.html#slide-1",
-      "theme": "light",
-      "accent": "blue",
-      "description": "Loop Engineering full-day speaking aid at projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/full-day.html",
-          "sha256": "9d9bbc9a4c79e847c36432d2a3bcc18a508a0a00f40f57bba409291fea42e19e"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "full-day-slides-light.png",
-      "source": "docs/slides/full-day.html#slide-2",
-      "theme": "light",
-      "accent": "blue",
-      "description": "Presentation slide at the target projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/full-day.html",
-          "sha256": "9d9bbc9a4c79e847c36432d2a3bcc18a508a0a00f40f57bba409291fea42e19e"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "loop-engineering-closing-light.png",
-      "source": "docs/slides/full-day.html#slide-17",
-      "theme": "light",
-      "accent": "blue",
-      "description": "Loop Engineering full-day speaking aid at projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/full-day.html",
-          "sha256": "9d9bbc9a4c79e847c36432d2a3bcc18a508a0a00f40f57bba409291fea42e19e"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "full-day-guide-dark.png",
-      "source": "docs/guides/full-day.html",
+      "file": "workshop-agenda-dark.png",
+      "source": "docs/index.html#ch-agenda",
       "theme": "dark",
       "accent": "blue",
-      "description": "Full-day guide in a local browser.",
+      "description": "Local workshop agenda; not GitHub UI.",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -398,8 +338,8 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "docs/guides/full-day.html",
-          "sha256": "51c2659771ae5fd14aa781da75ca8a5ef90e0f161888850061e3056332b59721"
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
         },
         {
           "path": "docs/assets/html-docs/article.css",
@@ -432,11 +372,149 @@
       ]
     },
     {
-      "file": "loop-engineering-guide-dark.png",
-      "source": "docs/guides/loop-engineering.html",
+      "file": "workshop-opening-dark.png",
+      "source": "docs/index.html#opening",
       "theme": "dark",
       "accent": "blue",
-      "description": "Local guide to bounded loop decisions; not a live agent dashboard.",
+      "description": "Full-day workshop presenter view in a local browser; not GitHub UI.",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "workshop-slides-dark.png",
+      "source": "docs/index.html#ch-agenda",
+      "theme": "dark",
+      "accent": "blue",
+      "description": "Full-day workshop presenter view in a local browser; not GitHub UI.",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "workshop-closing-dark.png",
+      "source": "docs/index.html#closing",
+      "theme": "dark",
+      "accent": "blue",
+      "description": "Full-day workshop presenter view in a local browser; not GitHub UI.",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/index.html",
+          "sha256": "fbdbde1de4aa4a4c2f4b485060adc692701747cca053fa05113c177ed6cc589d"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "security-evidence-dark.png",
+      "source": "docs/labs/04-trusted-delivery/index.html#codeql",
+      "theme": "dark",
+      "accent": "blue",
+      "description": "Local lab view of recorded CodeQL evidence; not GitHub UI.",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -444,8 +522,54 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "docs/guides/loop-engineering.html",
-          "sha256": "0fe98b7f1d86169b636b7c8388975228f31ac5934dc8340b53206fcd17e7eea3"
+          "path": "docs/labs/04-trusted-delivery/index.html",
+          "sha256": "32c0b64bb1bf28513ca9f2a2dd2413415139d624e0872d0b64cf1bcdb1f50145"
+        },
+        {
+          "path": "docs/assets/html-docs/article.css",
+          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.css",
+          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
+        },
+        {
+          "path": "docs/assets/html-docs/article.js",
+          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
+        },
+        {
+          "path": "docs/assets/html-docs/slides.js",
+          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
+        },
+        {
+          "path": "docs/assets/materials.js",
+          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
+        },
+        {
+          "path": "docs/assets/html-docs/tokens.css",
+          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
+        },
+        {
+          "path": "docs/assets/html-docs/appearance.js",
+          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
+        }
+      ]
+    },
+    {
+      "file": "release-boundary-dark.png",
+      "source": "docs/labs/04-trusted-delivery/index.html#release-boundary",
+      "theme": "dark",
+      "accent": "blue",
+      "description": "Local lab view of the human release boundary; not GitHub UI.",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "kind": "browser-capture",
+      "inputs": [
+        {
+          "path": "docs/labs/04-trusted-delivery/index.html",
+          "sha256": "32c0b64bb1bf28513ca9f2a2dd2413415139d624e0872d0b64cf1bcdb1f50145"
         },
         {
           "path": "docs/assets/html-docs/article.css",
@@ -479,10 +603,10 @@
     },
     {
       "file": "secret-protection-dark.png",
-      "source": "docs/guides/secret-protection.html#evidence",
+      "source": "docs/labs/04-trusted-delivery/index.html#secret-protection",
       "theme": "dark",
       "accent": "blue",
-      "description": "Guide view of native GitHub REST push protection and its clean control; no credential values or GitHub UI.",
+      "description": "Local lab view of recorded push-protection evidence; not GitHub UI.",
       "viewport": {
         "width": 1440,
         "height": 1000
@@ -490,8 +614,8 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "docs/guides/secret-protection.html",
-          "sha256": "b4ee1690ee72beb66c55d74e41035d53ebcea40a84a0f07a1227adbb2b2ae4b5"
+          "path": "docs/labs/04-trusted-delivery/index.html",
+          "sha256": "32c0b64bb1bf28513ca9f2a2dd2413415139d624e0872d0b64cf1bcdb1f50145"
         },
         {
           "path": "docs/assets/html-docs/article.css",
@@ -512,250 +636,6 @@
         {
           "path": "docs/assets/materials.js",
           "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "security-remediation-dark.png",
-      "source": "docs/guides/security-remediation.html#review",
-      "theme": "dark",
-      "accent": "blue",
-      "description": "Local guide view of a real CodeQL finding, human review, merge and fixed alert; not GitHub UI.",
-      "viewport": {
-        "width": 1440,
-        "height": 1000
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/guides/security-remediation.html",
-          "sha256": "d8bb2a885f95559b6b010cefa800506b86e795d5a5ff567d69496cbf453cea3a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.css",
-          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.css",
-          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.js",
-          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.js",
-          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "security-release-dark.png",
-      "source": "docs/guides/security-remediation.html#release",
-      "theme": "dark",
-      "accent": "blue",
-      "description": "Guide view of the recorded reviewed package, human environment approval and Azure runtime; not GitHub UI.",
-      "viewport": {
-        "width": 1440,
-        "height": 1000
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/guides/security-remediation.html",
-          "sha256": "d8bb2a885f95559b6b010cefa800506b86e795d5a5ff567d69496cbf453cea3a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.css",
-          "sha256": "64aea9a006a7343126663180688856e4652724db6f485a86ef3388d2b0acde22"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.css",
-          "sha256": "493251a280ae8d4b2763396f194725ec23dd4b8f79648db98a62f02ecd4d612a"
-        },
-        {
-          "path": "docs/assets/html-docs/article.js",
-          "sha256": "0bdfd3e55d996f0af87c6e324855038f5c170125378c31fcff9f440e39cae96f"
-        },
-        {
-          "path": "docs/assets/html-docs/slides.js",
-          "sha256": "a95e83fdd4e7741a3ac6c228f429955c91ade567e97dbde61d3c7f48c62c233d"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "showcase-slides-dark.png",
-      "source": "docs/slides/agentic-engineering-loop.html#slide-2",
-      "theme": "dark",
-      "accent": "blue",
-      "description": "Presentation slide at the target projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/agentic-engineering-loop.html",
-          "sha256": "14336d8a83b1c80ba604b58588be65331290e40f803e8aa2680414d04f76e311"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "loop-engineering-opening-dark.png",
-      "source": "docs/slides/full-day.html#slide-1",
-      "theme": "dark",
-      "accent": "blue",
-      "description": "Loop Engineering full-day speaking aid at projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/full-day.html",
-          "sha256": "9d9bbc9a4c79e847c36432d2a3bcc18a508a0a00f40f57bba409291fea42e19e"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "full-day-slides-dark.png",
-      "source": "docs/slides/full-day.html#slide-2",
-      "theme": "dark",
-      "accent": "blue",
-      "description": "Presentation slide at the target projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/full-day.html",
-          "sha256": "9d9bbc9a4c79e847c36432d2a3bcc18a508a0a00f40f57bba409291fea42e19e"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
-        },
-        {
-          "path": "docs/assets/html-docs/tokens.css",
-          "sha256": "d2022012d7b514dc086ed0249101e546f6c4afae15d1311f9d04939908d7a1e1"
-        },
-        {
-          "path": "docs/assets/html-docs/appearance.js",
-          "sha256": "5affdf321e6e758e320b175826a24a7738bdf119396729689ccad9d9a3bcd098"
-        }
-      ]
-    },
-    {
-      "file": "loop-engineering-closing-dark.png",
-      "source": "docs/slides/full-day.html#slide-17",
-      "theme": "dark",
-      "accent": "blue",
-      "description": "Loop Engineering full-day speaking aid at projector resolution.",
-      "viewport": {
-        "width": 1920,
-        "height": 1080
-      },
-      "kind": "browser-capture",
-      "inputs": [
-        {
-          "path": "docs/slides/full-day.html",
-          "sha256": "9d9bbc9a4c79e847c36432d2a3bcc18a508a0a00f40f57bba409291fea42e19e"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.css",
-          "sha256": "0fd80481261cebddb3eab3fae2a09de5502cd045157f9ccfb142f6ccc3d30709"
-        },
-        {
-          "path": "docs/assets/materials.js",
-          "sha256": "47f438bbd8554fdb449854e264ca982ce29857068e004163238373b622c3bb7f"
-        },
-        {
-          "path": "docs/assets/html-docs/deck.js",
-          "sha256": "deeb331ba842839ac78b240d5d70ce29884f124d1bef02172e1753c3f8e60624"
         },
         {
           "path": "docs/assets/html-docs/tokens.css",
@@ -837,7 +717,7 @@
     },
     {
       "file": "pharmacy-suggestion-light.png",
-      "source": "student/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
+      "source": "docs/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
       "theme": "light",
       "accent": "blue",
       "description": "Actual local HTTP 409 response; synthetic data, not GitHub or a cloud deployment.",
@@ -848,7 +728,7 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "student/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
+          "path": "docs/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
           "sha256": "cba22c766a41561220aa6a68197677bcdd0a753c92aa3a9187ce6cfd5a216526"
         },
         {
@@ -871,7 +751,7 @@
     },
     {
       "file": "pharmacy-suggestion-dark.png",
-      "source": "student/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
+      "source": "docs/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
       "theme": "dark",
       "accent": "blue",
       "description": "Actual local HTTP 409 response; synthetic data, not GitHub or a cloud deployment.",
@@ -882,7 +762,7 @@
       "kind": "browser-capture",
       "inputs": [
         {
-          "path": "student/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
+          "path": "docs/labs/02-intent-to-pr/artifacts/inventory.reference.mjs",
           "sha256": "cba22c766a41561220aa6a68197677bcdd0a753c92aa3a9187ce6cfd5a216526"
         },
         {

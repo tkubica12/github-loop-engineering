@@ -3,8 +3,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 import { root } from "./validation.mjs";
-import * as lab from "../student/labs/02-intent-to-pr/artifacts/inventory.reference.mjs";
-import * as delivery from "../teacher/demos/trusted-delivery/fixture/repository/src/reservations.mjs";
+import * as lab from "../docs/labs/02-intent-to-pr/artifacts/inventory.reference.mjs";
+import * as delivery from "../platform/demos/trusted-delivery/fixture/repository/src/reservations.mjs";
 
 test("delivery continues the same pharmacy behavior as the completed lab", () => {
   const labStock = lab.createInventory();
@@ -26,7 +26,7 @@ test("delivery continues the same pharmacy behavior as the completed lab", () =>
 });
 
 test("the delivery red state changes only the zero-quantity comparison", () => {
-  const fixture = join(root, "teacher", "demos", "trusted-delivery", "fixture");
+  const fixture = join(root, "platform", "demos", "trusted-delivery", "fixture");
   const red = readFileSync(join(fixture, "red", "reservations.mjs"), "utf8").replaceAll("\r\n", "\n");
   const green = readFileSync(join(fixture, "repository", "src", "reservations.mjs"), "utf8").replaceAll("\r\n", "\n");
   assert.notEqual(red, green);

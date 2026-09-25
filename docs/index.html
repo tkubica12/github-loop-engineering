@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Loop Engineering with GitHub full-day workshop and separate Agentic Engineering Loop showcase for the organization.">
+  <meta name="description" content="Loop Engineering with GitHub: one full-day workshop, an opening platform demonstration and five hands-on labs.">
   <title>Loop Engineering with GitHub</title>
   <meta name="doc-id" content="workshop-hub">
   <!--
@@ -142,103 +142,87 @@ SOFTWARE.
 <div class="doc">
   <header class="doc-header" id="opening">
     <div class="slide-content slide-content--title">
-      <p class="slide-eyebrow">Loop Engineering with GitHub</p>
-      <h2 class="slide-title">Engineer the loop.<br><em>Not only the prompt.</em></h2>
-      <p class="slide-lead">Bound work, verify outcomes, persist evidence, and assign the next decision.</p>
+      <p class="slide-eyebrow">One full-day workshop</p>
+      <h2 class="slide-title">From intent to<br><em>verified outcomes.</em></h2>
+      <p class="slide-lead">See the whole GitHub loop, then build it in five labs.</p>
     </div>
-    <p class="eyebrow">From intent to verified outcomes</p>
-    <h1>Engineer the loop, not only the prompt.</h1>
-    <p class="subtitle">Use GitHub Copilot as the primary worker and GitHub as the durable governance platform. Bound the work, verify the outcome, persist what happened, and make the next decision explicit.</p>
+    <p class="eyebrow">09:00-16:30 &middot; Synthetic pharmacy scenario</p>
+    <h1>Loop Engineering with GitHub</h1>
+    <p class="subtitle">Follow one synthetic pharmacy service through issues, Copilot-assisted changes, pull requests, deterministic checks, security evidence and human decisions. Open a lab directly from the agenda; use <strong>Slides</strong> on this page or in any lab for presenter cues.</p>
   </header>
   <nav class="doc-nav" aria-label="Workshop navigation">
-    <a href="index.html">Loop Engineering with GitHub</a>
     <a href="#main">Skip to content</a>
-    <a href="guides/references.html">Product state</a>
-    <a href="slides/full-day.html">Open full-day deck</a>
-    <a href="slides/agentic-engineering-loop.html">Run the one-hour showcase</a>
+    <a href="#ch-agenda">Today's agenda</a>
+    <a href="#ch-demo">Opening demonstration</a>
+    <a href="labs/01-agentic-workflow/index.html">Start Lab 1</a>
   </nav>
-  <nav class="toc" aria-label="Contents"><p class="toc-label">Contents</p><ol>
-    <li><a href="#ch-lifecycle">The operating lifecycle</a></li>
-    <li><a href="#ch-experiences">Two experiences</a></li>
-    <li><a href="#ch-profiles">Portable controls</a></li>
+  <nav class="toc" aria-label="Contents"><p class="toc-label">Workshop path</p><ol>
+    <li><a href="#ch-agenda">Agenda</a></li>
+    <li><a href="#ch-demo">See the whole loop</a></li>
+    <li><a href="#ch-labs">Work through five labs</a></li>
+    <li><a href="#ch-adoption">Connect it to your team</a></li>
   </ol></nav>
   <main id="main">
-    <section class="chapter" id="ch-lifecycle">
-      <h2 class="chapter-label">The operating lifecycle</h2>
-      <article class="card card--lead" id="card-read-back" data-open>
-        <div class="slide-content"><h2 class="slide-title">Read back before acting again.</h2><ul class="slide-points"><li class="frag">Intake carries stable identity.</li><li class="frag">Verification produces independent evidence.</li><li class="frag">Persisted state bounds the next decision.</li></ul></div>
-        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">A useful loop reads back before it acts again</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+    <section class="chapter" id="ch-agenda"><h2 class="chapter-label">Agenda</h2>
+      <article class="card card--lead" id="card-day-map" data-open>
+        <div class="slide-content"><h2 class="slide-title">See it.<br><em>Work with it.</em><br>Connect it.</h2><p class="slide-lead">One story, five hands-on outcomes.</p></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="true"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The day begins with the destination, then builds toward it</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
         <div class="card-body">
-          <figure class="figure">
-            <svg viewBox="0 0 960 370" width="100%" role="img" aria-labelledby="hub-loop-title hub-loop-desc">
-              <title id="hub-loop-title">Loop Engineering lifecycle</title>
-              <desc id="hub-loop-desc">Intake leads to Delegate, Act, Verify, Persist, and Decide. A return edge from Decide to Intake reads prior state before another action.</desc>
-              <defs><marker id="hub-loop-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="var(--accent)"/></marker></defs>
-              <g fill="var(--surface)" stroke="var(--border-strong)" stroke-width="2">
-                <rect x="30" y="25" width="260" height="110" rx="10"/><rect x="350" y="25" width="260" height="110" rx="10"/><rect x="670" y="25" width="260" height="110" rx="10"/>
-                <rect x="670" y="215" width="260" height="110" rx="10"/><rect x="350" y="215" width="260" height="110" rx="10"/><rect x="30" y="215" width="260" height="110" rx="10"/>
-              </g>
-              <g fill="none" stroke="var(--accent)" stroke-width="3" marker-end="url(#hub-loop-arrow)">
-                <path d="M290 80H338"/><path d="M610 80H658"/><path d="M800 135V203"/><path d="M670 270H622"/><path d="M350 270H302"/><path d="M160 215V147"/>
-              </g>
-              <g fill="var(--text)" font-family="var(--font-sans)" font-size="25" text-anchor="middle">
-                <text x="160" y="70">Intake</text><text x="480" y="70">Delegate</text><text x="800" y="70">Act</text>
-                <text x="800" y="260">Verify</text><text x="480" y="260">Persist</text><text x="160" y="260">Decide</text>
-              </g>
-              <g fill="var(--text-muted)" font-family="var(--font-sans)" font-size="17" text-anchor="middle">
-                <text x="160" y="105">Eligible signal and stable identity</text><text x="480" y="105">Bounded worker and exact context</text><text x="800" y="105">Reviewable, reversible proposal</text>
-                <text x="800" y="290">Independent checks and</text><text x="800" y="312">human judgment</text>
-                <text x="480" y="295">State, evidence, attempts and owner</text><text x="160" y="295">Retry, wait, escalate, no-op or exit</text>
-                <text x="455" y="183">Read prior state before another action</text>
-              </g>
-            </svg>
-            <figcaption>Decide returns to Intake. Reads prior state before retry, wait, escalation, no-op, or verified exit.</figcaption>
-          </figure>
-          <p><a href="guides/loop-engineering.html">Open the compact loop guide</a>.</p>
+          <p>Open the session or lab from its agenda entry. Each lab has its own explanation, short presentation cues and complete step-by-step guide in the same HTML file. All hands-on work happens in your assigned GitHub station repository, never in this authoring repository.</p>
+          <dl>
+            <dt>09:00-09:30</dt><dd><a href="#ch-demo">Executive platform briefing and opening demonstration</a> &mdash; follow a synthetic pharmacy request across the entire GitHub ecosystem.</dd>
+            <dt>09:30-10:20</dt><dd><a href="labs/01-agentic-workflow/index.html">Lab 1: Bounded continuous AI with GitHub Agentic Workflows</a> &mdash; constrain a repository workflow.</dd>
+            <dt>10:20-10:35</dt><dd>Break.</dd>
+            <dt>10:35-11:35</dt><dd><a href="labs/02-intent-to-pr/index.html">Lab 2: From intent to a verified handoff</a> &mdash; refine a need and review a Copilot-assisted change.</dd>
+            <dt>11:35-12:30</dt><dd><a href="labs/03-operating-model/index.html">Lab 3: GitHub Enterprise operating model</a> &mdash; name ownership and governance boundaries.</dd>
+            <dt>12:30-13:15</dt><dd>Lunch.</dd>
+            <dt>13:15-14:35</dt><dd><a href="labs/04-trusted-delivery/index.html">Lab 4: Trusted delivery with CI/CD and DevSecOps</a> &mdash; secure a workflow and inspect deterministic evidence.</dd>
+            <dt>14:35-14:50</dt><dd>Break.</dd>
+            <dt>14:50-15:50</dt><dd><a href="labs/05-capstone/index.html">Lab 5: The governed human-agent delivery loop</a> &mdash; decide from evidence tied to a revision.</dd>
+            <dt>15:50-16:30</dt><dd><a href="#ch-adoption">Adoption roadmap and discussion</a> &mdash; choose a reversible pilot and its success measures.</dd>
+          </dl>
         </div>
       </article>
     </section>
-    <section class="chapter" id="ch-experiences">
-      <h2 class="chapter-label">Two experiences</h2>
-      <article class="card" id="card-choose-experience">
-        <div class="slide-content"><h2 class="slide-title">One platform story.<br><em>Two formats.</em></h2><ul class="slide-points"><li class="frag">Full day: guided depth.</li><li class="frag">One hour: the governed story.</li><li class="frag">Mission control: an explicitly separate simulation.</li></ul></div>
-        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Choose an experience with the right depth</span><span class="card-sub">Full-day workshop, 60-minute showcase, or offline-safe mission control.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+    <section class="chapter" id="ch-demo"><h2 class="chapter-label">Opening demonstration</h2>
+      <article class="card" id="card-platform-loop">
+        <div class="slide-content"><h2 class="slide-title">GitHub carries the<br><em>whole engineering loop.</em></h2><ul class="slide-points"><li class="frag">An issue names intent.</li><li class="frag">A pull request makes work reviewable.</li><li class="frag">Checks and people decide what ships.</li></ul></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Follow one pharmacy request from issue to next decision</span><span class="card-sub">09:00-09:30 &middot; Facilitator demonstration; no attendee setup.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
         <div class="card-body">
-          <h4>One platform story, two formats.</h4>
-          <div class="summary-grid">
-            <div class="summary-item"><span class="summary-label">Full day</span><h4>Loop Engineering with GitHub</h4><p>Five progressive chapters combine bounded continuation, guided work, deterministic evidence, and enterprise architecture decisions.</p><p><a href="guides/full-day.html">Open the workshop guide</a></p></div>
-            <div class="summary-item"><span class="summary-label">60 minutes</span><h4>GitHub Beyond Coding</h4><p>A historical issue-to-release story with coding agents, security controls and human approval, followed by an explicitly separate maintenance continuation.</p><p><a href="guides/agentic-engineering-loop.html">Open the audience guide</a></p></div>
-            <div class="summary-item"><span class="summary-label">Hands-on</span><h4>The five labs</h4><p>Each lab is one directory with its guide and artifacts. You work in your own station repository, and GitHub&rsquo;s own checks decide whether it worked.</p><p><a href="../student/labs/index.html">Open the labs</a></p></div>
-            <div class="summary-item"><span class="summary-label">Offline-safe</span><h4>Mission control</h4><p>A labeled reservation scenario illustrates GitHub concepts offline. It is separate from the recorded export-remediation story.</p><p><a href="../teacher/demos/agentic-engineering-loop/control-room.html">Open mission control</a></p></div>
-          </div>
+          <p>Watch the facilitator open a prepared <strong>synthetic</strong> pharmacy instructor station. A request to prevent overselling after consecutive reservations becomes a GitHub issue with acceptance criteria. A test-only change is proposed in a pull request. Actions runs service tests independently of any agent. A reviewer decides whether to accept the change; a separate release decision would need its own revision-bound evidence.</p>
+          <ol>
+            <li>Open the station issue and identify the need, owner and acceptance criteria.</li>
+            <li>Open its linked pull request and inspect the proposed diff and review.</li>
+            <li>Open the Actions checks and distinguish a passing test from an agent's claim.</li>
+            <li>Inspect security evidence, the release boundary and the named next decision.</li>
+          </ol>
+          <p><strong>Expected outcome:</strong> you can trace intent, proposal, independent verification and human authority through durable GitHub artifacts. A green check does not itself deploy anything. The five labs build and inspect these same boundaries in your own station.</p>
+          <p><strong>Live path:</strong> the facilitator rehearses this chain in a separate instructor station and shows its actual GitHub issue, pull request, checks and review. If the live chain is unavailable, inspect the <a href="../platform/templates/station-repository/test/inventory.test.mjs">local synthetic stock tests</a> as an illustrative source example, plus <a href="labs/04-trusted-delivery/index.html#codeql">Lab 4's labelled historical security observation</a>. They are not one live chain and do not prove a deployment. GitHub Agentic Workflows are public preview; no preview run is required for this opening.</p>
         </div>
       </article>
+      <article class="card" id="card-loop-boundary">
+        <div class="slide-content"><h2 class="slide-title">The loop reads back<br><em>before acting again.</em></h2><ul class="slide-points"><li class="frag">Persist what happened.</li><li class="frag">Compare the next signal.</li><li class="frag">Retry, wait, escalate or stop.</li></ul></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">The next run needs prior state, not just another prompt</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+        <div class="card-body"><p>The operating sequence is intake, delegate, act, verify, persist and decide. GitHub holds the issue, pull request, checks and decision record. Copilot is the primary worker; deterministic checks and required human review remain separate authorities. Per-run limits reduce exposure but cannot prevent duplicate work across runs without stable identity and a read-back of earlier evidence.</p><p>The sandbox path needs no dedicated enterprise organization. Enterprise policies, security licensing and environment approvals require a capability check; unavailable controls have labelled lab fallbacks and are never presented as active enforcement.</p></div>
+      </article>
     </section>
-    <section class="chapter" id="ch-profiles">
-      <h2 class="chapter-label">Portable controls</h2>
-      <article class="card" id="card-share-contract">
-        <div class="slide-content"><h2 class="slide-title">Share the contract.<br><em>Verify the controls.</em></h2><ul class="slide-points"><li class="frag">Sandbox works without enterprise access.</li><li class="frag">Enterprise controls remain configurable.</li><li class="frag">A simulation never becomes platform evidence.</li></ul></div>
-        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">One engineering contract supports two deployment profiles</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
-        <div class="card-body">
-          <p>Portable by design.</p>
-          <div class="summary-grid">
-            <div class="summary-item"><span class="summary-label">Sandbox profile</span><p>Runs against <code>tkubica12</code>, local station renders, and repository-level controls available today.</p></div>
-            <div class="summary-item"><span class="summary-label">Enterprise profile</span><p>Map team repositories, central policy, security, and release approvals to your organization's supported capabilities.</p></div>
-            <div class="summary-item"><span class="summary-label">Capability map</span><p>Every state is labeled live, preview, demonstration, or simulation. The fallback never masquerades as GitHub.</p></div>
-          </div>
-          <ul class="arrow-list">
-            <li><a href="guides/platform-architecture.html">Explore the architecture</a>.</li>
-            <li><a href="guides/trusted-delivery.html">Run the delivery demonstration</a>.</li>
-            <li><a href="guides/security-remediation.html">Inspect the real security remediation</a>.</li>
-            <li><a href="guides/secret-protection.html">Inspect Secret Protection</a>.</li>
-            <li><a href="guides/references.html">Review sources and availability</a>.</li>
-          </ul>
-        </div>
+    <section class="chapter" id="ch-labs"><h2 class="chapter-label">Five progressive labs</h2>
+      <article class="card" id="card-lab-path">
+        <div class="slide-content"><h2 class="slide-title">Every lab proves<br><em>one part of the loop.</em></h2><ul class="slide-points"><li class="frag">Open a lab from the agenda.</li><li class="frag">Present its cues with Slides.</li><li class="frag">Follow the guide in reading view.</li></ul></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Use the same lab file for explanation and hands-on work</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+        <div class="card-body"><p>Each lab opens with the outcome, access requirements and prepared state; then shows the procedure, expected GitHub evidence, recovery and optional extensions. Use <strong>Slides</strong> on that page for its concise explanation, and exit the slide view for the full instructions. Your repository's green checks, reviews, rejected pushes and published issues are the proof; no local pass-printing runner is required.</p><p>If you fall behind, use the reference file in that lab's <code>artifacts/</code> folder to rejoin the storyline without claiming that a recorded example is your own result.</p></div>
+      </article>
+    </section>
+    <section class="chapter" id="ch-adoption"><h2 class="chapter-label">Adoption roadmap</h2>
+      <article class="card" id="card-pilot">
+        <div class="slide-content"><h2 class="slide-title">Start where outcomes<br><em>can be verified.</em></h2><ul class="slide-points"><li class="frag">Choose reversible, low-risk work.</li><li class="frag">Name the accountable owner.</li><li class="frag">Measure accepted outcomes and cost.</li></ul></div>
+        <h3 class="card-head"><button type="button" class="card-toggle" aria-expanded="false"><span class="card-num" aria-hidden="true"></span><span class="card-titles"><span class="card-title">Select a governed pilot, not an autonomous feature tour</span><span class="card-sub">15:50-16:30 &middot; Discussion and next steps.</span></span><span class="card-mark" aria-hidden="true"></span></button></h3>
+        <div class="card-body"><p>Choose a frequent task with clear acceptance, quick tests and reversible changes. Agree who owns the issue, agent permissions, review, release and stop decision. Track accepted outcomes, time spent on human attention, duplicate avoidance, failure handling and cost over four to eight weeks. If moving from Azure DevOps, migrate repositories and pipelines in bounded waves; verify identity, policy and evidence parity before retiring existing controls.</p></div>
       </article>
     </section>
   </main>
-  <section class="takeaway" id="closing"><p>Engineer a loop that verifies its outcome, persists its evidence, and makes the next decision explicit.</p><div class="slide-content slide-content--end"><h2 class="slide-title">Verified outcomes.<br><em>Explicit next decisions.</em></h2></div></section>
-  <footer class="doc-footer">Synthetic pharmacy scenario. Loop references and changing product availability validated 15 September 2026.</footer>
+  <section class="takeaway" id="closing"><p>Carry one verified result and an accountable next decision from each chapter into the next.</p><div class="slide-content slide-content--end"><h2 class="slide-title">One workshop.<br><em>One connected story.</em></h2></div></section>
+  <footer class="doc-footer">Synthetic pharmacy data only. Check preview and enterprise capabilities before the live session.</footer>
 </div>
 </body>
 </html>

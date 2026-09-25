@@ -37,7 +37,7 @@ export function sourceText(source) {
 }
 
 export function materialFiles() {
-  return [...walk(join(root, "docs"), ".html"), ...walk(join(root, "student"), ".html"), ...walk(join(root, "teacher"), ".html")].sort();
+  return [...walk(join(root, "docs"), ".html"), ...walk(join(root, "platform", "demos"), ".html")].sort();
 }
 
 export function sourceElement(source, id, ancestorClass) {
@@ -125,36 +125,25 @@ export function validateRepository() {
     }
   }
 
-  const decks = [
-    join(root, "docs", "slides", "full-day.html"),
-    join(root, "docs", "slides", "agentic-engineering-loop.html")
-  ];
-  for (const deck of decks) {
-    const content = htmlMarkup(readFileSync(deck, "utf8"));
-    const count = [...content.matchAll(/<section\b[^>]*class="[^"]*\bslide\b[^"]*"/g)].length;
-    if (count < 12) errors.push(`${relative(root, deck)}: expected at least 12 slides, found ${count}`);
-    if (!/<main\b[^>]*class="[^"]*\bdeck-stage\b/.test(content)) {
-      errors.push(`${relative(root, deck)}: missing canonical deck stage`);
-    }
-    for (let index = 1; index <= count; index++) {
-      const slide = sourceElement(content, `slide-${index}`, "slide");
-      if (!slide || !/^<section\b[^>]*\bid="s-[^"]+"/.test(slide)) {
-        errors.push(`${relative(root, deck)}: slide-${index} needs an alias inside a stable s- slide`);
-      }
-    }
+  const hub = htmlMarkup(readFileSync(join(root, "docs", "index.html"), "utf8"));
+  if (!hub.includes('id="ch-agenda"') || !hub.includes('id="ch-demo"') ||
+      !hub.includes('data-action="toggle-slides"')) {
+    errors.push("workshop hub needs an agenda, opening demonstration and slide control");
   }
-
-  const controlRoom = htmlMarkup(readFileSync(join(root, "teacher", "demos", "agentic-engineering-loop", "control-room.html"), "utf8"));
-  const scenes = Array.from({ length: 8 }, (_, index) => sourceElement(controlRoom, `scene-${index + 1}`, "card"));
-  if (!controlRoom.match(/simulation/gi) || scenes.some((scene) => !scene) || new Set(scenes).size !== 8 ||
-      [...controlRoom.matchAll(/<article\b[^>]*class="[^"]*\bcard\b[^"]*"/g)].length !== 8) {
-    errors.push("control room must visibly label simulation and contain exactly eight scenes");
+  for (const [index, lab] of ["01-agentic-workflow", "02-intent-to-pr", "03-operating-model",
+    "04-trusted-delivery", "05-capstone"].entries()) {
+    const target = `labs/${lab}/index.html`;
+    if (!hub.includes(`href="${target}"`)) errors.push(`agenda needs a direct link to Lab ${index + 1}`);
+    const source = htmlMarkup(readFileSync(join(root, "docs", "labs", lab, "index.html"), "utf8"));
+    if (!source.includes('data-action="toggle-slides"') || !source.includes('class="slide-content')) {
+      errors.push(`Lab ${index + 1} needs reading and presentation modes in the same document`);
+    }
   }
 
   const workflowDirectories = [
     join(root, ".github", "workflows"),
     join(root, "platform", "templates", "station-repository", ".github", "workflows"),
-    join(root, "teacher", "demos", "security-remediation", "workflows")
+    join(root, "platform", "demos", "security-remediation", "workflows")
   ];
   for (const directory of workflowDirectories) {
     for (const workflow of walk(directory, ".yml")) {

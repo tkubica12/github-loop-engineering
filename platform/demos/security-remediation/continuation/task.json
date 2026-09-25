@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "taskId": "export-malformed-name-regression",
+  "kind": "live-continuation-of-retained-recommendation",
+  "producerReceipt": "../evidence/maintenance.json",
+  "historicalIssue": "https://github.com/tkubica12/pharmacy-agentic-loop-demo/issues/3",
+  "historicalReviewedCommit": "dc4b2708ec2e55bb5652c2c56c8bbf640646043c",
+  "objective": "Add one regression for GET /exports/% that asserts status 400 and the exact JSON error without production changes.",
+  "allowedFiles": [
+    "platform/demos/security-remediation/continuation/test/export-name.test.mjs"
+  ],
+  "testImport": "../src/server.mjs",
+  "executionLayout": "The trusted verifier copies the historical local fixture plus solution into an owned disposable directory and copies this new test into its test directory.",
+  "externalVerifier": "node platform/demos/security-remediation/scripts/verify-continuation.mjs",
+  "acceptance": [
+    "The original suite and new regression pass together.",
+    "The regression fails when the malformed-name response status is mutated to 500.",
+    "The regression fails when the malformed-name error body is mutated.",
+    "No existing production, workflow, trusted verifier or historical evidence file changes."
+  ],
+  "forbidden": [
+    "remote writes",
+    "credentials",
+    "approval",
+    "merge",
+    "deployment"
+  ],
+  "evidenceBoundary": "A live local verifier run is not a GitHub cloud agent run; the retained producer remains historical. No recorded local receipt is shipped in the public repository."
+}

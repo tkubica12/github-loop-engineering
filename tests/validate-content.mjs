@@ -6,4 +6,4 @@ if (result.errors.length) {
   process.exit(1);
 }
 console.log(`PASS ${result.htmlCount} HTML files and all local references`);
-console.log("PASS slide controls, mission fallback, and workflow pinning");
+console.log("PASS linked agenda, combined lab presentations, and workflow pinning");

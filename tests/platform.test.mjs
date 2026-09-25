@@ -95,7 +95,7 @@ test("primary harnesses use Copilot without an Anthropic dependency", () => {
       assert.match(source, /copilot-requests:\s*write/);
     }
   }
-  const lab = readFileSync(join(root, "student", "labs", "02-intent-to-pr", "index.html"), "utf8");
+  const lab = readFileSync(join(root, "docs", "labs", "02-intent-to-pr", "index.html"), "utf8");
   assert.match(lab, /Copilot/);
   assert.match(readFileSync(join(template, "AGENTS.md"), "utf8"), /Copilot.*OpenCode/);
   assert.match(readFileSync(join(template, ".github", "CODEOWNERS"), "utf8"), /\/AGENTS\.md/);

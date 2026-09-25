@@ -2,12 +2,9 @@
 
 ## Purpose
 
-This repository authors two GitHub learning experiences built on one progressive scenario: a synthetic pharmacy stock and reservation service.
+This repository authors one full-day technical workshop, **Loop Engineering with GitHub**, defined in `AGENDA.md`. Its progressive scenario is a synthetic pharmacy stock and reservation service.
 
-1. **Loop Engineering with GitHub** — a full-day technical workshop defined in `AGENDA.md`.
-2. **GitHub Beyond Coding: The Agentic Engineering Loop** — a separate one-hour showcase.
-
-Both present GitHub as an orchestration layer for people, coding agents, deterministic automation, security, and delivery governance. Optimize for attendee learning, live-delivery reliability, and credible enterprise adoption — not feature count.
+The workshop presents GitHub as an orchestration layer for people, coding agents, deterministic automation, security, and delivery governance. Optimize for attendee learning, live-delivery reliability, and credible enterprise adoption — not feature count.
 
 The material is **customer-neutral**. Use no company, tenant, or customer names anywhere, including identifiers, URLs, and recorded evidence. Use synthetic data only.
 
@@ -19,7 +16,7 @@ Each full-day chapter follows one rhythm:
 2. **Work with it** — guide one meaningful hands-on outcome.
 3. **Connect it** — explain the architecture, controls, tradeoffs, and adoption path.
 
-Put the strongest platform message and the complete engineering loop before the first break. Keep each experience one progressive story. Prefer depth on critical outcomes over shallow coverage. Give every chapter a clear outcome and transition. Design for recovery margin, and move optional depth into explicit extensions.
+Put the strongest platform message and the complete engineering loop before the first break. Keep one progressive story. Prefer depth on critical outcomes over shallow coverage. Give every chapter a clear outcome and transition. Design for recovery margin, and move optional depth into explicit extensions.
 
 ## Platform profiles
 
@@ -39,9 +36,9 @@ Prefer current first-party GitHub documentation. Record the validation date for 
 ## Repository layout
 
 ```text
-student/labs/            index.html plus one directory per lab
-teacher/demos/           demo source, fixtures, automation, operator notes
-docs/                    index.html, slides/, guides/, assets/, adr/
+docs/                    index.html (agenda, opening demo, Slides), labs/, assets/, adr/
+docs/labs/               one directory per lab: index.html plus artifacts/
+platform/demos/          demo source, fixtures, automation, operator notes
 platform/                profiles/, scripts/, templates/
 templates/               reusable authoring templates
 tests/                   materials integrity checks
@@ -51,7 +48,7 @@ Root files: `README.md` (short navigation), `PLAN.md` (delivery roadmap), `AGEND
 
 ## Attendee-facing content
 
-HTML is the source format for presentations, lab instructions, reference documentation, and architecture explanations. Do not use Markdown as the primary attendee experience.
+HTML is the source format for presentations, lab instructions, reference documentation, and architecture explanations. `docs/index.html` is the sole attendee entry point; each of the five linked labs combines reading and presentation modes in its own HTML. Do not use Markdown as the primary attendee experience or create parallel slide decks and guides.
 
 - Use the vendored `html-docs` system in `docs/assets/html-docs/`. **Never edit vendored runtime files** — they are SHA-pinned.
 - Synchronize canonical head blocks with `node docs/assets/html-docs/sync-head.js <file>`.
@@ -63,13 +60,13 @@ HTML is the source format for presentations, lab instructions, reference documen
 
 ### Slides
 
-Slides are speaking aids. One idea per slide, sparse text, progressive disclosure. Article slides stay within 45 words and three points of at most ten words; deck slides within 65 words. Keep full procedures in the reading material. Preserve full-screen, keyboard, and deep-link behavior.
+Slides are speaking aids. One idea per slide, sparse text, progressive disclosure. Article slides stay within 45 words and three points of at most ten words. Keep full procedures in the reading view of the same HTML file. Preserve full-screen, keyboard, and deep-link behavior.
 
 ### Guides
 
 Address the reader directly: "Open", "Run", "Verify". Never use third-person classroom narration. Use progressive disclosure, stable anchors, copyable commands, expected results, checkpoints, and cleanup. Explain whether each action is a live platform operation or a labeled substitute.
 
-## Student labs
+## Attendee labs
 
 Each lab is **one directory**: `index.html` plus an `artifacts/` folder holding only what the attendee opens, copies, or completes. Do not add lab metadata files, shared runners, or generated fixtures.
 
@@ -77,11 +74,11 @@ Labs are performed in the attendee's own station repository on GitHub. **Verific
 
 Every lab states its outcome and time, prerequisites and access path, prepared starting state, numbered steps, observable expected results, troubleshooting tied to symptoms, a recovery path including a reference artifact for attendees who run out of time, and optional extensions kept separate from the core path.
 
-## Teacher demonstrations
+## Facilitator demonstrations
 
 Every demonstration is self-contained, repeatable from a clean documented start, automated and idempotent where GitHub permits, and safe with synthetic data. Each provides an executable preflight, non-interactive lifecycle automation, an operator flow with timing and expected visible states, recovery instructions, and pre-captured evidence for network-, quota-, or permission-sensitive steps.
 
-The one-hour showcase needs minute-by-minute pacing, a credible payoff in the first ten minutes, and optional branches the presenter can skip.
+The opening demonstration needs a rehearsed instructor station, a credible payoff in the first 30 minutes, and an honestly labelled source-based fallback when the live chain is unavailable.
 
 ## GitHub automation
 

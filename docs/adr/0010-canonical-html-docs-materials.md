@@ -1,6 +1,6 @@
 # 0010: Canonical html-docs materials and document appearance
 
-- Status: Accepted
+- Status: Superseded by [0012: One full-day HTML journey](0012-one-full-day-html-journey.md)
 - Date: 2026-09-16
 
 ## Context

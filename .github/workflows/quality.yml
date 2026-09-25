@@ -52,7 +52,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           npm run compile:workflows
-          git diff --exit-code -- .github/workflows .github/aw platform/templates/station-repository/.github teacher/demos/security-remediation/workflows
+          git diff --exit-code -- .github/workflows .github/aw platform/templates/station-repository/.github platform/demos/security-remediation/workflows
 
   workflow-security:
     name: Audit workflows
@@ -68,9 +68,9 @@ jobs:
           go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
           .github/workflows/quality.yml
           platform/templates/station-repository/.github/workflows/ci.yml
-          teacher/demos/security-remediation/fixture/repository/.github/workflows/quality.yml
-          teacher/demos/security-remediation/fixture/repository/.github/workflows/codeql.yml
-          teacher/demos/security-remediation/workflows/release.yml
+          platform/demos/security-remediation/fixture/repository/.github/workflows/quality.yml
+          platform/demos/security-remediation/fixture/repository/.github/workflows/codeql.yml
+          platform/demos/security-remediation/workflows/release.yml
       - name: Run zizmor
         uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
         with:

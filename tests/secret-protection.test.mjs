@@ -16,8 +16,8 @@ import {
   redact,
   validateConfig,
   validateNewOutput
-} from "../teacher/demos/secret-protection/scripts/lib.mjs";
-import { main } from "../teacher/demos/secret-protection/scripts/protection.mjs";
+} from "../platform/demos/secret-protection/scripts/lib.mjs";
+import { main } from "../platform/demos/secret-protection/scripts/protection.mjs";
 
 const config = {
   repository: "example/pharmacy",
@@ -41,7 +41,7 @@ const sourceSpec = {
 };
 
 test("recorded native observation preserves the blocked write and clean control without publishing sample values", () => {
-  const file = new URL("../teacher/demos/secret-protection/evidence/push-protection.json", import.meta.url);
+  const file = new URL("../platform/demos/secret-protection/evidence/push-protection.json", import.meta.url);
   const text = readFileSync(file, "utf8");
   const evidence = JSON.parse(text);
   assert.equal(evidence.kind, "recorded-native-push-protection");

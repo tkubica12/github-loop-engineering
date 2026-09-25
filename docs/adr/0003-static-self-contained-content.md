@@ -30,7 +30,7 @@ Content validation is custom and interaction code must stay small. There is no b
 
 ## Validation
 
-Serve the repository locally, navigate every internal link, operate slides by keyboard, switch themes, and run the mission-control fallback with network access disabled.
+Serve the repository locally, navigate every internal link, operate the hub and five lab Slides modes by keyboard, switch themes, and verify that local source-based fallbacks remain readable with network access disabled. The separate mission-control experience was retired by [ADR 0012](0012-one-full-day-html-journey.md).
 
 ## Assumptions
 

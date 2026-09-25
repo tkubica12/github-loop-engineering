@@ -79,7 +79,7 @@ test("published screenshots identify actual browser captures and matching pharma
     assert.deepEqual(capture.inputs.map((input) => input.path).sort(), screenshotInputs(capture.source).sort(),
       `${capture.file}: bind the full current appearance/runtime source set`);
     for (const input of capture.inputs) {
-      assert.match(input.path, /^(docs|platform|student|teacher)\//);
+      assert.match(input.path, /^(docs|platform)\//);
       assert.ok(!input.path.split("/").includes(".."));
       assert.equal(input.sha256, createHash("sha256").update(readFileSync(join(root, input.path), "utf8").replaceAll("\r\n", "\n")).digest("hex"),
         `${capture.file}: ${input.path} changed; rerun npm run capture`);
@@ -93,7 +93,7 @@ test("published screenshots identify actual browser captures and matching pharma
       assert.ok(capture.inputs.some((input) => input.path === "docs/assets/html-docs/appearance.js"));
       assert.ok(capture.inputs.some((input) => input.path === "docs/assets/html-docs/tokens.css"));
       assert.ok(capture.inputs.some((input) => input.path === "docs/assets/materials.js"));
-      if (/evidence|security-|secret-protection/.test(capture.file)) {
+      if (/evidence|security-|secret-protection|release-boundary/.test(capture.file)) {
         assert.match(capture.description, /not (?:a screenshot of )?(?:the )?GitHub|no .*GitHub UI/i,
           "A local guide capture must not be represented as a GitHub screenshot");
       }
@@ -104,12 +104,11 @@ test("published screenshots identify actual browser captures and matching pharma
   for (const state of ["baseline", "suggestion"]) {
     for (const theme of ["light", "dark"]) assert.ok(images.has(`pharmacy-${state}-${theme}.png`));
   }
-  for (const theme of ["light", "dark"]) assert.ok(images.has(`security-release-${theme}.png`));
+  for (const theme of ["light", "dark"]) assert.ok(images.has(`workshop-agenda-${theme}.png`));
   for (const theme of ["light", "dark"]) assert.ok(images.has(`secret-protection-${theme}.png`));
   for (const theme of ["light", "dark"]) {
-    for (const name of ["full-day-guide", "full-day-slides", "showcase-slides",
-      "security-remediation", "security-release", "secret-protection",
-      "loop-engineering-guide", "loop-engineering-opening", "loop-engineering-closing"]) {
+    for (const name of ["workshop-opening", "workshop-slides", "workshop-closing",
+      "workshop-agenda", "security-evidence", "release-boundary", "secret-protection"]) {
       assert.ok(images.has(`${name}-${theme}.png`));
     }
   }

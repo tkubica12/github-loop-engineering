@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { root } from "./validation.mjs";
 
-const demo = join(root, "teacher", "demos", "security-remediation");
+const demo = join(root, "platform", "demos", "security-remediation");
 test("the security scene reproduces only harmless local exposure and closes it with the reviewed fix", () => {
   const output = execFileSync(process.execPath, [join(demo, "scripts", "rehearse.mjs")],
     { encoding: "utf8", timeout: 60_000 });

@@ -95,7 +95,7 @@ independent status-code and response-body mutations both failed the new test.
 That recorded source-bound receipt was removed before public publication because
 it embedded a non-neutral absolute local working directory in its evidence chain.
 The continuation is now demonstrated live by running
-`node teacher\demos\security-remediation\scripts\verify-continuation.mjs` and
+`node platform\demos\security-remediation\scripts\verify-continuation.mjs` and
 reading the verifier's current result. This is local deterministic verification,
 not a fresh GitHub run or post-deployment monitoring.
 
